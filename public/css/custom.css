@@ -1,0 +1,34 @@
+/* custom.css */
+.navbar-custom .navbar-nav .nav-link:not(.logout-link) {
+    color: white !important;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.navbar-custom .navbar-nav .nav-link.active:not(.logout-link) {
+    color: white !important;
+    font-weight: bold;
+}
+
+.navbar-custom .navbar-nav .nav-link:hover:not(.logout-link) {
+    color: #f0f0f0 !important;
+    transform: translateY(-2px);
+}
+
+.navbar-custom .navbar-nav .nav-link:not(.active):not(.logout-link) {
+    color: #f0f0f0 !important;
+}
+
+.navbar-custom .navbar-toggler-icon {
+    color: white !important;
+}
+
+/* Style khusus untuk menu logout */
+.navbar-custom .navbar-nav .logout-link {
+    color: #dc3545 !important; /* Warna merah untuk logout */
+    font-weight: normal; /* Hilangkan bold */
+}
+
+.navbar-custom .navbar-nav .logout-link:hover {
+    color: #ff5252 !important; /* Warna hover yang lebih cerah */
+    transform: none; /* Hilangkan efek transform saat hover */
+}

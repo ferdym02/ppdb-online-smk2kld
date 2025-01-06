@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Bukti Pendaftaran</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 800px;
+                margin: 0 auto;
+                border: 1px solid #000;
+                padding: 20px;
+            }
+
+            .header {
+                text-align: center;
+            }
+
+            .header img {
+                width: 100px;
+            }
+
+            .header h3 {
+                margin: 0;
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-weight: bold;
+                margin-top: 20px;
+            }
+
+            .info-table,
+            .data-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+
+            .info-table th,
+            .info-table td,
+            .data-table th,
+            .data-table td {
+                border: 1px solid #000;
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            .info-table th {
+                width: 150px;
+            }
+
+            .data-table th {
+                text-align: left;
+            }
+
+            .footer {
+                margin-top: 20px;
+            }
+
+            .signature {
+                margin-top: 40px;
+                text-align: left;
+            }
+
+            .signature div {
+                display: inline-block;
+                width: 45%;
+                text-align: center;
+            }
+
+            .note {
+                font-size: 12px;
+                margin-top: 10px;
+            }
+
+            .qr-code {
+                width: 100px;
+                float: right;
+                margin-top: -20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <img src="logo.png" alt="Logo" />
+                <h3>
+                    PENERIMAAN PESERTA DIDIK BARU ONLINE<br />Kota Demo - MODEL
+                    A<br />Tahun Pelajaran 2023/2024
+                </h3>
+            </div>
+
+            <div class="section-title">Info Pendaftaran</div>
+            <table class="info-table">
+                <tr>
+                    <th>Nomor Pendaftaran</th>
+                    <td>2023-0001</td>
+                    <th>Lokasi Pendaftaran</th>
+                    <td>SMPN 1</td>
+                </tr>
+                <tr>
+                    <th>Nomor Formulir</th>
+                    <td>F-2023-123</td>
+                    <th>Jalur</th>
+                    <td>Zonasi</td>
+                </tr>
+                <tr>
+                    <th>Waktu</th>
+                    <td colspan="3">01 Sep 2023 14:30:45</td>
+                </tr>
+            </table>
+
+            <div class="section-title">Biodata Siswa</div>
+            <table class="info-table">
+                <tr>
+                    <th>Nomor Peserta</th>
+                    <td>2023-5678</td>
+                    <th>NISN</th>
+                    <td>9876543210</td>
+                </tr>
+                <tr>
+                    <th>Nama Lengkap</th>
+                    <td>Andi Permana</td>
+                    <th>Tempat & Tgl. Lahir</th>
+                    <td>Bandar Lampung, 10 Januari 2007</td>
+                </tr>
+                <tr>
+                    <th>Alamat</th>
+                    <td colspan="3">Jalan Merdeka No. 10, Bandar Lampung</td>
+                </tr>
+                <tr>
+                    <th>Sekolah Asal</th>
+                    <td>SMPN 1 Bandar Lampung</td>
+                    <th>Tahun Lulus</th>
+                    <td>2023</td>
+                </tr>
+            </table>
+
+            <div class="section-title">Data Nilai Siswa</div>
+            <table class="data-table">
+                <tr>
+                    <th>IND</th>
+                    <th>MAT</th>
+                    <th>IPA</th>
+                    <th>NUN</th>
+                </tr>
+                <tr>
+                    <td>85</td>
+                    <td>90</td>
+                    <td>88</td>
+                    <td>263</td>
+                </tr>
+            </table>
+
+            <div class="section-title">Daftar Pilihan Sekolah</div>
+            <table class="info-table">
+                <tr>
+                    <th>Pilihan 1</th>
+                    <td>SMA Negeri 1</td>
+                    <th>Pilihan 2</th>
+                    <td>SMA Negeri 2</td>
+                </tr>
+                <tr>
+                    <th>Pilihan 3</th>
+                    <td colspan="3">SMA Negeri 3</td>
+                </tr>
+            </table>
+
+            <div class="section-title">Pernyataan</div>
+            <p class="note">
+                Saya yang bertanda tangan di bawah ini menyetujui data di atas
+                dan siap menerima sanksi jika terdapat ketidaksesuaian.
+            </p>
+
+            <div class="signature">
+                <div>
+                    Menyetujui,<br />Siswa terdaftar<br /><br /><br /><br />
+                    (Andi Permana)
+                </div>
+                <div>
+                    Kota Demo - MODEL A, 01 Sep 2023<br />Operator PPDB<br /><br /><br /><br />
+                    (Andita Pramana Putra)
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
