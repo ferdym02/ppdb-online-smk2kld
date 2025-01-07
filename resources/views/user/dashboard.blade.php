@@ -247,24 +247,17 @@
                 </div>
                 <div class="card-body">
                     <p>Jika memiliki pertanyaan atau kendala dapat menghubungi panitia PPDB SMK Negeri 2 Kalianda melalui:</p>
-                    
                     @if(!empty($profile->call_center))
-                        @php
-                            $callCenters = json_decode($profile->call_center, true);
-                        @endphp
-                        @foreach($callCenters as $number)
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="bi bi-whatsapp me-2" style="font-size: 1.5rem; color: #25D366;"></i>
-                                <a href="https://wa.me/{{ str_replace([' ', '-', '(', ')'], '', $number) }}" target="_blank" style="font-size: 1.1rem; color: #000;">
-                                    {{ $number }}
-                                </a>
-                            </div>
+                        @foreach($profile->call_center as $number)
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-whatsapp me-2" style="font-size: 1.5rem; color: #25D366;"></i>
+                            <a href="https://wa.me/{{ preg_replace('/\D/', '', $number) }}" target="_blank">{{ $number }}</a></li>
+                        </div>
                         @endforeach
                     @else
-                        <p>Belum ada nomor call center yang tersedia.</p>
+                        Belum ada nomor call center.
                     @endif
-                </div>        
-                
+                </div>
             </div>
         </div>
     </div>

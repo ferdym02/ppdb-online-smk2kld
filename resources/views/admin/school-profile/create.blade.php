@@ -53,11 +53,16 @@
                                         <img src="{{ asset('storage/' . $schoolProfile->logo_sekolah) }}" alt="Logo Sekolah" width="150">
                                     </div>
                                 @endif
-                                <div class="mb-3 mt-3">
-                                    <label for="call_center" class="form-label">Call Center</label>
-                                    <input type="number" name="call_center[]" id="call_center_0" class="form-control mb-2" value="{{ old('call_center.0', $callCenters[0] ?? '') }}" placeholder="Call Center 1">
-                                    <input type="number" name="call_center[]" id="call_center_1" class="form-control mb-2" value="{{ old('call_center.1', $callCenters[1] ?? '') }}" placeholder="Call Center 2">
+                                <div class="mb-3">
+                                    <label for="call_center_1" class="form-label">Call Center 1</label>
+                                    <input type="text" name="call_center_1" id="call_center_1" class="form-control" 
+                                        value="{{ old('call_center_1', $schoolProfile->call_center_1 ?? '') }}">
                                 </div>
+                                <div class="mb-3">
+                                    <label for="call_center_2" class="form-label">Call Center 2</label>
+                                    <input type="text" name="call_center_2" id="call_center_2" class="form-control" 
+                                        value="{{ old('call_center_2', $schoolProfile->call_center_2 ?? '') }}">
+                                </div>                                
                                 <div class="mb-3">
                                     <label for="facebook" class="form-label">Facebook</label>
                                     <input type="url" name="facebook" id="facebook" class="form-control" value="{{ old('facebook', $schoolProfile->facebook ?? '') }}">

@@ -107,12 +107,9 @@
             { data: 'nisn', name: 'nisn', className: 'text-center' },
             { data: 'nama_lengkap', name: 'nama_lengkap' },
             {
-                data: 'jenis_kelamin',
-                name: 'jenis_kelamin',
-                render: function (data) {
-                    return data === 'Laki-Laki' ? 'L' : 'P';
-                },
-                className: 'text-center'
+              data: 'jenis_kelamin',
+              name: 'jenis_kelamin',
+              className: 'text-center'
             },
             { data: 'asal_sekolah', name: 'asal_sekolah' },
             { data: 'tanggal_pendaftaran', name: 'tanggal_pendaftaran', className: 'text-center' },

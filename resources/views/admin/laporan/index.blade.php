@@ -186,7 +186,7 @@
           data: 'jenis_kelamin', 
           name: 'jenis_kelamin',
           render: function(data, type, row) {
-              return data === 'Laki-Laki' ? 'L' : 'P';
+              return data === 'Laki-laki' ? 'L' : 'P';
           },
           className: 'text-center'
       },

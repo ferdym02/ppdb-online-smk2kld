@@ -480,21 +480,20 @@
                 <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
                   <i class="bi bi-whatsapp flex-shrink-0"></i>
                   <div>
-                    <h3>Call Center</h3>
-                    <ul class="m-0">
-                      @if(!empty($profile->call_center))
-                          @php
-                              $callCenters = json_decode($profile->call_center, true);
-                          @endphp
-                          @foreach($callCenters as $number)
-                              <li><a href="https://wa.me/{{ preg_replace('/\D/', '', $number) }}" target="_blank">{{ $number }}</a></li>
-                          @endforeach
-                      @else
-                          Belum ada nomor call center.
-                      @endif
-                    </ul>
-                  </div>                
-                </div>                
+                      <h3>Call Center</h3>
+                      <ul class="m-0">
+                          @if(!empty($profile->call_center))
+                              @foreach($profile->call_center as $number)
+                                  <li>
+                                      <a href="https://wa.me/{{ preg_replace('/\D/', '', $number) }}" target="_blank">{{ $number }}</a>
+                                  </li>
+                              @endforeach
+                          @else
+                              <li>Belum ada nomor call center.</li>
+                          @endif
+                      </ul>
+                  </div>
+                </div>              
                 <!-- End Info Item -->
 
                 <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
