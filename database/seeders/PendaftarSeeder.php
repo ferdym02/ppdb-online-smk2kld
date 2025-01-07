@@ -12,6 +12,6 @@ class PendaftarSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Pendaftar::factory()->count(1)->create();
+        // \App\Models\Pendaftar::factory()->count(1)->create();
     }
 }
