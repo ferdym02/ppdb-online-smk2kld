@@ -15,6 +15,12 @@ public/hot
 public_html/storage
 public_html/hot
 
+# storage exclusions
+/storage/*
+!/storage/app/
+!/storage/app/public/
+!/storage/app/public/logos/
+
 storage/*.key
 # .env
 Homestead.yaml
