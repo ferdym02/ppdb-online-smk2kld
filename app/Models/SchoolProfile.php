@@ -17,13 +17,9 @@ class SchoolProfile extends Model
         'logo_sekolah', 
         'facebook', 
         'instagram',
-        'call_center',
+        'call_center_1',
+        'call_center_2',
         'x',
         'tiktok' 
-    ];
-
-    // Cast the call_center field to an array
-    protected $casts = [
-        'call_center' => 'array',
     ];
 }

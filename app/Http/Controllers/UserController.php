@@ -34,6 +34,10 @@ class UserController extends Controller
         $pendaftar = Pendaftar::where('user_id', auth()->id())->first();
 
         $profile = SchoolProfile::first();
+        $profile->call_center = array_filter([
+            $profile->call_center_1,
+            $profile->call_center_2
+        ]);
         $jadwals = Jadwal::all();
 
         // Mengambil file SPTJM dari tabel pengumumans berdasarkan judul

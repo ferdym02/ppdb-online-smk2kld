@@ -15,7 +15,7 @@ class SchoolProfileController extends Controller
         $name = Auth::user()->name;
         $schoolProfile = SchoolProfile::first();
         // Decode JSON call_center menjadi array
-        $callCenters = json_decode($schoolProfile->call_center, true);
+        $callCenters = $schoolProfile->call_center;
         return view('admin.school-profile.create', compact('schoolProfile', 'name', 'title', 'callCenters'));
     }
 
@@ -29,51 +29,34 @@ class SchoolProfileController extends Controller
             'logo_sekolah' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'facebook' => 'nullable|url',
             'instagram' => 'nullable|url',
-            'call_center' => 'nullable|array',
-            'call_center.*' => 'nullable|string|max:15', // validasi untuk setiap nomor di call center
+            'call_center_1' => 'nullable|string|max:15',
+            'call_center_2' => 'nullable|string|max:15',
             'x' => 'nullable|url',
             'tiktok' => 'nullable|url',
         ]);
 
+        // Ambil semua input yang diperlukan
         $data = $request->only([
-            'nama_sekolah', 
-            'alamat_sekolah', 
-            'email_sekolah', 
-            'telepon_sekolah', 
-            'facebook', 
-            'instagram',
-            'x',
-            'tiktok',
+            'nama_sekolah', 'alamat_sekolah', 'email_sekolah', 'telepon_sekolah',
+            'facebook', 'instagram', 'call_center_1', 'call_center_2', 'x', 'tiktok'
         ]);
 
-        // Mengubah array call_center menjadi JSON
-        if ($request->has('call_center')) {
-            $data['call_center'] = json_encode(array_filter($request->call_center));
-        }
-
-        // Ambil data profil sekolah yang ada untuk mendapatkan logo lama
-        $schoolProfile = SchoolProfile::find(1);
-
-        // Menyimpan logo sekolah jika ada file yang diunggah
+        // Proses logo sekolah jika ada
         if ($request->hasFile('logo_sekolah')) {
-            // Jika ada logo lama, hapus file lama terlebih dahulu
+            $logo = $request->file('logo_sekolah');
+            $fileName = 'school-logo.' . $logo->getClientOriginalExtension();
+            $filePath = $logo->storeAs('logos', $fileName, 'public');
+
+            // Hapus logo lama jika ada
+            $schoolProfile = SchoolProfile::find(1);
             if ($schoolProfile && $schoolProfile->logo_sekolah) {
                 Storage::disk('public')->delete($schoolProfile->logo_sekolah);
             }
 
-            $logo = $request->file('logo_sekolah');
-            
-            // Tentukan nama file baru dengan format 'school-logo'
-            $fileName = 'school-logo.' . $logo->getClientOriginalExtension();
-
-            // Simpan file dengan nama yang ditentukan
-            $filePath = $logo->storeAs('logos', $fileName, 'public');
-
-            // Simpan path file dalam database
             $data['logo_sekolah'] = $filePath;
         }
 
-        // Menggunakan updateOrCreate untuk memperbarui atau membuat data
+        // Simpan atau perbarui profil sekolah
         SchoolProfile::updateOrCreate(['id' => 1], $data);
 
         return redirect()->back()->with('success', 'Profil sekolah berhasil disimpan');

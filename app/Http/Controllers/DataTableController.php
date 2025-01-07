@@ -82,31 +82,29 @@ class DataTableController extends Controller
     }
 
     public function getPendaftarByStatus($status, Request $request)
-{
-    // Filter hanya untuk status 'diterima'
-    $pendaftars = Pendaftar::where('status_pendaftaran', $status);
+    {
+        // Filter hanya untuk status 'diterima'
+        $pendaftars = Pendaftar::where('status_pendaftaran', $status);
 
-    // Tambahkan filter daftar ulang
-    if ($request->has('daftar_ulang') && $request->daftar_ulang !== '') {
-        if ($request->daftar_ulang === 'null') {
-            $pendaftars->whereNull('daftar_ulang');
-        } elseif ($request->daftar_ulang === 'ya') {
-            $pendaftars->where('daftar_ulang', 'ya');
+        // Tambahkan filter daftar ulang
+        if ($request->has('daftar_ulang') && $request->daftar_ulang !== '') {
+            if ($request->daftar_ulang === 'null') {
+                $pendaftars->whereNull('daftar_ulang');
+            } elseif ($request->daftar_ulang === 'ya') {
+                $pendaftars->where('daftar_ulang', 'ya');
+            }
+            // Abaikan 'tidak', tidak perlu disertakan karena status otomatis 'gugur'
         }
-        // Abaikan 'tidak', tidak perlu disertakan karena status otomatis 'gugur'
+
+        return DataTables::eloquent($pendaftars)
+            ->addIndexColumn()
+            ->addColumn('jenis_kelamin', function ($row) {
+                return $row->jenis_kelamin === 'Laki-laki' ? 'L' : 'P';
+            })
+            ->addColumn('tanggal_pendaftaran', function ($pendaftar) {
+                return $pendaftar->created_at->format('d-m-Y');
+            })
+            ->make(true);
     }
-
-    return DataTables::eloquent($pendaftars)
-        ->addIndexColumn()
-        ->addColumn('jenis_kelamin', function ($row) {
-            return $row->jenis_kelamin === 'Laki-Laki' ? 'L' : 'P';
-        })
-        ->addColumn('tanggal_pendaftaran', function ($pendaftar) {
-            return $pendaftar->created_at->format('d-m-Y');
-        })
-        ->make(true);
-}
-
-
 
 }

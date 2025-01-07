@@ -28,6 +28,10 @@ class HomeController extends Controller
     {
         $jurusans = Jurusan::all();
         $profile = SchoolProfile::first();
+        $profile->call_center = array_filter([
+            $profile->call_center_1,
+            $profile->call_center_2
+        ]);
         $jadwals = Jadwal::all();
         return view('home', compact('profile', 'jurusans', 'jadwals'));
     }
