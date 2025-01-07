@@ -1,3 +1,8 @@
+# Mengabaikan semua isi folder public/
 *
-!public/
+
+# Membolehkan folder logos untuk di-upload
+!logos/
+
+# Membolehkan file .gitignore itu sendiri di-upload
 !.gitignore
