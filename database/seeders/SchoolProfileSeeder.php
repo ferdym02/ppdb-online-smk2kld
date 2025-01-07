@@ -22,7 +22,8 @@ class SchoolProfileSeeder extends Seeder
             'logo_sekolah' => 'logos/school-logo.png',
             'facebook' => 'https://www.facebook.com/smk2kld/',
             'instagram' => 'https://www.instagram.com/smk2kld/',
-            'call_center' => json_encode(["081234567893", "081234567892"]),
+            'call_center_1' => '081234567890',
+            'call_center_2'=> '081234567891',
             'x' => 'https://twitter.com/smkn2kalianda',
             'tiktok' => 'https://www.tiktok.com/@smknegeri2kalianda',
         ]);
