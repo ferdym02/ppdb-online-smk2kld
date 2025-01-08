@@ -18,12 +18,12 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'email' => 'admin2@example.com',
-                'password' => Hash::make('password'), // Pastikan menggunakan hashing untuk keamanan
+                'password' => Hash::make('password'), 
                 'role' => 'admin', // Set role sebagai 'admin'
             ],
             [
-                'name' => 'Ferdy',
-                'email' => 'ferdywan02@gmail.com',
+                'name' => 'Awaludin',
+                'email' => 'awaludin@gmail.com',
                 'password' => Hash::make('password'),
                 'role' => 'user', // Default role
             ],
