@@ -50,13 +50,6 @@ class JadwalsSeeder extends Seeder
                 'tanggal_selesai' => '2024-09-17',
                 'waktu' => '09.00 - 15.00 WIB',
             ],
-            [
-                'kegiatan' => 'MPLSasasasddd',
-                'lokasi' => 'Online',
-                'tanggal_mulai' => '2025-01-02',
-                'tanggal_selesai' => '2025-01-08',
-                'waktu' => '07.30 - 15.00 WIB',
-            ],
         ]);
     }
 }

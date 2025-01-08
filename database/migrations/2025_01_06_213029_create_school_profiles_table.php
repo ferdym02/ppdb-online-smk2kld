@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('facebook', 255)->nullable(); // URL Facebook sekolah
             $table->string('instagram', 255)->nullable(); // URL Instagram sekolah
             $table->timestamps(); // created_at dan updated_at
-            // Tambahkan kolom baru untuk Call Center 1 dan 2
             $table->string('call_center_1')->nullable();
             $table->string('call_center_2')->nullable();
             $table->string('x', 255)->nullable(); // URL Twitter atau lainnya
