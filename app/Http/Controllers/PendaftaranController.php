@@ -231,7 +231,10 @@ class PendaftaranController extends Controller
             $files = [];
             foreach (['kartu_keluarga', 'ktp_orang_tua', 'akte_kelahiran', 'ijazah', 'foto_calon_siswa', 'raport', 'piagam', 'surat_keterangan'] as $fileField) {
                 if ($request->hasFile($fileField)) {
-                    $files[$fileField] = $request->file($fileField)->store('file_pendaftaran', 'public');
+                    $originalName = $request->file($fileField)->getClientOriginalName();
+                    $fileExtension = $request->file($fileField)->getClientOriginalExtension();
+                    $fileName = $request->nisn . '_' . $fileField . '_' . time() . '.' . $fileExtension;
+                    $files[$fileField] = $request->file($fileField)->storeAs('file_pendaftaran', $fileName, 'public');
                 }
             }
 
@@ -348,16 +351,22 @@ class PendaftaranController extends Controller
             'nilai_rapor.*.bahasa_indonesia' => 'required|numeric|min:0|max:100',
             'nilai_rapor.*.bahasa_inggris' => 'required|numeric|min:0|max:100',
         ]);
-       
+        
         // Handle file uploads and deletions
         foreach (['kartu_keluarga', 'ktp_orang_tua', 'akte_kelahiran', 'ijazah', 'foto_calon_siswa', 'raport', 'piagam', 'surat_keterangan'] as $fileField) {
             if ($request->hasFile($fileField)) {
-                // Upload file baru dan hapus file lama
+                // Hapus file lama jika ada
                 $oldFilePath = $pendaftar->$fileField;
                 if ($oldFilePath && Storage::disk('public')->exists($oldFilePath)) {
                     Storage::disk('public')->delete($oldFilePath);
                 }
-                $validatedData[$fileField] = $request->file($fileField)->store('file_pendaftaran', 'public');
+
+                // Buat nama file baru dengan format khusus
+                $fileExtension = $request->file($fileField)->getClientOriginalExtension();
+                $fileName = $request->nisn . '_' . $fileField . '_' . time() . '.' . $fileExtension;
+
+                // Simpan file baru dengan nama khusus
+                $validatedData[$fileField] = $request->file($fileField)->storeAs('file_pendaftaran', $fileName, 'public');
             } else {
                 // Jika tidak ada file baru, gunakan file lama
                 $validatedData[$fileField] = $pendaftar->$fileField;
@@ -446,16 +455,21 @@ class PendaftaranController extends Controller
         $validatedData['catatan_penolakan'] = null;
         $validatedData['daftar_ulang'] = null;
         
-        
         // Handle file uploads and deletions
         foreach (['kartu_keluarga', 'ktp_orang_tua', 'akte_kelahiran', 'ijazah', 'foto_calon_siswa', 'raport', 'piagam', 'surat_keterangan'] as $fileField) {
             if ($request->hasFile($fileField)) {
-                // Upload file baru dan hapus file lama
+                // Hapus file lama jika ada
                 $oldFilePath = $pendaftar->$fileField;
                 if ($oldFilePath && Storage::disk('public')->exists($oldFilePath)) {
                     Storage::disk('public')->delete($oldFilePath);
                 }
-                $validatedData[$fileField] = $request->file($fileField)->store('file_pendaftaran', 'public');
+
+                // Buat nama file baru dengan format khusus
+                $fileExtension = $request->file($fileField)->getClientOriginalExtension();
+                $fileName = $request->nisn . '_' . $fileField . '_' . time() . '.' . $fileExtension;
+
+                // Simpan file baru dengan nama khusus
+                $validatedData[$fileField] = $request->file($fileField)->storeAs('file_pendaftaran', $fileName, 'public');
             } else {
                 // Jika tidak ada file baru, gunakan file lama
                 $validatedData[$fileField] = $pendaftar->$fileField;
