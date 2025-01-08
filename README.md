@@ -2,8 +2,6 @@
 
 ## Prasyarat
 
-Sebelum memulai instalasi, pastikan Anda telah menginstal perangkat lunak berikut:
-
 -   **XAMPP/Laragon/Software Sejenis:** (Berisi Apache, MySQL, PHP) Pastikan PHP versi >= 8.1 dan _extension_ yang dibutuhkan Laravel sudah aktif.
 -   **Composer:** (Manajer paket untuk PHP)
 -   **Node.js dan npm (atau Yarn):** Jika Anda menggunakan _frontend tooling_ seperti Vite atau Webpack.
@@ -13,18 +11,7 @@ Sebelum memulai instalasi, pastikan Anda telah menginstal perangkat lunak beriku
 
 ## Instalasi
 
-Ikuti langkah-langkah berikut untuk menginstal proyek ini:
-
 1.  **Kloning repositori (atau salin folder proyek):**
-
-    Jika menggunakan Git:
-
-    ```bash
-    git clone [https://www.andarepository.com/](https://www.andarepository.com/)
-    cd nama-repositori
-    ```
-
-    Jika tidak menggunakan Git, salin folder proyek ke direktori `htdocs` (jika menggunakan XAMPP) atau direktori _web root_ yang sesuai.
 
 2.  **Jalankan XAMPP/Laragon/Software Sejenis:** Pastikan Apache dan MySQL sudah berjalan.
 
@@ -50,14 +37,14 @@ Ikuti langkah-langkah berikut untuk menginstal proyek ini:
 
     Buka berkas `.env` dan sesuaikan pengaturan berikut:
 
-    -   `APP_NAME`: Nama aplikasi Anda.
+    -   `APP_NAME`: `PPDB Online SMK Negeri 2 Kalianda`.
     -   `APP_URL`: URL aplikasi Anda (misalnya, `http://localhost`).
     -   `DB_CONNECTION`: Koneksi database Anda (misalnya, `mysql`).
     -   `DB_HOST`: Host database Anda (biasanya `127.0.0.1` atau `localhost`).
     -   `DB_PORT`: Port database Anda (biasanya `3306` untuk MySQL).
-    -   `DB_DATABASE`: Nama database yang telah Anda buat di MySQL.
-    -   `DB_USERNAME`: Nama pengguna database Anda.
-    -   `DB_PASSWORD`: Kata sandi database Anda.
+    -   `DB_DATABASE`: `ppdb`
+    -   `DB_USERNAME`: `root`
+    -   `DB_PASSWORD`:
 
 6.  **Generate key aplikasi:**
 
@@ -81,29 +68,15 @@ Ikuti langkah-langkah berikut untuk menginstal proyek ini:
 
     Perintah ini akan membuat _link_ dari `public/storage` ke `storage/app/public`, sehingga _file_ yang diunggah dapat diakses melalui web.
 
-9.  **(Opsional) Instal dependensi _frontend_ (npm/Yarn) jika ada:**
+9.  **Instal dependensi _frontend_:**
 
     ```bash
     npm install
-    # atau
-    yarn install
     ```
 
     **Perhatian:** Jika terjadi _error_ pada tahap ini, pastikan Windows Defender atau antivirus Anda sudah dimatikan.
 
-10. **(Opsional) _Build_ aset _frontend_ (jika ada):**
-
-    ```bash
-    npm run dev
-    # atau
-    yarn dev
-    # atau untuk produksi
-    npm run build
-    # atau
-    yarn build
-    ```
-
-11. **Jalankan server pengembangan:**
+10. **Jalankan server pengembangan:**
 
     ```bash
     php artisan serve
@@ -121,14 +94,8 @@ Berikut adalah akun _default_ yang akan dibuat setelah menjalankan `php artisan 
 | Awaludin   | awaludin@gmail.com | password | user       |
 | Superadmin | admin1@example.com | password | superadmin |
 
-**Penting:** Segera ganti _password default_ setelah login pertama kali untuk alasan keamanan.
-
 ## Troubleshooting
 
 -   **Error saat `composer install` atau `npm install`:** Pastikan Windows Defender atau antivirus Anda sudah dimatikan sementara.
 -   **Error koneksi database:** Periksa kembali konfigurasi database di berkas `.env`.
 -   **File tidak tampil di storage:** Pastikan Anda sudah menjalankan `php artisan storage:link`.
-
-## Kontribusi
-
-(Bagian kontribusi, lisensi, dan lain-lain bisa ditambahkan seperti contoh sebelumnya)
