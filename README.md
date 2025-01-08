@@ -1,66 +1,134 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem PPDB Online SMKN 2 Kalianda
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Prasyarat
 
-## About Laravel
+Sebelum memulai instalasi, pastikan Anda telah menginstal perangkat lunak berikut:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   **XAMPP/Laragon/Software Sejenis:** (Berisi Apache, MySQL, PHP) Pastikan PHP versi >= 8.1 dan _extension_ yang dibutuhkan Laravel sudah aktif.
+-   **Composer:** (Manajer paket untuk PHP)
+-   **Node.js dan npm (atau Yarn):** Jika Anda menggunakan _frontend tooling_ seperti Vite atau Webpack.
+-   **Git (Opsional):** Untuk mengkloning repositori.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Penting:** Selama proses instalasi, disarankan untuk **mematikan sementara Windows Defender atau antivirus lainnya** untuk mencegah potensi masalah, terutama saat `composer install` dan `npm install`. Setelah instalasi selesai, Anda dapat mengaktifkannya kembali.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Instalasi
 
-## Learning Laravel
+Ikuti langkah-langkah berikut untuk menginstal proyek ini:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1.  **Kloning repositori (atau salin folder proyek):**
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+    Jika menggunakan Git:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    ```bash
+    git clone [https://www.andarepository.com/](https://www.andarepository.com/)
+    cd nama-repositori
+    ```
 
-## Laravel Sponsors
+    Jika tidak menggunakan Git, salin folder proyek ke direktori `htdocs` (jika menggunakan XAMPP) atau direktori _web root_ yang sesuai.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2.  **Jalankan XAMPP/Laragon/Software Sejenis:** Pastikan Apache dan MySQL sudah berjalan.
 
-### Premium Partners
+3.  **Instal dependensi PHP (Composer):**
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    Buka _Command Prompt_ atau _Terminal_ dan arahkan ke direktori proyek. Kemudian jalankan perintah berikut:
 
-## Contributing
+    ```bash
+    composer install
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    **Perhatian:** Jika terjadi _error_ pada tahap ini, pastikan Windows Defender atau antivirus Anda sudah dimatikan.
 
-## Code of Conduct
+4.  **Salin berkas `.env.example` dan buat berkas `.env`:**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    ```bash
+    cp .env.example .env
+    # atau jika di windows
+    copy .env.example .env
+    ```
 
-## Security Vulnerabilities
+5.  **Konfigurasi berkas `.env`:**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    Buka berkas `.env` dan sesuaikan pengaturan berikut:
 
-## License
+    -   `APP_NAME`: Nama aplikasi Anda.
+    -   `APP_URL`: URL aplikasi Anda (misalnya, `http://localhost`).
+    -   `DB_CONNECTION`: Koneksi database Anda (misalnya, `mysql`).
+    -   `DB_HOST`: Host database Anda (biasanya `127.0.0.1` atau `localhost`).
+    -   `DB_PORT`: Port database Anda (biasanya `3306` untuk MySQL).
+    -   `DB_DATABASE`: Nama database yang telah Anda buat di MySQL.
+    -   `DB_USERNAME`: Nama pengguna database Anda.
+    -   `DB_PASSWORD`: Kata sandi database Anda.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+6.  **Generate key aplikasi:**
+
+    ```bash
+    php artisan key:generate
+    ```
+
+7.  **Migrasi dan _Seed_ Database:**
+
+    ```bash
+    php artisan migrate --seed
+    ```
+
+    Perintah `--seed` akan mengisi database dengan data awal, termasuk data _user default_.
+
+8.  **Buat _Symbolic Link_ untuk Storage:**
+
+    ```bash
+    php artisan storage:link
+    ```
+
+    Perintah ini akan membuat _link_ dari `public/storage` ke `storage/app/public`, sehingga _file_ yang diunggah dapat diakses melalui web.
+
+9.  **(Opsional) Instal dependensi _frontend_ (npm/Yarn) jika ada:**
+
+    ```bash
+    npm install
+    # atau
+    yarn install
+    ```
+
+    **Perhatian:** Jika terjadi _error_ pada tahap ini, pastikan Windows Defender atau antivirus Anda sudah dimatikan.
+
+10. **(Opsional) _Build_ aset _frontend_ (jika ada):**
+
+    ```bash
+    npm run dev
+    # atau
+    yarn dev
+    # atau untuk produksi
+    npm run build
+    # atau
+    yarn build
+    ```
+
+11. **Jalankan server pengembangan:**
+
+    ```bash
+    php artisan serve
+    ```
+
+    Buka aplikasi Anda di _browser_ pada URL yang ditampilkan (biasanya `http://127.0.0.1:8000`).
+
+## Akun Default
+
+Berikut adalah akun _default_ yang akan dibuat setelah menjalankan `php artisan migrate --seed`:
+
+| Nama       | Email              | Password | Role       |
+| ---------- | ------------------ | -------- | ---------- |
+| Admin      | admin2@example.com | password | admin      |
+| Awaludin   | awaludin@gmail.com | password | user       |
+| Superadmin | admin1@example.com | password | superadmin |
+
+**Penting:** Segera ganti _password default_ setelah login pertama kali untuk alasan keamanan.
+
+## Troubleshooting
+
+-   **Error saat `composer install` atau `npm install`:** Pastikan Windows Defender atau antivirus Anda sudah dimatikan sementara.
+-   **Error koneksi database:** Periksa kembali konfigurasi database di berkas `.env`.
+-   **File tidak tampil di storage:** Pastikan Anda sudah menjalankan `php artisan storage:link`.
+
+## Kontribusi
+
+(Bagian kontribusi, lisensi, dan lain-lain bisa ditambahkan seperti contoh sebelumnya)
