@@ -37,7 +37,7 @@
 
     Buka berkas `.env` dan sesuaikan pengaturan berikut:
 
-    -   `APP_NAME`: `PPDB Online SMK Negeri 2 Kalianda`.
+    -   `APP_NAME`: `ppdb_smkn2kalianda`.
     -   `APP_URL`: URL aplikasi Anda (misalnya, `http://localhost`).
     -   `DB_CONNECTION`: Koneksi database Anda (misalnya, `mysql`).
     -   `DB_HOST`: Host database Anda (biasanya `127.0.0.1` atau `localhost`).
