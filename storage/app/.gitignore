@@ -1,3 +1,6 @@
 *
 !public/
 !.gitignore
+# Include public/logos folder and PNG files
+!public/logos/
+!public/logos/*.png

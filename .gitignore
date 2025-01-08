@@ -28,3 +28,7 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+# Include logos folder in public/storage
+!storage/app/public/logos/
+!storage/app/public/logos/*.png

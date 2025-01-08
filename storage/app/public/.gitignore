@@ -1,2 +1,5 @@
 *
 !.gitignore
+# Include logos folder and PNG files
+!public/logos/
+!public/logos/*.png
