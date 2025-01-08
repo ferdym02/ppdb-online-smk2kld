@@ -43,7 +43,7 @@
     <nav class="navbar navbar-expand-lg navbar-light d-flex justify-center navbar-custom">
         <div class="container-fluid">
             <a class="navbar-brand text-white" href="/user/dashboard">
-                <img src="{{ asset('storage/logo.png') }}" alt="Logo" width="auto" height="30" class="d-inline-block align-text-top">
+                <img src="{{ asset('storage/logos/school-logo.png') }}" alt="Logo" width="auto" height="30" class="d-inline-block align-text-top">
                 PPDB SMKN 2 Kalianda
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
