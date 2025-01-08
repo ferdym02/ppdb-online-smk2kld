@@ -90,9 +90,9 @@ Berikut adalah akun _default_ yang akan dibuat setelah menjalankan `php artisan 
 
 | Nama       | Email              | Password | Role       |
 | ---------- | ------------------ | -------- | ---------- |
+| Superadmin | admin1@example.com | password | superadmin |
 | Admin      | admin2@example.com | password | admin      |
 | Awaludin   | awaludin@gmail.com | password | user       |
-| Superadmin | admin1@example.com | password | superadmin |
 
 ## Troubleshooting
 
