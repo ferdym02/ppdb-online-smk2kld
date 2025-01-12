@@ -62,6 +62,12 @@ class AuthController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
+        // Periksa apakah email terdaftar
+        $userExists = User::where('email', $request->email)->exists();
+        if (!$userExists) {
+            return back()->with('loginError', 'Email tidak terdaftar.')->withInput();
+        }
+
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
