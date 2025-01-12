@@ -441,7 +441,11 @@
                         </div>
                         <div class="card-footer">
                             <div class="d-flex justify-content-end">
-                                <a href="{{ route('admin.cetakBukti', $pendaftar->id) }}" class="btn btn-success me-1"><i class="fas fa-print"></i> | Cetak Bukti Pendaftaran</a>
+                                @if (!in_array($pendaftar->status_pendaftaran, ['pending', 'rejected']))
+                                    <a href="{{ route('admin.cetakBukti', $pendaftar->id) }}" class="btn btn-success me-1">
+                                        <i class="fas fa-print"></i> | Cetak Bukti Pendaftaran
+                                    </a>
+                                @endif
                                 <a href="/admin/pendaftar/{{ $pendaftar->id }}/edit" class="btn btn-warning">Edit</a>
                                 <form action="{{ route('pendaftar.destroy', $pendaftar->id) }}" method="POST" style="display:inline;" class="form-delete">
                                     @csrf
