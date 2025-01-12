@@ -70,10 +70,17 @@
                         <strong>Status Pendaftaran:</strong> 
                         <span class="bg-success" style="color: white; padding: 5px 10px; border-radius: 5px;">Diterima</span>
                         <p><strong>Diterima di jurusan:</strong> {{ $pendaftar->jurusanDiterima->nama }}</p>
+                        <strong>Status Daftar Ulang:</strong>
+                        @if (is_null($pendaftar->daftar_ulang))
+                            <span>Belum</span>
+                        @elseif ($pendaftar->daftar_ulang === 'tidak')
+                            <span>Tidak</span>
+                        @elseif ($pendaftar->daftar_ulang === 'ya')
+                            <span>Sudah</span>
+                        @endif
                         <div class="alert alert-info mt-3">
                             Selamat! Anda telah diterima dalam proses PPDB. Silakan segera melakukan <strong>daftar ulang</strong> sesuai dengan tanggal yang ada di jadwal. Terkait tata cara daftar ulang dapat dilihat pada menu <a href="/user/pengumuman">Pengumuman</a>.
                         </div>
-                    </p>
                     <a href="{{ route('pendaftar.cetakBukti', $pendaftar->id) }}" class="btn btn-success">Cetak Bukti Pendaftaran</a>
                 @endif
             </p>            
