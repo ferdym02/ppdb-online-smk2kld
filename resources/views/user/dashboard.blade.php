@@ -96,7 +96,7 @@
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fa-solid fa-circle-xmark mr-2 text-primary me-2"></i>
-                            <span>Jika pendaftaran belum terverifikasi, calon peserta didik baru dapat melakukan edit data pendaftaran sesuai catatan dari admin.</span>
+                            <span>Jika pendaftaran ditolak (belum terverifikasi), calon peserta didik baru dapat melakukan edit data pendaftaran sesuai catatan dari admin.</span>
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fas fa-check-circle mr-2 text-primary me-2"></i>
