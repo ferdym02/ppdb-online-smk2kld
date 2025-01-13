@@ -39,12 +39,32 @@
                     <th class="text-center">Tanggal Buka</th>
                     <th class="text-center">Tanggal Tutup</th>
                     <th class="text-center">Kuota Penerimaan</th>
-                    <th class="text-center">Kuota Terpakai</th>
-                    <th class="text-center">Kuota Tersedia</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Aksi</th>
                   </tr>
                 </thead>
+                <tbody>
+                  @foreach ($periodes as $index => $periode)
+                  <tr>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-center">{{ $periode->tahun_pelajaran }}</td>
+                    <td class="text-center">{{ \Carbon\Carbon::parse($periode->tanggal_buka)->format('d-m-Y') }}</td>
+                    <td class="text-center">{{ \Carbon\Carbon::parse($periode->tanggal_tutup)->format('d-m-Y') }}</td>
+                    <td class="text-center">{{ $periode->kuota_penerimaan }}</td>
+                    <td class="text-center">{{ $periode->status ? 'Aktif' : 'Tidak Aktif' }}</td>
+                    <td class="text-center">
+                      <a href="{{ route('periodes.show', $periode->id) }}" class="btn btn-info btn-sm">Detail</a>
+                      <!-- Tambahkan tombol aksi (edit/delete) sesuai kebutuhan -->
+                      <button class="btn btn-warning btn-sm edit-btn" data-periode="{{ $periode }}">Edit</button>
+                      <form method="POST" action="{{ route('periodes.destroy', $periode->id) }}" style="display: inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger btn-sm">Hapus</button>
+                      </form>
+                    </td>
+                  </tr>
+                  @endforeach
+                </tbody>
               </table>
             </div>
           </div>
@@ -146,7 +166,7 @@
   <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="editForm" method="POST" action="{{ old('action_url', '') }}">
+            <form id="editForm" method="POST" action="{{ old('action_url', route('periodes.update', $periode->id)) }}">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="form_action" value="edit">
@@ -257,49 +277,13 @@
 <script src="https://cdn.datatables.net/v/bs5/dt-2.1.5/datatables.min.js"></script>
 <script>
   $(document).ready(function() {
-    var table = $('#periode-table').DataTable({
-      processing: true,
-      serverSide: true,
-      ajax: "{{ route('periodes.data') }}",
-      columns: [
-        {
-          data: null,
-          name: 'nomor',
-          orderable: false,
-          searchable: false,
-          render: function (data, type, row, meta) {
-            return meta.row + 1;
-          },
-          className: 'text-center',
-          width: '5%' // Membatasi lebar kolom nomor
-        },
-        { data: 'tahun_pelajaran', name: 'tahun_pelajaran', className: 'text-center' },
-        { data: 'tanggal_buka', name: 'tanggal_buka', className: 'text-center' },
-        { data: 'tanggal_tutup', name: 'tanggal_tutup', className: 'text-center' },
-        { data: 'kuota_penerimaan', name: 'kuota_penerimaan', className: 'text-center' },
-        { data: 'kuota_penerimaan_used', name: 'kuota_penerimaan_used', className: 'text-center' },
-        {
-          data: null,
-          name: 'kuota_tersedia',
-          render: function (data) {
-            return data.kuota_penerimaan - data.kuota_penerimaan_used;
-          },
-          className: 'text-center',
-          orderable: false,
-          searchable: false
-        },
-        { data: 'status', name: 'status', render: function(data) { return data ? 'Aktif' : 'Tidak Aktif'; },
-          className: 'text-center'
-        },
-        {
-          data: 'action',
-          name: 'action',
-          orderable: false,
-          searchable: false,
-          className: 'text-center', // Untuk menengahkan tombol
-          width: '15%' // Membatasi lebar kolom aksi
-        }
-      ],
+    $('#periode-table').DataTable({
+      paging: true,
+      searching: true,
+      ordering: true,
+      info: true,
+      lengthChange: true,
+      autoWidth: true,
     });
 
     // Handle edit button click

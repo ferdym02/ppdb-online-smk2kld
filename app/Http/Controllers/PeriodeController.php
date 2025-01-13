@@ -9,11 +9,25 @@ use Carbon\Carbon;
 
 class PeriodeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        session(['periodes_url' => $request->fullUrl()]);
         $name = Auth::user()->name;
         $title = 'Periode Pendaftaran';
-        return view('admin.periode.index', compact('title', 'name'));
+        $periodes = Periode::all();
+        return view('admin.periode.index', compact('title', 'name', 'periodes'));
+    }
+
+    public function show($id, Request $request)
+    {
+        // Simpan URL halaman sebelumnya di sesi
+        $request->session()->put('previous_url', url()->previous());
+        $name = Auth::user()->name;
+        $title = 'Detail Periode Pendaftaran';
+        // Ambil data periode beserta data relasi
+        $periodes = Periode::with(['aptitudeTests', 'periodeJurusans.jurusan', 'pendaftars'])->findOrFail($id);
+
+        return view('admin.periode.show', compact('title','name', 'periodes'));
     }
 
     public function store(Request $request)
