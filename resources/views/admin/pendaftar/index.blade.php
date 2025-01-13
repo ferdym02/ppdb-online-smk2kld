@@ -92,6 +92,12 @@
                                         <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'cadangan', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-info">Detail</a></td>
                                     </tr>
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="2" class="text-start">Total Pendaftar:</th>
+                                        <td class="text-center"><strong>{{ $totalPending + $totalVerified + $totalRejected + $totalDiterima + $totalGugur + $totalCadangan }}</strong></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
