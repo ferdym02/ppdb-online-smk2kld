@@ -23,10 +23,11 @@ class SchoolProfileController extends Controller
     {
         $request->validate([
             'nama_sekolah' => 'required|string|max:255',
+            'npsn' => 'required|numeric|digits_between:1,10',
             'alamat_sekolah' => 'required|string',
             'email_sekolah' => 'required|email|max:255',
             'telepon_sekolah' => 'required|string|max:15',
-            'logo_sekolah' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'logo_sekolah' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'facebook' => 'nullable|url',
             'instagram' => 'nullable|url',
             'call_center_1' => 'nullable|string|max:15',
@@ -37,7 +38,7 @@ class SchoolProfileController extends Controller
 
         // Ambil semua input yang diperlukan
         $data = $request->only([
-            'nama_sekolah', 'alamat_sekolah', 'email_sekolah', 'telepon_sekolah',
+            'nama_sekolah', 'npsn', 'alamat_sekolah', 'email_sekolah', 'telepon_sekolah',
             'facebook', 'instagram', 'call_center_1', 'call_center_2', 'x', 'tiktok'
         ]);
 

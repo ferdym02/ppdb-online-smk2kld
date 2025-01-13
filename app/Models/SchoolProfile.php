@@ -10,7 +10,8 @@ class SchoolProfile extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nama_sekolah', 
+        'nama_sekolah',
+        'npsn',
         'alamat_sekolah', 
         'email_sekolah', 
         'telepon_sekolah', 

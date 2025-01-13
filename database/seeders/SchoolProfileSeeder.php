@@ -16,6 +16,7 @@ class SchoolProfileSeeder extends Seeder
     {
         DB::table('school_profiles')->insert([
             'nama_sekolah' => 'SMK Negeri 2 Kalianda',
+            'npsn' => '10800483',
             'alamat_sekolah' => 'Jl. Soekarno-Hatta Km No.52, Kedaton, Kec. Kalianda, Kabupaten Lampung Selatan, Lampung 35551',
             'email_sekolah' => 'smkn02kalianda@gmail.com',
             'telepon_sekolah' => '(0727) 322282',

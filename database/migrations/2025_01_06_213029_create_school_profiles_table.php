@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('school_profiles', function (Blueprint $table) {
             $table->id(); // Primary key (UNSIGNED BIGINT)
             $table->string('nama_sekolah', 255); // Nama sekolah
+            $table->unsignedBigInteger('npsn')->nullable()->after('nama_sekolah');
             $table->text('alamat_sekolah'); // Alamat sekolah
             $table->string('email_sekolah', 255); // Email sekolah
             $table->string('telepon_sekolah', 255); // Telepon sekolah

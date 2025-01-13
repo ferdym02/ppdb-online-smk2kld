@@ -95,6 +95,16 @@
                 <!--end::Col-->
             </div>
             <!--end::Row-->
+            <!-- Informasi Sekolah -->
+            <div class="row justify-content-center my-3">
+                <div class="col-lg-6 text-center">
+                    <img src="{{ asset('storage/' . $schoolProfile->logo_sekolah) }}" alt="Logo Sekolah" class="img-fluid mb-1" style="max-width: 100px;">
+                    <h4>{{ $schoolProfile->nama_sekolah }}</h4>
+                    <p class="mb-0">{{ $schoolProfile->alamat_sekolah }}</p>
+                    <p class="mb-0">{{ $schoolProfile->email_sekolah }}</p>
+                    <p>NPSN: {{ $schoolProfile->npsn }}</p>
+                </div>
+            </div>
         </div>
         <!--end::Container-->
     </div>

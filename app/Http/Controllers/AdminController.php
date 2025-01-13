@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pendaftar;
 use App\Models\Jurusan;
+use App\Models\SchoolProfile;
 
 class AdminController extends Controller
 {
@@ -19,7 +20,8 @@ class AdminController extends Controller
         $totalDiterima = Pendaftar::where('status_pendaftaran', 'diterima')->count();
         $totalGugur = Pendaftar::where('status_pendaftaran', 'gugur')->count();
         $totalJurusan = Jurusan::count();
-        return view('admin.dashboard', compact('title', 'user', 'totalPendaftar', 'totalDiterima', 'totalGugur', 'totalJurusan'));
+        $schoolProfile = SchoolProfile::first();
+        return view('admin.dashboard', compact('title', 'user', 'totalPendaftar', 'totalDiterima', 'totalGugur', 'totalJurusan', 'schoolProfile'));
     }
 
     public function adminProfile()
