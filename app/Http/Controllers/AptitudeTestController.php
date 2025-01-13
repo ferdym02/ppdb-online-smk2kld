@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AptitudeTest;
 use App\Models\Periode;
+use App\Models\Pendaftar;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
@@ -11,13 +12,42 @@ use Carbon\Carbon;
 
 class AptitudeTestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        session(['aptitude_tests_url' => $request->fullUrl()]);
         $name = Auth::user()->name;
         $title = 'Tes Minat dan Bakat';
         $periodes = Periode::all();
         $aptitudes = AptitudeTest::with('periode')->get(); // Mengambil data tes dan periode terkait
         return view('admin.aptitude.index', compact('title', 'name', 'periodes', 'aptitudes'));
+    }
+
+    public function show($id, Request $request)
+    {
+        // Simpan URL halaman sebelumnya di sesi
+        $request->session()->put('previous_url', url()->previous());
+        // Cari data Tes Minat dan Bakat berdasarkan ID
+        $aptitudes = AptitudeTest::with('periode')->findOrFail($id);
+
+        // Ambil filter dari request
+        $tanggalTes = $request->get('tanggal_tes');
+        $statusTes = $request->get('status_tes'); // Tambahkan status_tes
+
+        // Filter data pendaftar
+        $pendaftars = Pendaftar::query()
+            ->when($tanggalTes, function ($query, $tanggalTes) {
+                return $query->whereDate('tanggal_tes', $tanggalTes);
+            })
+            ->when($statusTes, function ($query, $statusTes) {
+                return $query->where('status_tes', $statusTes);
+            })
+            ->get();
+
+        // Judul halaman
+        $title = "Detail Tes Minat dan Bakat";
+
+        // Tampilkan view dengan data
+        return view('admin.aptitude.show', compact('aptitudes', 'title', 'pendaftars', 'tanggalTes', 'statusTes'));
     }
 
     public function store(Request $request)

@@ -53,6 +53,7 @@
                       <td class="text-center">{{ $aptitude->kuota_per_hari }}</td>
                       <td class="text-center">{{ $aptitude->status ? 'Aktif' : 'Tidak Aktif' }}</td>
                       <td class="text-center">
+                        <a href="{{ route('aptitudes.show', $aptitude->id) }}" class="btn btn-info btn-sm">Detail</a>
                         <button class="btn btn-warning btn-edit btn-sm" data-id="{{ $aptitude->id }}" 
                           data-periode="{{ $aptitude->periode_id }}" 
                           data-tanggal-buka="{{ $aptitude->tanggal_buka_tes }}" 
