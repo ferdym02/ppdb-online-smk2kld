@@ -48,8 +48,8 @@
                     <tr>
                       <td class="text-center">{{ $index + 1 }}</td>
                       <td class="text-center">{{ $aptitude->periode->tahun_pelajaran }}</td>
-                      <td class="text-center">{{ \Carbon\Carbon::parse($aptitude->tanggal_buka_tes)->format('d/m/Y') }}</td>
-                      <td class="text-center">{{ \Carbon\Carbon::parse($aptitude->tanggal_tutup_tes)->format('d/m/Y') }}</td>                      
+                      <td class="text-center">{{ \Carbon\Carbon::parse($aptitude->tanggal_buka_tes)->format('d-m-Y') }}</td>
+                      <td class="text-center">{{ \Carbon\Carbon::parse($aptitude->tanggal_tutup_tes)->format('d-m-Y') }}</td>                      
                       <td class="text-center">{{ $aptitude->kuota_per_hari }}</td>
                       <td class="text-center">{{ $aptitude->status ? 'Aktif' : 'Tidak Aktif' }}</td>
                       <td class="text-center">

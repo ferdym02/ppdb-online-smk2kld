@@ -49,7 +49,7 @@ class AptitudeTestController extends Controller
         // Tampilkan view dengan data
         return view('admin.aptitude.show', compact('aptitudes', 'title', 'pendaftars', 'tanggalTes', 'statusTes'));
     }
-
+    
     public function store(Request $request)
     {
         $request->validate([
