@@ -44,6 +44,7 @@ return new class extends Migration
                 $table->decimal("nilai_bahasa_inggris_semester_$i", 5, 2)->nullable();
             }
             $table->unsignedBigInteger('periode_id');
+            $table->unsignedBigInteger('aptitude_tests_id')->nullable();
             $table->enum('nilai_tes_minat_bakat', ['A', 'B', 'C', 'K'])->nullable();
             $table->enum('status_tes', ['belum', 'sudah'])->default('belum');
             $table->string('status_pendaftaran')->default('pending');
@@ -51,6 +52,11 @@ return new class extends Migration
             $table->unsignedBigInteger('jurusan_diterima')->nullable();
             $table->decimal('nilai_akhir', 5, 2)->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('periode_id')->references('id')->on('periodes')->onDelete('cascade');
+            $table->foreign('jurusan_diterima')->references('id')->on('periode_jurusan')->onDelete('set null');
+            $table->foreign('aptitude_tests_id')->references('id')->on('aptitude_tests')->onDelete('set null');
         });
     }
 

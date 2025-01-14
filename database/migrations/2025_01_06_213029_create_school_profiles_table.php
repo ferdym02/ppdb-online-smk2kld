@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('school_profiles', function (Blueprint $table) {
             $table->id(); // Primary key (UNSIGNED BIGINT)
             $table->string('nama_sekolah', 255); // Nama sekolah
-            $table->unsignedBigInteger('npsn')->nullable()->after('nama_sekolah');
+            $table->unsignedBigInteger('npsn');
             $table->text('alamat_sekolah'); // Alamat sekolah
             $table->string('email_sekolah', 255); // Email sekolah
             $table->string('telepon_sekolah', 255); // Telepon sekolah
-            $table->string('logo_sekolah', 255)->nullable(); // Logo sekolah (opsional)
+            $table->string('logo_sekolah', 255); // Logo sekolah (opsional)
             $table->string('facebook', 255)->nullable(); // URL Facebook sekolah
             $table->string('instagram', 255)->nullable(); // URL Instagram sekolah
             $table->timestamps(); // created_at dan updated_at
