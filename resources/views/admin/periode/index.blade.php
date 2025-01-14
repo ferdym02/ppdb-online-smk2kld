@@ -166,7 +166,7 @@
   <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="editForm" method="POST" action="{{ old('action_url', route('periodes.update', $periode->id)) }}">
+            <form id="editForm" method="POST" action="{{ isset($periode) ? route('periodes.update', $periode->id) : '#' }}">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="form_action" value="edit">

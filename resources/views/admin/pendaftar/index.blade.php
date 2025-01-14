@@ -50,7 +50,7 @@
                                     <tr>
                                         <th class="text-center" style="width: 10%">No.</th>
                                         <th>Status Pendaftaran</th>
-                                        <th class="text-center">Total Pendaftar</th>
+                                        <th class="text-center">Pendaftar</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
