@@ -560,6 +560,9 @@ class PendaftaranController extends Controller
                 return redirect()->back()->with('error', 'Tidak ada tes minat bakat tersedia saat ini.');
             }
 
+            // Tambahkan aptitude_tests_id ke pendaftar
+            $pendaftar->aptitude_tests_id = $tesAktif->id;
+
             try {
                 DB::beginTransaction(); // Mulai transaksi hanya untuk penjadwalan tanggal tes
                 
@@ -607,6 +610,7 @@ class PendaftaranController extends Controller
 
         return redirect()->back()->with('success', 'Status verifikasi telah diperbarui.');
     }
+
 
     public function updateNilaiTes(Request $request, $id)
     {

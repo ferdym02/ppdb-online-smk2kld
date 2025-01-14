@@ -729,6 +729,7 @@
                 icon: 'success',
                 title: 'Berhasil',
                 text: "{{ session('success') }}",
+                confirmButtonColor: '#4CAF50',
             });
         @endif
 
