@@ -119,8 +119,8 @@
                           <th class="text-center">Nomor Pendaftaran</th>
                           <th>Nama Lengkap</th>
                           <th class="text-center">L/P</th>
-                          <th>Tanggal Tes</th>
-                          <th>Status Tes</th>
+                          <th class="text-center">Tanggal Tes</th>
+                          <th class="text-center">Status Tes</th>
                           <th class="text-center">Aksi</th>
                         </tr>
                       </thead>
@@ -131,8 +131,8 @@
                               <td class="text-center">{{ $pendaftar->nomor_pendaftaran }}</td>
                               <td>{{ $pendaftar->nama_lengkap }}</td>
                               <td class="text-center">{{ $pendaftar->jenis_kelamin === 'Laki-laki' ? 'L' : 'P' }}</td>
-                              <td>{{ \Carbon\Carbon::parse($pendaftar->tanggal_tes)->format('d-m-Y') }}</td>
-                              <td>{{ ucfirst($pendaftar->status_tes) }}</td>
+                              <td class="text-center">{{ \Carbon\Carbon::parse($pendaftar->tanggal_tes)->format('d-m-Y') }}</td>
+                              <td class="text-center">{{ ucfirst($pendaftar->status_tes) }}</td>
                               <td class="text-center">
                                 <a href="{{ url('/admin/pendaftar/' . $pendaftar->id) }}" class="btn btn-sm btn-info">
                                     Detail

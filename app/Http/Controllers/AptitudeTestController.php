@@ -35,6 +35,7 @@ class AptitudeTestController extends Controller
 
         // Filter data pendaftar
         $pendaftars = Pendaftar::query()
+            ->where('aptitude_tests_id', $id) // Tambahkan filter untuk mencocokkan aptitude_test_id
             ->when($tanggalTes, function ($query, $tanggalTes) {
                 return $query->whereDate('tanggal_tes', $tanggalTes);
             })

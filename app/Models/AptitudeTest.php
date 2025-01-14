@@ -21,4 +21,10 @@ class AptitudeTest extends Model
     {
         return $this->belongsTo(Periode::class);
     }
+
+    public function pendaftars()
+    {
+        return $this->hasMany(Pendaftar::class, 'aptitude_tests_id');
+    }
+
 }
