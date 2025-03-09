@@ -752,6 +752,7 @@ class PendaftaranController extends Controller
                 'pilihan_jurusan_3' => $pilihanJurusan3 ? $pilihanJurusan3->nama : '-',
                 'base64FotoCalonSiswa' => $base64FotoCalonSiswa,
             ];
+            dd($data, $base64Left, $base64Right, $periode);
 
             $pdf = PDF::loadView('pdf.bukti_pendaftaran', $data, compact('base64Left', 'base64Right', 'periode'));
             return $pdf->download('Bukti_Pendaftaran.pdf');
