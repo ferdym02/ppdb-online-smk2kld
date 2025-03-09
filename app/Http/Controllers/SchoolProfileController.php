@@ -27,7 +27,7 @@ class SchoolProfileController extends Controller
             'alamat_sekolah' => 'required|string',
             'email_sekolah' => 'required|email|max:255',
             'telepon_sekolah' => 'required|string|max:15',
-            'logo_sekolah' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'logo_sekolah' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'facebook' => 'nullable|url',
             'instagram' => 'nullable|url',
             'call_center_1' => 'nullable|string|max:15',
