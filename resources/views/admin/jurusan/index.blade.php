@@ -31,8 +31,8 @@
                 <thead>
                   <tr>
                     <th class="text-center">No.</th>
-                    <th class="text-center">Kode</th>
-                    <th>Jurusan</th>
+                    <th class="text-center">Kode Jurusan</th>
+                    <th>Nama Jurusan</th>
                     <th class="text-center">Action</th>
                   </tr>
                 </thead>
@@ -86,7 +86,7 @@
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <label for="kode" class="form-label">Kode</label>
+              <label for="kode" class="form-label">Kode Jurusan</label>
               <input type="text" class="form-control @error('kode') is-invalid @enderror" id="kode" name="kode" value="{{ old('kode') }}" placeholder="Masukkan kode jurusan" required>
               @error('kode')
                 <div class="invalid-feedback">{{ $message }}</div>
