@@ -79,6 +79,7 @@
                                                     data-bs-target="#modalEdit"
                                                     data-id="{{ $item->id }}" 
                                                     data-kuota="{{ $item->kuota }}"
+                                                    data-jurusan="{{ $item->jurusan->nama }}"
                                                 >
                                                     Edit
                                                 </button>
@@ -165,6 +166,11 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group mb-3">
+                            <label>Jurusan</label>
+                            <p id="jurusanKeterangan" class="form-control-plaintext fw-bold"></p>
+                        </div>
+                        
+                        <div class="form-group mb-3">
                             <label for="kuotaEdit">Kuota</label>
                             <input 
                                 type="number" 
@@ -224,13 +230,15 @@
     $(document).ready(function() {
         // Handle edit modal show event
         $('#modalEdit').on('show.bs.modal', function(event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var kuota = button.data('kuota');
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var kuota = button.data('kuota');
+            var jurusan = button.data('jurusan'); // Ambil nama jurusan
 
-        var modal = $(this);
-        modal.find('#kuotaEdit').val(kuota);
-        modal.find('#formEdit').attr('action', '/admin/periode-jurusan/' + id);
+            var modal = $(this);
+            modal.find('#jurusanKeterangan').text(jurusan); // Tampilkan nama jurusan
+            modal.find('#kuotaEdit').val(kuota);
+            modal.find('#formEdit').attr('action', '/admin/periode-jurusan/' + id);
         });
     });
     // Show toast notification if session has 'success' or 'error'
