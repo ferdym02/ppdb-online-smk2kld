@@ -77,6 +77,16 @@
                       </div>
                     </div>
                   </div>
+                  @if ($periodes->pendaftars->where('status_pendaftaran', 'diterima')->count() > 0)
+                      <div class="card-footer d-flex justify-content-end">
+                          <a href="{{ route('laporan.pdfDiterima', ['periode_id' => $periodes->id]) }}" class="btn btn-danger">
+                              <i class="bi bi-file-earmark-pdf"></i> Cetak PDF Pendaftar Lulus
+                          </a>
+                          <a href="{{ route('laporan.excelDiterima', ['periode_id' => $periodes->id]) }}" class="btn btn-success ms-2">
+                              <i class="bi bi-file-earmark-excel"></i> Cetak Excel Pendaftar Lulus
+                          </a>
+                      </div>
+                  @endif
                 </div>
               </div>
             </div>
