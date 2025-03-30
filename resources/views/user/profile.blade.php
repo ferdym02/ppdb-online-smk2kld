@@ -1,11 +1,11 @@
 @extends('user.layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container mt-3">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header text-white">User Profile</div>
+                <div class="card-header text-white">Profil Pengguna</div>
             
                 <div class="card-body text-center">
                     <!-- Alert Sukses -->
@@ -74,14 +74,14 @@
                     @csrf
                     @method('PUT')
                     <div class="mb-3">
-                        <label for="newPassword" class="form-label">New Password</label>
+                        <label for="newPassword" class="form-label">Password Baru</label>
                         <input type="password" class="form-control" id="newPassword" name="new_password" required>
                     </div>
                     <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <label for="confirmPassword" class="form-label">Konfirmasi Password</label>
                         <input type="password" class="form-control" id="confirmPassword" name="new_password_confirmation" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update Password</button>
+                    <button type="submit" class="btn btn-primary">Perbarui Password</button>
                 </form>
             </div>
         </div>
