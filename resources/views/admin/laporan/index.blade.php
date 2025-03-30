@@ -33,7 +33,7 @@
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-calendar"></i></span>
             <select class="form-control" id="periode" placeholder="Periode">
-              <option value="" selected disabled>Periode Pendaftaran</option>
+              <option value="" selected>Periode Pendaftaran</option>
               @foreach($periodes as $periode)
                 <option value="{{ $periode->id }}" {{ $periode->is_active ? 'selected' : '' }}>
                   {{ $periode->tahun_pelajaran }}
@@ -64,7 +64,7 @@
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-book"></i></span>
             <select class="form-control" id="jurusan">
-              <option value="" selected disabled>Jurusan</option>
+              <option value="" selected>Pilihan Jurusan</option>
               @foreach($jurusans as $jurusan)
                 <option value="{{ $jurusan->id }}">{{ $jurusan->nama }}</option>
               @endforeach
@@ -74,15 +74,27 @@
 
         <div class="col-md-4">
           <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-flag"></i></span>
-            <select class="form-control" id="status_pendaftaran">
-              <option value="" selected disabled>Status</option>
-              @foreach($status_pendaftaran as $status)
-                <option value="{{ $status }}">{{ ucfirst($status) }}</option>
-              @endforeach
-            </select>
+              <span class="input-group-text"><i class="bi bi-flag"></i></span>
+              <select class="form-control" id="status_pendaftaran">
+                  <option value="" selected>Status</option>
+                  @foreach($status_pendaftaran as $status)
+                      <option value="{{ $status }}">
+                          @php
+                              $statusMapping = [
+                                  'pending' => 'Pending',
+                                  'verified' => 'Terverifikasi',
+                                  'rejected' => 'Perlu Perbaikan',
+                                  'diterima' => 'Lulus',
+                                  'gugur' => 'Tidak Lulus',
+                                  'cadangan' => 'Cadangan'
+                              ];
+                          @endphp
+                          {{ $statusMapping[strtolower($status)] ?? ucfirst($status) }}
+                      </option>
+                  @endforeach
+              </select>
           </div>
-        </div>
+        </div>      
         
         <div class="col-md-4">
           <button class="btn btn-primary w-100" id="filter">
@@ -91,30 +103,23 @@
         </div>
       </div>
   
-      <!-- Tombol Cetak PDF dan Tabel -->
-      <div class="row mb-3">
-        <div class="col-12">
-          <a href="{{ route('laporan.pdf') }}" class="btn btn-danger">
-            <i class="bi bi-file-earmark-pdf"></i> Laporan PDF
-          </a>
-          <a href="{{ route('laporan.word') }}" class="btn btn-primary mx-1">
-            <i class="bi bi-file-earmark-word"></i> Laporan Word
-          </a>
-          <a href="{{ route('laporan.excel') }}" class="btn btn-success">
-            <i class="bi bi-file-earmark-excel"></i> Laporan Excel
-          </a>
-        </div>
-      </div>
-  
       <div class="row">
         <div class="col-12">
           <div class="card">
+            <div class="card-header d-flex justify-content-end">
+              <a href="#" id="cetak-pdf" class="btn btn-danger">
+                <i class="bi bi-file-earmark-pdf"></i> Laporan PDF
+              </a>
+              <a href="#" id="cetak-excel" class="btn btn-success ms-1">
+                <i class="bi bi-file-earmark-excel"></i> Laporan Excel
+              </a>            
+            </div>
             <div class="card-body">
               <table id="pendaftar-table" class="table table-bordered table-striped table-hover">
                 <thead>
                   <tr>
                     <th class="text-center">No.</th>
-                    <th class="text-center">Nomor Pendaftaran</th>
+                    <th class="text-center">No. Pendaftaran</th>
                     <th class="text-center">NISN</th>
                     <th>Nama Lengkap</th>
                     <th class="text-center">L/P</th>
@@ -123,17 +128,6 @@
                   </tr>
                 </thead>
               </table>
-            </div>
-            <div class="card-footer">
-              <a href="{{ route('laporan.pdfDiterima') }}" class="btn btn-danger mb-3">
-                <i class="bi bi-file-earmark-pdf"></i> Cetak PDF Pendaftar Diterima
-              </a>
-              <a href="{{ route('laporan.wordDiterima') }}" class="btn btn-primary mb-3 mx-1">
-                <i class="bi bi-file-earmark-word"></i> Cetak Word Pendaftar Diterima
-              </a>            
-              <a href="{{ route('laporan.excelDiterima') }}" class="btn btn-success mb-3">
-                <i class="bi bi-file-earmark-excel"></i> Cetak Excel Pendaftar Diterima
-              </a>        
             </div>
           </div>
         </div>
@@ -155,59 +149,97 @@
     });
 
     var table = $('#pendaftar-table').DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: {
-      url: "{{ route('laporan.getData') }}",
-      data: function(d) {
-        d.periode = $('#periode').val();
-        d.start_date = $('#start_date').val();
-        d.end_date = $('#end_date').val();
-        d.jurusan = $('#jurusan').val();
-        d.status_pendaftaran = $('#status_pendaftaran').val();
-      }
-    },
-    columns: [
-      {
-        data: null,
-        name: 'nomor',
-        render: function (data, type, row, meta) {
-          return meta.row + 1;
-        },
-        orderable: false,
-        searchable: false,
-        width: '5%',
-        className: 'text-center'
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: "{{ route('laporan.getData') }}",
+        data: function(d) {
+          d.periode = $('#periode').val();
+          d.start_date = $('#start_date').val();
+          d.end_date = $('#end_date').val();
+          d.jurusan = $('#jurusan').val();
+          d.status_pendaftaran = $('#status_pendaftaran').val();
+        }
       },
-      { data: 'nomor_pendaftaran', name: 'nomor_pendaftaran', className: 'text-center', },
-      { data: 'nisn', name: 'nisn', className: 'text-center', },
-      { data: 'nama_lengkap', name: 'nama_lengkap' },
-      { 
-          data: 'jenis_kelamin', 
-          name: 'jenis_kelamin',
-          render: function(data, type, row) {
-              return data === 'Laki-laki' ? 'L' : 'P';
+      columns: [
+        {
+          data: null,
+          name: 'nomor',
+          render: function (data, type, row, meta) {
+            return meta.row + 1;
           },
+          orderable: false,
+          searchable: false,
+          width: '5%',
           className: 'text-center'
-      },
-      { data: 'asal_sekolah', name: 'asal_sekolah' },
-      { 
-        data: 'status_pendaftaran', 
-        name: 'status_pendaftaran',
-        render: function(data, type, row) {
-          if (data) {
-            return data.charAt(0).toUpperCase() + data.slice(1).toLowerCase();
-          }
-          return data;
-        } 
+        },
+        { data: 'nomor_pendaftaran', name: 'nomor_pendaftaran', className: 'text-center', },
+        { data: 'nisn', name: 'nisn', className: 'text-center', },
+        { data: 'nama_lengkap', name: 'nama_lengkap' },
+        { 
+            data: 'jenis_kelamin', 
+            name: 'jenis_kelamin',
+            render: function(data, type, row) {
+                return data === 'Laki-laki' ? 'L' : 'P';
+            },
+            className: 'text-center'
+        },
+        { data: 'asal_sekolah', name: 'asal_sekolah' },
+        { 
+          data: 'status_pendaftaran', 
+          name: 'status_pendaftaran',
+          render: function(data, type, row) {
+              var statusMapping = {
+                  'pending': 'Pending',
+                  'verified': 'Terverifikasi',
+                  'rejected': 'Perlu Perbaikan',
+                  'diterima': 'Lulus',
+                  'gugur': 'Tidak Lulus',
+                  'cadangan': 'Cadangan'
+              };
+              return statusMapping[data.toLowerCase()] || data;
+          },
       }
-    ]
-  });
-
+      ]
+    });
 
     $('#filter').click(function() {
       table.draw();
     });
+
+    $('#cetak-pdf').click(function(e) {
+        e.preventDefault();
+        var periode = $('#periode').val();
+        var start_date = $('#start_date').val();
+        var end_date = $('#end_date').val();
+        var jurusan = $('#jurusan').val();
+        var status_pendaftaran = $('#status_pendaftaran').val();
+
+        var url = "{{ route('laporan.pdf') }}?periode=" + periode + 
+                  "&start_date=" + start_date + 
+                  "&end_date=" + end_date + 
+                  "&jurusan=" + jurusan + 
+                  "&status_pendaftaran=" + status_pendaftaran;
+
+        window.location.href = url;
+    });
+
+    $('#cetak-excel').click(function(e) {
+        e.preventDefault();
+        var periode = $('#periode').val();
+        var start_date = $('#start_date').val();
+        var end_date = $('#end_date').val();
+        var jurusan = $('#jurusan').val();
+        var status_pendaftaran = $('#status_pendaftaran').val();
+
+        var url = "{{ route('laporan.excel') }}?periode=" + periode + 
+                  "&start_date=" + start_date + 
+                  "&end_date=" + end_date + 
+                  "&jurusan=" + jurusan + 
+                  "&status_pendaftaran=" + status_pendaftaran;
+
+        window.location.href = url;
+    }); 
   });
 </script>
 @endsection
