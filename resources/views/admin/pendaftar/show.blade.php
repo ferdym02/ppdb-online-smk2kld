@@ -9,6 +9,16 @@
 @endsection
 
 @section('content')
+@php
+    $statusMapping = [
+        'pending' => 'Pending',
+        'verified' => 'Terverifikasi',
+        'rejected' => 'Perlu Perbaikan',
+        'diterima' => 'Lulus',
+        'gugur' => 'Tidak Lulus',
+        'cadangan' => 'Cadangan'
+    ];
+@endphp
 <main class="app-main">
     <div class="app-content-header"> <!--begin::Container-->
         <div class="container-fluid"> <!--begin::Row-->
@@ -23,6 +33,8 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="{{ url('/admin/dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('/admin/pendaftar') }}">Data Pendaftar</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('/admin/pendaftar/status/' . $status) }}">Data Pendaftar {{ $statusMapping[$status] }}</a></li>
                         <li class="breadcrumb-item active" aria-current="page">
                           {{ $title }}
                         </li>
@@ -260,14 +272,30 @@
                                         <tr>
                                             <th>Status Pendaftaran</th>
                                             <td>:
-                                                <span class="badge 
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'pending' ? 'text-bg-secondary' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'verified' ? 'text-bg-primary' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'rejected' ? 'text-bg-warning' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'diterima' ? 'text-bg-success' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'gugur' ? 'text-bg-danger' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'cadangan' ? 'text-bg-info' : '' }}">
-                                                    {{ ucfirst($pendaftar->status_pendaftaran) }}
+                                                @php
+                                                    $statusLabels = [
+                                                        'pending' => 'Pending',
+                                                        'verified' => 'Terverifikasi',
+                                                        'rejected' => 'Perlu Perbaikan',
+                                                        'diterima' => 'Lulus',
+                                                        'gugur' => 'Tidak Lulus',
+                                                        'cadangan' => 'Cadangan',
+                                                    ];
+
+                                                    $statusColors = [
+                                                        'pending' => 'text-bg-secondary',
+                                                        'verified' => 'text-bg-primary',
+                                                        'rejected' => 'text-bg-warning',
+                                                        'diterima' => 'text-bg-success',
+                                                        'gugur' => 'text-bg-danger',
+                                                        'cadangan' => 'text-bg-info',
+                                                    ];
+
+                                                    $status = strtolower($pendaftar->status_pendaftaran);
+                                                @endphp
+
+                                                <span class="badge {{ $statusColors[$status] ?? 'text-bg-dark' }}">
+                                                    {{ $statusLabels[$status] ?? ucfirst($pendaftar->status_pendaftaran) }}
                                                 </span>
                                             </td>
                                         </tr>
@@ -296,7 +324,7 @@
                                 <div class="col-md-6">
                                     <table class="table">
                                         <tr>
-                                            <th>Nilai Tes Minat Bakat</th>
+                                            <th>Nilai Tes Minat dan Bakat</th>
                                             <td>: {{ $pendaftar->nilai_tes_minat_bakat ?? 'Belum ditentukan' }}</td>
                                         </tr>
                                         @if ($pendaftar->jurusan_diterima)
@@ -386,12 +414,12 @@
                                             <label for="status">Status Verifikasi:</label>
                                             <select name="status" id="status" class="form-control">
                                                 <option value="" disabled selected>Pilih Status Verifikasi</option>
-                                                <option value="verifikasi">Verifikasi</option>
-                                                <option value="tolak">Tolak</option>
+                                                <option value="verifikasi" class="text-success">Terverifikasi</option>
+                                                <option value="tolak" class="text-danger">Perlu Perbaikan</option>
                                             </select>
                                         </div>
                                         <div class="form-group mt-3" id="catatan_penolakan_div" style="display: none;">
-                                            <label for="catatan_penolakan">Catatan Penolakan:</label>
+                                            <label for="catatan_penolakan">Catatan Perbaikan:</label>
                                             <textarea name="catatan_penolakan" id="catatan_penolakan" class="form-control"></textarea>
                                         </div>
                                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
@@ -412,13 +440,13 @@
                                     <form id="nilaiJurusanForm" action="{{ route('pendaftar.updateNilaiTes', $pendaftar->id) }}" method="POST">
                                         @csrf
                                         <div class="form-group">
-                                            <label for="nilai_tes_minat_bakat">Nilai Tes Minat Bakat:</label>
+                                            <label for="nilai_tes_minat_bakat">Nilai Tes Minat dan Bakat:</label>
                                             <select name="nilai_tes_minat_bakat" id="nilai_tes_minat_bakat" class="form-control">
-                                                <option value="" disabled selected>Pilih Nilai Tes Minat Bakat</option>
-                                                <option value="A">A</option>
-                                                <option value="B">B</option>
-                                                <option value="C">C</option>
-                                                <option value="K">K</option>
+                                                <option value="" disabled selected>Pilih Nilai Tes Minat dan Bakat</option>
+                                                <option class="text-success" value="A">A (Lulus)</option>
+                                                <option class="text-success" value="B">B (Lulus)</option>
+                                                <option class="text-success" value="C">C (Lulus)</option>
+                                                <option class="text-danger" value="K">K (Tidak Lulus)</option>
                                             </select>
                                         </div>
                                         <div class="form-group mt-3" id="jurusan_diterima_div" style="display: none;">
