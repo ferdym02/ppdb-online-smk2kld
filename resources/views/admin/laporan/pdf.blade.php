@@ -17,12 +17,16 @@
         }
         th, td {
             border: 1px solid #000;
-            text-align: left;
             padding: 6px;
         }
         th {
             background-color: #f2f2f2;
-            text-align: center; /* Memusatkan teks di header tabel */
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-left {
+            text-align: left;
         }
         h2 {
             text-align: center;
@@ -98,9 +102,22 @@
             text-align: left;
             font-size: 14px;
         }
+        .filter-bg {
+            background-color: #f2f2f2
+        }
     </style>
 </head>
 <body>
+    @php
+        $statusMapping = [
+            'pending' => 'Pending',
+            'verified' => 'Terverifikasi',
+            'rejected' => 'Perlu Perbaikan',
+            'diterima' => 'Lulus',
+            'gugur' => 'Tidak Lulus',
+            'cadangan' => 'Cadangan'
+        ];
+    @endphp
     <header>
         <table class="header-table">
             <tr>
@@ -122,47 +139,88 @@
         </table>
     </header>
     <hr class="garis1" />
-    <div class="section-judul">
-        <strong>
-            <p>Laporan Calon Peserta Didik Baru PPDB Online</p>
-            <p>JALUR REGULER</p>
-            <p>SMK NEGERI 2 TAHUN PELAJARAN {{ $periode ? $periode->tahun_pelajaran : 'Tidak Diketahui' }}</p>
-        </strong>
-    </div>
-    <div class="pendaftar-table">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 5%">No.</th>
-                    <th>Nomor Pendaftaran</th>
-                    <th>NISN</th>
-                    <th>Nama Lengkap</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Asal Sekolah</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($pendaftar as $index => $item)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->nomor_pendaftaran }}</td>
-                    <td>{{ $item->nisn }}</td>
-                    <td>{{ $item->nama_lengkap }}</td>
-                    <td>{{ $item->jenis_kelamin }}</td>
-                    <td>{{ $item->asal_sekolah }}</td>
-                </tr>
-                @endforeach
-            </tbody>
+    <div style="margin-top: 15px;">
+        <h4 style="margin-bottom: 5px;">Filter Laporan:</h4>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td class="filter-bg" style="width: 30%;"><strong>Periode</strong></td>
+                <td>{{ request()->periode ? $pendaftarGrouped->first()->first()->periode->tahun_pelajaran ?? 'Semua' : 'Semua' }}</td>
+            </tr>
+            <tr>
+                <td class="filter-bg"><strong>Dari Tanggal</strong></td>
+                <td>{{ request()->start_date ? date('d-m-Y', strtotime(request()->start_date)) : '-' }}</td>
+            </tr>
+            <tr>
+                <td class="filter-bg"><strong>Sampai Tanggal</strong></td>
+                <td>{{ request()->end_date ? date('d-m-Y', strtotime(request()->end_date)) : '-' }}</td>
+            </tr>            
+            <tr>
+                <td class="filter-bg"><strong>Jurusan</strong></td>
+                <td>{{ request()->jurusan ? \App\Models\Jurusan::find(request()->jurusan)->nama ?? 'Semua' : 'Semua' }}</td>
+            </tr>
+            <tr>
+                <td class="filter-bg"><strong>Status Pendaftaran</strong></td>
+                <td>{{ request()->status_pendaftaran ? ($statusMapping[request()->status_pendaftaran] ?? request()->status_pendaftaran) : 'Semua' }}</td>
+            </tr>
         </table>
-    </div>
-    <div id="ttd" style="float: right; margin-top: 30px;">
-        <p>Kalianda, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p> 
-        <p id="kepsek">Kepala Sekolah,</p>
-        <div id="nama-kepsek">
-            <strong><u>NYOMAN MISTER, M.Pd</u></strong><br />
-            Pembina Tk I<br />
-            NIP. 19720706 200604 1 012
+    </div>    
+    @foreach ($pendaftarGrouped as $periodeId => $pendaftar)
+        <div class="section-judul">
+            <strong>
+                <p>Laporan Calon Peserta Didik Baru PPDB Online</p>
+                <p>Jalur Reguler</p>
+                <p>SMK Negeri 2 Kalianda Tahun Pelajaran {{ $pendaftar->first()->periode->tahun_pelajaran ?? 'Tidak Diketahui' }}</p>
+            </strong>
         </div>
-    </div>
+
+        <div class="pendaftar-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width: 5%">No.</th>
+                        <th class="text-center" style="width: 10%">Nomor Pendaftaran</th>
+                        <th class="text-center" style="width: 15%">NISN</th>
+                        <th class="text-left">Nama Lengkap</th>
+                        <th class="text-center" style="width: 5%">L/P</th>
+                        <th class="text-left" style="width: 20%">Asal Sekolah</th>
+                        <th class="text-left" style="width: 10%">Status Pendaftaran</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ($pendaftar->isEmpty())
+                        <tr>
+                            <td colspan="7" class="text-center"><strong>Tidak ada data</strong></td>
+                        </tr>
+                    @else
+                        @foreach ($pendaftar as $index => $item)
+                            <tr>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="text-center">{{ $item->nomor_pendaftaran }}</td>
+                                <td class="text-center">{{ $item->nisn }}</td>
+                                <td>{{ $item->nama_lengkap }}</td>
+                                <td class="text-center">{{ $item->jenis_kelamin == 'Laki-laki' ? 'L' : 'P' }}</td>
+                                <td>{{ $item->asal_sekolah }}</td>
+                                <td>{{ $statusMapping[strtolower($item->status_pendaftaran)] ?? $item->status_pendaftaran }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+        </div>
+
+        <div id="ttd" style="float: right; margin-top: 30px;">
+            <p>Kalianda, {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}</p> 
+            <p id="kepsek">Kepala Sekolah,</p>
+            <div id="nama-kepsek">
+                <strong><u>NYOMAN MISTER, M.Pd</u></strong><br />
+                Pembina Tk I<br />
+                NIP. 19720706 200604 1 012
+            </div>
+        </div>
+
+        @if (!$loop->last)
+            <div style="page-break-after: always;"></div>
+        @endif
+    @endforeach
 </body>
 </html>
