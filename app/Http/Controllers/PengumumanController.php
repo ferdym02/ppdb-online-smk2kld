@@ -14,7 +14,7 @@ class PengumumanController extends Controller
 {
     public function index()
     {
-        $title = 'Kelola Pengumuman';
+        $title = 'Pengumuman';
         $pengumumans = Pengumuman::all();
         $name = Auth::user()->name;
         return view('admin.pengumuman.index', compact('title', 'name', 'pengumumans'));
