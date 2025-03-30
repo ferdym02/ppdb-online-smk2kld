@@ -287,19 +287,22 @@
     });
 
     // Handle edit button click
-    $('#periode-table').on('click', '.edit-btn', function() {
-      var url = $(this).data('url');
+  $('#periode-table').on('click', '.edit-btn', function() {
       var data = $(this).data('periode');
-      
-      $('#editForm').attr('action', url);
+
+      // Pastikan URL update sesuai dengan ID yang dipilih
+      $('#editForm').attr('action', '/admin/periodes/' + data.id);
+
+      // Isi form dengan data periode yang benar
       $('#edit_tahun_pelajaran').val(data.tahun_pelajaran);
       $('#edit_tanggal_buka').val(data.tanggal_buka);
       $('#edit_tanggal_tutup').val(data.tanggal_tutup);
       $('#edit_kuota_penerimaan').val(data.kuota_penerimaan);
-      $('#edit_status').val(data.status);
-      
+      $('#edit_status').val(data.status ? "1" : "0"); // Ubah menjadi string "1" atau "0"
+
+      // Tampilkan modal edit
       $('#editModal').modal('show');
-    });
+  });
 
     // Handle delete confirmation with SweetAlert
     $('#periode-table').on('click', '.btn-danger', function(e) {
