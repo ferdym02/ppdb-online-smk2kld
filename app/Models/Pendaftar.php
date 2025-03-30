@@ -44,8 +44,8 @@ class Pendaftar extends Model
         'nilai_mtk_semester_5', 'nilai_ipa_semester_5', 'nilai_bahasa_indonesia_semester_5', 'nilai_bahasa_inggris_semester_5', //tampilkan
         'periode_id',
         'aptitude_tests_id',
-        'jurusan_diterima', //tampilkan jika ada
-        'nilai_akhir', //tampilkan jika ada
+        'jurusan_diterima',
+        'nilai_akhir',
         'daftar_ulang',
     ];
 
