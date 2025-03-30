@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="card bg-light mt-3 text-dark">
-    <div class="card-header text-white" style="background-color: #0a369d">
+    <div class="card-header text-white">
         Informasi Pendaftaran
     </div>
     <div class="card-body">
@@ -31,12 +31,12 @@
     </div>
 </div>
 <div class="card mt-4">
-    <div class="card-header text-white" style="background-color: #0a369d">
+    <div class="card-header text-white">
         Edit Data Pendaftaran
     </div>
     <div class="card-body">
         <div class="alert alert-warning mt-3">
-            <strong>Perhatian:</strong> Khusus untuk pendaftarannya yang <strong>ditolak</strong>, perhatikan catatan penolakan dari admin dan pastikan Anda memperbaiki data yang keliru supaya pendaftaran Anda dapat terverifikasi.
+            <strong>Perhatian:</strong> Khusus untuk pendaftarannya yang <strong>perlu perbaikan</strong>, perhatikan catatan perbaikan dari admin dan pastikan Anda memperbaiki data yang keliru supaya pendaftaran Anda dapat terverifikasi.
         </div>
         <form id="pendaftaranForm" method="POST" action="{{ route('pendaftaran.update', $pendaftar->id) }}" enctype="multipart/form-data">
             @csrf
@@ -179,7 +179,7 @@
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary" id="nextTahap2">Selanjutnya: Tahap 2</button>
+                <button type="button" class="btn btn-sm btn-primary" id="nextTahap2">Selanjutnya: Tahap 2</button>
             </div>
             
             <!-- Tahap 2: Upload Dokumen Pendukung -->
@@ -298,8 +298,8 @@
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-secondary" id="prevTahap1">Kembali: Tahap 1</button>
-                <button type="button" class="btn btn-primary" id="nextTahap3">Selanjutnya: Tahap 3</button>
+                <button type="button" class="btn btn-sm btn-secondary" id="prevTahap1">Kembali: Tahap 1</button>
+                <button type="button" class="btn btn-sm btn-primary" id="nextTahap3">Selanjutnya: Tahap 3</button>
             </div>
 
             <!-- Tahap 3: Nilai Rapor -->
@@ -308,22 +308,22 @@
                 @for ($semester = 1; $semester <= 5; $semester++)
                     <h4 class="mt-3">Semester {{ $semester }}</h4>
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
+                        <div class="col-md-6 mb-md-3">
+                            <div class="form-group mb-2">
                                 <label for="mtk_semester_{{ $semester }}">Nilai MTK:</label>
                                 <input type="number" class="form-control" id="mtk_semester_{{ $semester }}" name="nilai_rapor[{{ $semester }}][mtk]" value="{{ old('nilai_rapor.' . $semester . '.mtk', $pendaftar->{'nilai_mtk_semester_' . $semester}) }}" required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-2">
                                 <label for="bahasa_indonesia_semester_{{ $semester }}">Nilai Bahasa Indonesia:</label>
                                 <input type="number" class="form-control" id="bahasa_indonesia_semester_{{ $semester }}" name="nilai_rapor[{{ $semester }}][bahasa_indonesia]" value="{{ old('nilai_rapor.' . $semester . '.bahasa_indonesia', $pendaftar->{'nilai_bahasa_indonesia_semester_' . $semester}) }}" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
+                        <div class="col-md-6 mb-md-3">
+                            <div class="form-group mb-2">
                                 <label for="ipa_semester_{{ $semester }}">Nilai IPA:</label>
                                 <input type="number" class="form-control" id="ipa_semester_{{ $semester }}" name="nilai_rapor[{{ $semester }}][ipa]" value="{{ old('nilai_rapor.' . $semester . '.ipa', $pendaftar->{'nilai_ipa_semester_' . $semester}) }}" required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-2">
                                 <label for="bahasa_inggris_semester_{{ $semester }}">Nilai Bahasa Inggris:</label>
                                 <input type="number" class="form-control" id="bahasa_inggris_semester_{{ $semester }}" name="nilai_rapor[{{ $semester }}][bahasa_inggris]" value="{{ old('nilai_rapor.' . $semester . '.bahasa_inggris', $pendaftar->{'nilai_bahasa_inggris_semester_' . $semester}) }}" required>
                             </div>
@@ -331,8 +331,8 @@
                     </div>
                 @endfor
                 <div class="mt-3">
-                    <button type="button" class="btn btn-secondary" id="prevTahap2">Kembali: Tahap 2</button>
-                    <button type="submit" class="btn btn-success">Simpan Pembaruan</button>
+                    <button type="button" class="btn btn-sm btn-secondary" id="prevTahap2">Kembali: Tahap 2</button>
+                    <button type="submit" class="btn btn-sm btn-success">Simpan Pembaruan</button>
                 </div>
             </div>
         </form>
