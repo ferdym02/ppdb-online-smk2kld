@@ -1,47 +1,20 @@
 @extends('user.layouts.app')
 @section('css')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-<style>
-.back-to-top {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    background-color: #0a369d; /* Warna biru */
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    z-index: 9999;
-    transition: opacity 0.3s, transform 0.3s;
-}
-
-.back-to-top:hover {
-    background-color: #0056b3; /* Warna biru lebih gelap */
-}
-
-.back-to-top i {
-    font-size: 20px;
-}
-</style>
 @endsection
 
 @section('content')
 <div class="container mt-4">
-    <!-- Header Selamat Datang -->
-    <div class="jumbotron text-center py-4 mb-4">
-        <h1 class="display-5">Selamat Datang Calon Peserta Didik Baru</h1>
+    <!-- Jumbotron Selamat Datang -->
+    <div class="jumbotron text-center bg-body-tertiary rounded-3 py-4 mb-4">
+        <h1 class="text-body-emphasis">Selamat Datang Calon Peserta Didik Baru</h1>
         <p class="lead">di PPDB Online SMK Negeri 2 Kalianda Jalur Reguler</p>
     </div>
     <div class="row">
         <!-- Sidebar Navigasi -->
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm sticky-top" style="top: 20px;">
-                <div class="card-header text-white" style="background-color: #FFB30F">
+                <div class="card-header text-white" style="background-color: #9D0A36">
                     <h5 class="card-title mb-0">Daftar Isi</h5>
                 </div>
                 <div class="card-body p-0">
@@ -256,7 +229,7 @@
                                     <li>
                                         Surat Pernyataan Tanggung Jawab Mutlak (SPTJM) yang sudah diisi dan ttd materai 10.000.
                                         @if($sptjm && $sptjm->file_lampiran)
-                                            <a href="{{ Storage::url($sptjm->file_lampiran) }}" target="_blank">Unduh SPTJM</a>
+                                            <a href="{{ route('pengumuman') }}">Unduh SPTJM</a>
                                         @else
                                             <span>File belum tersedia.</span>
                                         @endif
@@ -295,33 +268,4 @@
         <i class="fas fa-arrow-up"></i>
     </div>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const backToTopButton = document.getElementById('backToTop');
-
-        // Tampilkan tombol jika halaman di-scroll ke bawah
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 200) { // Jika scroll lebih dari 200px
-                backToTopButton.classList.remove('d-none');
-                backToTopButton.style.opacity = '1';
-                backToTopButton.style.transform = 'scale(1)';
-            } else {
-                backToTopButton.style.opacity = '0';
-                backToTopButton.style.transform = 'scale(0.9)';
-                setTimeout(() => backToTopButton.classList.add('d-none'), 300);
-            }
-        });
-
-        // Scroll halus ke atas saat tombol diklik
-        backToTopButton.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-    });
-</script>
 @endsection
