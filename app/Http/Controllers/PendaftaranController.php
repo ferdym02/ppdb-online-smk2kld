@@ -91,6 +91,8 @@ class PendaftaranController extends Controller
         $name = Auth::user()->name;
         $pendaftar = Pendaftar::with(['jurusans', 'user'])->findOrFail($id);
         $title = "Detail Pendaftar";
+        $status = $request->query('status');
+
         
         // Simpan URL halaman sebelumnya di sesi
         $request->session()->put('previous_url', url()->previous());
@@ -124,7 +126,7 @@ class PendaftaranController extends Controller
             return $jurusan;
         });       
 
-        return view('admin.pendaftar.show', compact('pendaftar', 'title', 'name', 'jurusans'));
+        return view('admin.pendaftar.show', compact('pendaftar', 'title', 'name', 'jurusans', 'status'));
     }
 
     public function create()
