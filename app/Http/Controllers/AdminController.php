@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Pendaftar;
 use App\Models\Jurusan;
 use App\Models\SchoolProfile;
+use App\Models\Periode;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -21,7 +24,86 @@ class AdminController extends Controller
         $totalGugur = Pendaftar::where('status_pendaftaran', 'gugur')->count();
         $totalJurusan = Jurusan::count();
         $schoolProfile = SchoolProfile::first();
-        return view('admin.dashboard', compact('title', 'user', 'totalPendaftar', 'totalDiterima', 'totalGugur', 'totalJurusan', 'schoolProfile'));
+        $tahunSekarang = date('Y');
+        // Ambil periode aktif
+        $periodeAktif = Periode::where('status', 1)->first();
+
+        if ($periodeAktif) {
+            $tanggalTutup = Carbon::parse($periodeAktif->tanggal_tutup)->addDay();
+
+            // Ambil daftar pendaftar yang statusnya "rejected" atau "verified" sebelum tanggal tutup
+            $pendaftarYangDiperbarui = Pendaftar::whereIn('status_pendaftaran', ['rejected', 'verified'])
+                ->whereDate('created_at', '<', $tanggalTutup) // Tetap ambil sebelum tanggal tutup
+                ->whereDate('updated_at', '<', $tanggalTutup) // Pastikan status belum berubah setelah tanggal tutup
+                ->get();
+
+            // Jika ada pendaftar yang statusnya berubah, update dan catat log
+            if ($pendaftarYangDiperbarui->count() > 0) {
+                Pendaftar::whereIn('status_pendaftaran', ['rejected', 'verified'])
+                    ->whereDate('created_at', '<', $tanggalTutup)
+                    ->whereDate('updated_at', '<', $tanggalTutup)
+                    ->update(['status_pendaftaran' => 'gugur']);
+
+                Log::info('Status pendaftar otomatis diperbarui ke "gugur"', [
+                    'jumlah_pendaftar' => $pendaftarYangDiperbarui->count()
+                ]);
+            }
+        }
+
+        // Ambil data jumlah pendaftar per tahun
+        $dataPendaftar = Pendaftar::selectRaw('YEAR(created_at) as tahun, COUNT(*) as total')
+            ->groupBy('tahun')
+            ->orderBy('tahun', 'ASC')
+            ->get()
+            ->pluck('total', 'tahun')
+            ->toArray();
+
+        // Ambil data jumlah pendaftar yang "diterima" per tahun
+        $dataDiterima = Pendaftar::where('status_pendaftaran', 'diterima')
+            ->selectRaw('YEAR(created_at) as tahun, COUNT(*) as total')
+            ->groupBy('tahun')
+            ->orderBy('tahun', 'ASC')
+            ->get()
+            ->pluck('total', 'tahun')
+            ->toArray();
+
+        // Ambil data jumlah pendaftar yang "gugur" per tahun
+        $dataGugur = Pendaftar::where('status_pendaftaran', 'gugur')
+            ->selectRaw('YEAR(created_at) as tahun, COUNT(*) as total')
+            ->groupBy('tahun')
+            ->orderBy('tahun', 'ASC')
+            ->get()
+            ->pluck('total', 'tahun')
+            ->toArray();
+
+        // Tentukan tahun pertama dan tahun terakhir
+        $tahunPertama = min(array_keys($dataPendaftar)); 
+        $tahunSekarang = date('Y');
+        $tahunBatas = $tahunSekarang + 5;
+        $tahunTerakhir = max($tahunBatas, max(array_keys($dataPendaftar)));
+
+        $pendaftarPerTahun = [];
+        $diterimaPerTahun = [];
+        $gugurPerTahun = [];
+
+        for ($tahun = $tahunPertama; $tahun <= $tahunTerakhir; $tahun++) {
+            $pendaftarPerTahun[$tahun] = $dataPendaftar[$tahun] ?? 0;
+            $diterimaPerTahun[$tahun] = $dataDiterima[$tahun] ?? 0;
+            $gugurPerTahun[$tahun] = $dataGugur[$tahun] ?? 0;
+        }
+
+        $totalLakiLaki = Pendaftar::whereYear('created_at', $tahunSekarang)
+        ->where('jenis_kelamin', 'Laki-laki')
+        ->count();
+
+        $totalPerempuan = Pendaftar::whereYear('created_at', $tahunSekarang)
+        ->where('jenis_kelamin', 'Perempuan')
+        ->count();
+
+        return view('admin.dashboard', compact(
+            'title', 'user', 'totalPendaftar', 'totalDiterima', 'totalGugur', 'totalJurusan',
+            'schoolProfile', 'pendaftarPerTahun', 'diterimaPerTahun', 'gugurPerTahun', 'tahunSekarang', 'totalLakiLaki', 'totalPerempuan'
+        ));
     }
 
     public function adminProfile()
