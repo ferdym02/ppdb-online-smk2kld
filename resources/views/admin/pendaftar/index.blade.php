@@ -43,9 +43,9 @@
 
                     <!-- Tampilkan data jika ada -->
                     @if ($totalPending || $totalVerified || $totalRejected || $totalDiterima || $totalGugur || $totalCadangan)
-                    <div class="card">
+                    <div class="card">                                            
                         <div class="card-body">
-                            <table class="table table-bordered table-striped table-hover">
+                            <table class="table table-bordered table-striped table-hover align-middle">
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 10%">No.</th>
@@ -63,25 +63,25 @@
                                     </tr>
                                     <tr>
                                         <td class="text-center">2</td>
-                                        <td>Diverifikasi</td>
+                                        <td>Terverifikasi</td>
                                         <td class="text-center">{{ $totalVerified }}</td>
                                         <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'verified', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-primary">Detail</a></td>
                                     </tr>
                                     <tr>
                                         <td class="text-center">3</td>
-                                        <td>Ditolak</td>
+                                        <td>Perlu Perbaikan</td>
                                         <td class="text-center">{{ $totalRejected }}</td>
                                         <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'rejected', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-warning">Detail</a></td>
                                     </tr>
                                     <tr>
                                         <td class="text-center">4</td>
-                                        <td>Diterima</td>
+                                        <td>Lulus</td>
                                         <td class="text-center">{{ $totalDiterima }}</td>
                                         <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'diterima', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-success">Detail</a></td>
                                     </tr>
                                     <tr>
                                         <td class="text-center">5</td>
-                                        <td>Gugur</td>
+                                        <td>Tidak Lulus</td>
                                         <td class="text-center">{{ $totalGugur }}</td>
                                         <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'gugur', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-danger">Detail</a></td>
                                     </tr>
