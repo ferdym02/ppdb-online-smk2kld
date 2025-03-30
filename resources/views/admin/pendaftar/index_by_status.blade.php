@@ -5,6 +5,16 @@
 @endsection
 
 @section('content')
+@php
+    $statusMapping = [
+        'pending' => 'Pending',
+        'verified' => 'Terverifikasi',
+        'rejected' => 'Perlu Perbaikan',
+        'diterima' => 'Lulus',
+        'gugur' => 'Tidak Lulus',
+        'cadangan' => 'Cadangan'
+    ];
+@endphp
 <main class="app-main">
   <div class="app-content-header"> <!--begin::Container-->
     <div class="container-fluid"> <!--begin::Row-->
@@ -14,13 +24,14 @@
             <a href="{{ session('index_url') }}" class="me-3">
               <i class="fas fa-arrow-left"></i>
             </a>
-            <h3 class="mb-0">{{ $title }} {{ ucfirst($status) }}</h3>
+            <h3 class="mb-0">{{ $title }} {{ $statusMapping[$status] }}</h3>
         </div>
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="{{ url('/admin/dashboard') }}">Home</a></li>
+                  <li class="breadcrumb-item"><a href="{{ url('/admin/pendaftar') }}">Data Pendaftar</a></li>
                   <li class="breadcrumb-item active" aria-current="page">
-                    {{ $title }} {{ ucfirst($status) }}
+                    {{ $title }} {{ $statusMapping[$status] }}
                   </li>
               </ol>
           </div>
@@ -50,12 +61,12 @@
                         <thead>
                             <tr>
                                 <th class="text-center">No.</th>
-                                <th class="text-center">Nomor Pendaftaran</th>
+                                <th class="text-center">No. Pendaftaran</th>
                                 <th class="text-center">NISN</th>
                                 <th>Nama Lengkap</th>
                                 <th class="text-center">L/P</th>
                                 <th>Asal Sekolah</th>
-                                <th class="text-center">Tanggal Pendaftaran</th>
+                                <th class="text-center">Tgl Pendaftaran</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -120,7 +131,7 @@
                 searchable: false,
                 className: 'text-center',
                 render: function (data) {
-                    return `<a href="/admin/pendaftar/${data}" class="btn btn-sm btn-primary">Detail</a>`;
+                    return `<a href="/admin/pendaftar/${data}?status={{ $status }}" class="btn btn-sm btn-primary">Detail</a>`;
                 }
             }
         ]
