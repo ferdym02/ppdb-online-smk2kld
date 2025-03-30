@@ -96,7 +96,16 @@
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
-        <a class="btn-getstarted" href="/login">Login</a>
+        {{-- <a class="btn-getstarted" href="/login">Login</a> --}}
+        @if(Auth::check())
+            <!-- Jika pengguna sudah login, tampilkan nama dan tombol menuju dashboard -->
+            <a href="{{ route('user.dashboard') }}" class="btn-getstarted">
+                {{ Auth::user()->name }}
+            </a>
+        @else
+            <!-- Jika belum login, tampilkan tombol Login -->
+            <a href="{{ route('user.login') }}" class="btn-getstarted">Login</a>
+        @endif
       </div>
     </header>
 
@@ -113,7 +122,13 @@
               <h1>PPDB Online {{ $profile->nama_sekolah }} {{ $currentYear }}/{{ $nextYear }}</h1>
               <p>Melalui halaman ini, Anda dapat mendaftar sebagai calon peserta didik baru secara online dengan mudah dan cepat.</p>
               <div class="d-flex">
-                <a href="/register" class="btn-get-started">Daftar</a>
+                @if(Auth::check())
+                  <a href="{{ route('user.dashboard') }}" class="btn-get-started">
+                    Daftar di Sini
+                  </a>
+                @else
+                  <a href="/register" class="btn-get-started">Daftar di Sini</a>
+                @endif
               </div>
             </div>
             <div class="col-lg-6 order-1 order-lg-2 hero-img d-flex justify-content-center" data-aos="zoom-out" data-aos-delay="100">
@@ -357,7 +372,7 @@
                 <h3 class="text-center">Alur Pendaftaran</h3>
                 <div class="registration-step">
                   <i class="bi bi-r-circle"></i>
-                  <p>Buat akun PPDB dengan cara klik login yang ada bagian atas kemudian pilih "Daftar".</p>
+                  <p>Buat akun PPDB dengan cara klik tombol "Daftar Disini".</p>
                 </div>
                 <div class="registration-step">
                   <i class="bi bi-pencil-square"></i>
