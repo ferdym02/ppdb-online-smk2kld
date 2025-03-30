@@ -18,7 +18,7 @@ class AptitudeTestController extends Controller
         $name = Auth::user()->name;
         $title = 'Tes Minat dan Bakat';
         $periodes = Periode::all();
-        $aptitudes = AptitudeTest::with('periode')->get(); // Mengambil data tes dan periode terkait
+        $aptitudes = AptitudeTest::with('periode')->orderBy('created_at', 'desc')->get(); // Mengambil data tes dan periode terkait
         return view('admin.aptitude.index', compact('title', 'name', 'periodes', 'aptitudes'));
     }
 
