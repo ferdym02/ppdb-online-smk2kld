@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mt-3">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header text-white">User Profile</div>
+                <div class="card-header text-white">Profil Pengguna</div>
             
                 <div class="card-body text-center">
                     <!-- Alert Sukses -->
@@ -19,7 +19,7 @@
                     <!-- Alert Error -->
                     @if ($errors->any())
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <ul>
+                            <ul class="m-0">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
@@ -51,9 +51,9 @@
                         </table>
                     </div>
 
-                    <!-- Tombol Edit Password -->
+                    <!-- Tombol Edit Data -->
                     <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#editPasswordModal">
-                        Edit Password
+                        Edit Data
                     </button>
                 </div>
             </div>
@@ -66,24 +66,52 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editPasswordModalLabel">Edit Password</h5>
+                <h5 class="modal-title" id="editPasswordModalLabel">Edit Data</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form action="{{ route('user.update.password') }}" method="POST">
-                    @csrf
-                    @method('PUT')
+            <form action="{{ route('user.update.password') }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <!-- Field Nama -->
                     <div class="mb-3">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" name="new_password" required>
+                        <label for="name" class="form-label">Nama</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="name" 
+                            name="name" 
+                            value="{{ old('name', $user->name) }}" 
+                            required
+                        >
                     </div>
+                
+                    <!-- Field Password -->
                     <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="new_password_confirmation" required>
+                        <label for="newPassword" class="form-label">Password Baru</label>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="newPassword" 
+                            name="new_password"
+                        >
                     </div>
-                    <button type="submit" class="btn btn-primary">Update Password</button>
-                </form>
-            </div>
+                
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Konfirmasi Password</label>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="confirmPassword" 
+                            name="new_password_confirmation"
+                        >
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
