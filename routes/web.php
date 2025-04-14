@@ -74,11 +74,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/admin/laporan/getData', [LaporanController::class, 'getData'])->name('laporan.getData');
         Route::get('/admin/laporan/pdf', [LaporanController::class, 'generatePDF'])->name('laporan.pdf');
-        Route::get('/admin/laporan/word', [LaporanController::class, 'generateWord'])->name('laporan.word');
         Route::get('/admin/laporan/excel', [LaporanController::class, 'generateExcel'])->name('laporan.excel');
-        Route::get('/admin/laporan/word-diterima', [LaporanController::class, 'generateWordDiterima'])->name('laporan.wordDiterima');
-        Route::get('/admin/laporan/pdf-diterima', [LaporanController::class, 'generatePdfDiterima'])->name('laporan.pdfDiterima');
-        Route::get('/admin/laporan/excel-diterima', [LaporanController::class, 'generateExcelDiterima'])->name('laporan.excelDiterima');
+        Route::get('/admin/laporan/pdf-diterima/{periode_id}', [LaporanController::class, 'generatePdfDiterima'])->name('laporan.pdfDiterima');
+        Route::get('/admin/laporan/excel-diterima/{periode_id}', [LaporanController::class, 'generateExcelDiterima'])->name('laporan.excelDiterima');
         Route::resource('/admin/pengumuman', PengumumanController::class);
         Route::get('/pengumuman-data', [PengumumanController::class, 'getPengumumanData'])->name('pengumuman.data');
         Route::get('/admin/school-profile', [SchoolProfileController::class, 'create'])->name('school-profile.create');
@@ -94,7 +92,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/user/pendaftaran', [PendaftaranController::class, 'create'])->name('user.pendaftaran');
         Route::get('/user/pendaftaran/{id}/edit', [PendaftaranController::class, 'editPendaftaran'])->name('pendaftaran.edit');
         Route::put('/user/pendaftaran/{id}', [PendaftaranController::class, 'updatePendaftaran'])->name('pendaftaran.update');
-        Route::get('/user/pengumuman', [PengumumanController::class, 'pengumumanUser'])->name('pengumuman');
+        Route::get('/user/pengumuman', [PengumumanController::class, 'pengumumanUser'])->name('pengumumanUser');
+        Route::get('/user/pengumuman/{id}', [PengumumanController::class, 'pengumumanUserShow'])->name('pengumumanUser.show');
         Route::get('/user/status', function () {
             return view('/user/status');
         })->name('status');
