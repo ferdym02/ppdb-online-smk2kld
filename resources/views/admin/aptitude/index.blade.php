@@ -126,7 +126,7 @@
               <label for="kuota_per_hari" class="form-label">Kuota Per Hari</label>
               <input type="number" name="kuota_per_hari" id="kuota_per_hari" 
                      class="form-control @error('kuota_per_hari') is-invalid @enderror" 
-                     value="{{ old('kuota_per_hari') }}" required>
+                     value="{{ old('kuota_per_hari') }}" placeholder="Masukkan limit kuota per hari" required>
               @error('kuota_per_hari')
                 <div class="invalid-feedback">{{ $message }}</div>
               @enderror
