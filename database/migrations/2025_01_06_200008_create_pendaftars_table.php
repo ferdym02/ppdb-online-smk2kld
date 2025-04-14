@@ -38,10 +38,10 @@ return new class extends Migration
             $table->date('tanggal_tes')->nullable();
             $table->text('catatan_penolakan')->nullable();
             for ($i = 1; $i <= 5; $i++) {
-                $table->decimal("nilai_mtk_semester_$i", 5, 2)->nullable();
-                $table->decimal("nilai_ipa_semester_$i", 5, 2)->nullable();
-                $table->decimal("nilai_bahasa_indonesia_semester_$i", 5, 2)->nullable();
-                $table->decimal("nilai_bahasa_inggris_semester_$i", 5, 2)->nullable();
+                $table->decimal("nilai_mtk_semester_$i", 6, 2)->nullable();
+                $table->decimal("nilai_ipa_semester_$i", 6, 2)->nullable();
+                $table->decimal("nilai_bahasa_indonesia_semester_$i", 6, 2)->nullable();
+                $table->decimal("nilai_bahasa_inggris_semester_$i", 6, 2)->nullable();
             }
             $table->unsignedBigInteger('periode_id');
             $table->unsignedBigInteger('aptitude_tests_id')->nullable();
