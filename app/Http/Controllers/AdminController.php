@@ -19,14 +19,23 @@ class AdminController extends Controller
     {
         $title = "Dashboard Admin";
         $user = Auth::user();
-        $totalPendaftar = Pendaftar::count();
-        $totalDiterima = Pendaftar::where('status_pendaftaran', 'diterima')->count();
-        $totalGugur = Pendaftar::where('status_pendaftaran', 'gugur')->count();
         $totalJurusan = Jurusan::count();
         $schoolProfile = SchoolProfile::first();
         $tahunSekarang = date('Y');
         // Ambil periode aktif
         $periodeAktif = Periode::where('status', 1)->first();
+
+        $totalPendaftar = 0;
+        $totalDiterima = 0;
+        $totalGugur = 0;
+
+        if ($periodeAktif) {
+            $totalPendaftar = Pendaftar::where('periode_id', $periodeAktif->id)->count();
+            $totalDiterima = Pendaftar::where('periode_id', $periodeAktif->id)
+                ->where('status_pendaftaran', 'diterima')->count();
+            $totalGugur = Pendaftar::where('periode_id', $periodeAktif->id)
+                ->where('status_pendaftaran', 'gugur')->count();
+        }
 
         if ($periodeAktif) {
             $tanggalTutup = Carbon::parse($periodeAktif->tanggal_tutup);
@@ -98,7 +107,7 @@ class AdminController extends Controller
 
         return view('admin.dashboard', compact(
             'title', 'user', 'totalPendaftar', 'totalDiterima', 'totalGugur', 'totalJurusan',
-            'schoolProfile', 'pendaftarPerTahun', 'diterimaPerTahun', 'gugurPerTahun', 'tahunSekarang', 'totalLakiLaki', 'totalPerempuan'
+            'schoolProfile', 'pendaftarPerTahun', 'diterimaPerTahun', 'gugurPerTahun', 'tahunSekarang', 'totalLakiLaki', 'totalPerempuan',
         ));
     }
 
