@@ -75,6 +75,7 @@ class PendaftaranController extends Controller
         $title = 'Data Pendaftar';
         $name = Auth::user()->name;
         $pendaftar = Pendaftar::where('status_pendaftaran', $status)->get();
+        $periodeId = $request->input('periode_id');
         
         $jurusans = Jurusan::all()->keyBy('id');
 
@@ -82,8 +83,11 @@ class PendaftaranController extends Controller
         $jurusanMap = $jurusans->mapWithKeys(function ($item) {
             return [$item->id => $item->nama];
         });
+        // Ambil data tahun pelajaran dari model Periode
+        $periode = $periodeId ? Periode::find($periodeId) : null;
+        $tahunPelajaran = $periode?->tahun_pelajaran;
 
-        return view('admin.pendaftar.index_by_status', compact('pendaftar', 'jurusanMap', 'title', 'name', 'status'));
+        return view('admin.pendaftar.index_by_status', compact('pendaftar', 'jurusanMap', 'title', 'name', 'status', 'tahunPelajaran', 'periode'));
     }
 
     public function show($id, Request $request)
@@ -91,6 +95,7 @@ class PendaftaranController extends Controller
         $name = Auth::user()->name;
         $pendaftar = Pendaftar::with(['jurusans', 'user'])->findOrFail($id);
         $title = "Detail Pendaftar";
+        $status = $request->query('status');
         
         // Simpan URL halaman sebelumnya di sesi
         $request->session()->put('previous_url', url()->previous());
@@ -124,7 +129,7 @@ class PendaftaranController extends Controller
             return $jurusan;
         });       
 
-        return view('admin.pendaftar.show', compact('pendaftar', 'title', 'name', 'jurusans'));
+        return view('admin.pendaftar.show', compact('pendaftar', 'title', 'name', 'jurusans', 'status'));
     }
 
     public function create()
@@ -146,13 +151,15 @@ class PendaftaranController extends Controller
 
         $isRegistrationOpen = $activePeriod ? true : false;
 
-        // Ambil jurusan yang terkait dengan periode aktif
-        $jurusans = PeriodeJurusan::with('jurusan')
-        ->where('periode_id', $activePeriod->id)
-        ->get()
-        ->map(function ($periodeJurusan) {
-            return $periodeJurusan->jurusan;
-        });
+        // Cek dulu apakah $activePeriod ada sebelum ambil jurusan
+        $jurusans = $activePeriod
+        ? PeriodeJurusan::with('jurusan')
+            ->where('periode_id', $activePeriod->id)
+            ->get()
+            ->map(function ($periodeJurusan) {
+                return $periodeJurusan->jurusan;
+            })
+        : collect(); // kosongkan jurusan kalau tidak ada periode aktif
         
         return view('user.pendaftaran', compact('jurusans', 'pendaftar', 'isRegistrationOpen', 'title'));
     }
@@ -160,12 +167,8 @@ class PendaftaranController extends Controller
     public function store(Request $request)
     {
         $userId = Auth::id();
-
-        // Cek apakah pendaftar sudah ada
-        $existingPendaftar = Pendaftar::where('user_id', $userId)->first();
-
-        if ($existingPendaftar) {
-            return redirect()->back()->with('error', 'Anda sudah mendaftar.');
+        if (Pendaftar::where('user_id', $userId)->exists()) {
+            return back()->with('error', 'Anda sudah mendaftar.');
         }
 
         // Validasi input
@@ -182,17 +185,17 @@ class PendaftaranController extends Controller
             'alamat' => 'required|string|max:255',
             'prestasi_akademik' => 'required|boolean',
             'prestasi_non_akademik' => 'required|boolean',
-            'pilihan_jurusan_1' => 'required|exists:jurusans,id',
-            'pilihan_jurusan_2' => 'required|exists:jurusans,id',
-            'pilihan_jurusan_3' => 'required|exists:jurusans,id',
+            'pilihan_jurusan_1' => 'required|different:pilihan_jurusan_2,pilihan_jurusan_3|exists:jurusans,id',
+            'pilihan_jurusan_2' => 'required|different:pilihan_jurusan_1,pilihan_jurusan_3|exists:jurusans,id',
+            'pilihan_jurusan_3' => 'required|different:pilihan_jurusan_1,pilihan_jurusan_2|exists:jurusans,id',
             'kartu_keluarga' => 'required|file|mimes:jpg,jpeg,pdf|max:2048',
             'ktp_orang_tua' => 'required|file|mimes:jpg,jpeg,pdf|max:2048',
             'akte_kelahiran' => 'required|file|mimes:jpg,jpeg,pdf|max:2048',
             'ijazah' => 'required|file|mimes:jpg,jpeg,pdf|max:2048',
             'foto_calon_siswa' => 'required|file|mimes:jpg,jpeg|max:2048',
-            'raport' => 'required|file|mimes:pdf|max:2048',
-            'piagam' => 'nullable|file|mimes:jpg,jpeg,pdf|max:2048',
-            'surat_keterangan' => 'nullable|file|mimes:jpg,jpeg,pdf|max:2048',
+            'raport' => 'required|file|mimes:pdf|max:4096',
+            'piagam' => 'nullable|file|mimes:jpg,jpeg,pdf|max:4096',
+            'surat_keterangan' => 'nullable|file|mimes:jpg,jpeg,pdf|max:4096',
             'nilai_rapor.*.mtk' => 'required|numeric|min:0|max:100',
             'nilai_rapor.*.ipa' => 'required|numeric|min:0|max:100',
             'nilai_rapor.*.bahasa_indonesia' => 'required|numeric|min:0|max:100',
@@ -200,15 +203,6 @@ class PendaftaranController extends Controller
         ], [
             'nisn.unique' => 'NISN ini sudah terdaftar, silakan periksa kembali.',
         ]);
-        
-        // Validasi tambahan untuk memastikan pilihan jurusan berbeda
-        $pilihanJurusan1 = $request->input('pilihan_jurusan_1');
-        $pilihanJurusan2 = $request->input('pilihan_jurusan_2');
-        $pilihanJurusan3 = $request->input('pilihan_jurusan_3');
-
-        if ($pilihanJurusan1 == $pilihanJurusan2 || $pilihanJurusan1 == $pilihanJurusan3 || $pilihanJurusan2 == $pilihanJurusan3) {
-            return redirect()->back()->withErrors(['pilihan_jurusan' => 'Pilihan jurusan tidak boleh sama.'])->withInput();
-        }
 
         // Mendapatkan tanggal saat ini
         $currentDate = now();
@@ -227,86 +221,54 @@ class PendaftaranController extends Controller
         DB::beginTransaction();
 
         try {
-            // Handle file upload
-            $files = [];
-            foreach (['kartu_keluarga', 'ktp_orang_tua', 'akte_kelahiran', 'ijazah', 'foto_calon_siswa', 'raport', 'piagam', 'surat_keterangan'] as $fileField) {
-                if ($request->hasFile($fileField)) {
-                    $originalName = $request->file($fileField)->getClientOriginalName();
-                    $fileExtension = $request->file($fileField)->getClientOriginalExtension();
-                    $fileName = $request->nisn . '_' . $fileField . '_' . time() . '.' . $fileExtension;
-                    $files[$fileField] = $request->file($fileField)->storeAs('file_pendaftaran', $fileName, 'public');
+            // Simpan semua file
+            $fileFields = ['kartu_keluarga', 'ktp_orang_tua', 'akte_kelahiran', 'ijazah', 'foto_calon_siswa', 'raport', 'piagam', 'surat_keterangan'];
+            $files = collect($fileFields)->mapWithKeys(fn($field) =>
+                [$field => $request->hasFile($field)
+                    ? $request->file($field)->storeAs('file_pendaftaran', "{$request->nisn}_{$field}_" . time() . '.' . $request->file($field)->getClientOriginalExtension(), 'public')
+                    : null]
+            )->toArray();
+    
+            // Siapkan data pendaftar
+            $pendaftarData = $request->only([
+                'nama_lengkap', 'tempat_lahir', 'tanggal_lahir', 'alamat', 'asal_sekolah', 'nisn', 'jenis_kelamin',
+                'nama_ayah', 'nama_ibu', 'nomor_wa', 'prestasi_akademik', 'prestasi_non_akademik'
+            ]) + $files + [
+                'user_id' => $userId,
+                'status_pendaftaran' => 'pending',
+                'daftar_ulang' => null,
+                'catatan_penolakan' => null,
+                'periode_id' => $activePeriod->id,
+            ];
+    
+            // Nilai rapor
+            foreach (range(1, 5) as $semester) {
+                foreach (['mtk', 'ipa', 'bahasa_indonesia', 'bahasa_inggris'] as $mapel) {
+                    $pendaftarData["nilai_{$mapel}_semester_{$semester}"] = $request->input("nilai_rapor.{$semester}.{$mapel}");
                 }
             }
-
-            // Set default status verifikasi
-            $validatedData = $request->all();
-            $validatedData['status_pendaftaran'] = 'pending';
-            $validatedData['daftar_ulang'] = null;
-            $validatedData['catatan_penolakan'] = null;
-            // Simpan data pendaftar baru
-            $pendaftar = Pendaftar::create([
-                'user_id' => $userId,
-                'nama_lengkap' => $request->nama_lengkap,
-                'tempat_lahir' => $request->tempat_lahir,
-                'tanggal_lahir' => $request->tanggal_lahir,
-                'alamat' => $request->alamat,
-                'asal_sekolah' => $request->asal_sekolah,
-                'nisn' => $request->nisn,
-                'jenis_kelamin' => $request->jenis_kelamin,
-                'nama_ayah' => $request->nama_ayah,
-                'nama_ibu' => $request->nama_ibu,
-                'nomor_wa' => $request->nomor_wa,
-                'prestasi_akademik' => $request->prestasi_akademik,
-                'prestasi_non_akademik' => $request->prestasi_non_akademik,
-                'kartu_keluarga' => $files['kartu_keluarga'] ?? null,
-                'ktp_orang_tua' => $files['ktp_orang_tua'] ?? null,
-                'akte_kelahiran' => $files['akte_kelahiran'] ?? null,
-                'ijazah' => $files['ijazah'] ?? null,
-                'foto_calon_siswa' => $files['foto_calon_siswa'] ?? null,
-                'raport' => $files['raport'] ?? null,
-                'piagam' => $files['piagam'] ?? null,
-                'surat_keterangan' => $files['surat_keterangan'] ?? null,
-                'periode_id' => $activePeriod->id, // Menyimpan periode_id yang aktif
-                // Nilai rapor
-                'nilai_mtk_semester_1' => $request->input('nilai_rapor.1.mtk'),
-                'nilai_mtk_semester_2' => $request->input('nilai_rapor.2.mtk'),
-                'nilai_mtk_semester_3' => $request->input('nilai_rapor.3.mtk'),
-                'nilai_mtk_semester_4' => $request->input('nilai_rapor.4.mtk'),
-                'nilai_mtk_semester_5' => $request->input('nilai_rapor.5.mtk'),
-                'nilai_ipa_semester_1' => $request->input('nilai_rapor.1.ipa'),
-                'nilai_ipa_semester_2' => $request->input('nilai_rapor.2.ipa'),
-                'nilai_ipa_semester_3' => $request->input('nilai_rapor.3.ipa'),
-                'nilai_ipa_semester_4' => $request->input('nilai_rapor.4.ipa'),
-                'nilai_ipa_semester_5' => $request->input('nilai_rapor.5.ipa'),
-                'nilai_bahasa_indonesia_semester_1' => $request->input('nilai_rapor.1.bahasa_indonesia'),
-                'nilai_bahasa_indonesia_semester_2' => $request->input('nilai_rapor.2.bahasa_indonesia'),
-                'nilai_bahasa_indonesia_semester_3' => $request->input('nilai_rapor.3.bahasa_indonesia'),
-                'nilai_bahasa_indonesia_semester_4' => $request->input('nilai_rapor.4.bahasa_indonesia'),
-                'nilai_bahasa_indonesia_semester_5' => $request->input('nilai_rapor.5.bahasa_indonesia'),
-                'nilai_bahasa_inggris_semester_1' => $request->input('nilai_rapor.1.bahasa_inggris'),
-                'nilai_bahasa_inggris_semester_2' => $request->input('nilai_rapor.2.bahasa_inggris'),
-                'nilai_bahasa_inggris_semester_3' => $request->input('nilai_rapor.3.bahasa_inggris'),
-                'nilai_bahasa_inggris_semester_4' => $request->input('nilai_rapor.4.bahasa_inggris'),
-                'nilai_bahasa_inggris_semester_5' => $request->input('nilai_rapor.5.bahasa_inggris'),
+    
+            // Simpan data pendaftar
+            $pendaftar = Pendaftar::create($pendaftarData);
+    
+            // Simpan pilihan jurusan
+            $pendaftar->jurusans()->attach([
+                $request->pilihan_jurusan_1 => ['urutan_pilihan' => 1],
+                $request->pilihan_jurusan_2 => ['urutan_pilihan' => 2],
+                $request->pilihan_jurusan_3 => ['urutan_pilihan' => 3],
             ]);
-        
-            // Simpan data pilihan jurusan di tabel pivot
-            $pendaftar->jurusans()->attach($pilihanJurusan1, ['urutan_pilihan' => 1]);
-            $pendaftar->jurusans()->attach($pilihanJurusan2, ['urutan_pilihan' => 2]);
-            $pendaftar->jurusans()->attach($pilihanJurusan3, ['urutan_pilihan' => 3]);
-
-            // Ambil kode jurusan untuk pilihan jurusan 1
-            $jurusan1 = Jurusan::find($pilihanJurusan1);
-            $pendaftar->update(['nomor_pendaftaran' => Pendaftar::generateNomorPendaftaran($jurusan1->kode, $pendaftar->id)]);
-
+    
+            // Update nomor pendaftaran
+            $jurusan1 = Jurusan::find($request->pilihan_jurusan_1);
+            $pendaftar->update([
+                'nomor_pendaftaran' => Pendaftar::generateNomorPendaftaran($jurusan1->kode, $pendaftar->id),
+            ]);
+    
             DB::commit();
-
-            // Redirect atau respon setelah berhasil menyimpan data
             return redirect()->route('user.pendaftaran')->with('success', 'Pendaftaran berhasil!');
         } catch (\Exception $e) {
             DB::rollBack();
-    
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memproses pendaftaran.')->withInput();
+            return back()->with('error', 'Terjadi kesalahan saat memproses pendaftaran.')->withInput();
         }
     }
 
@@ -331,7 +293,12 @@ class PendaftaranController extends Controller
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string|max:255',
             'asal_sekolah' => 'required|string|max:255',
-            'nisn' => 'required|string|max:10',
+            'nisn' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('pendaftars', 'nisn')->ignore($pendaftar->id), // Abaikan validasi unik untuk NISN milik pendaftar ini
+            ],
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'nama_ayah' => 'required|string|max:255',
             'nama_ibu' => 'required|string|max:255',
@@ -350,6 +317,8 @@ class PendaftaranController extends Controller
             'nilai_rapor.*.ipa' => 'required|numeric|min:0|max:100',
             'nilai_rapor.*.bahasa_indonesia' => 'required|numeric|min:0|max:100',
             'nilai_rapor.*.bahasa_inggris' => 'required|numeric|min:0|max:100',
+        ], [
+            'nisn.unique' => 'NISN ini sudah terdaftar, silakan periksa kembali.',
         ]);
         
         // Handle file uploads and deletions
@@ -559,7 +528,6 @@ class PendaftaranController extends Controller
             if (!$tesAktif) {
                 return redirect()->back()->with('error', 'Tidak ada tes minat bakat tersedia saat ini.');
             }
-
             // Tambahkan aptitude_tests_id ke pendaftar
             $pendaftar->aptitude_tests_id = $tesAktif->id;
 
@@ -592,6 +560,12 @@ class PendaftaranController extends Controller
                 }
 
                 if (!$pendaftar->tanggal_tes) {
+                    // Jika tidak ada tanggal tes yang tersedia
+                    if ($startDate > $endDate) {
+                        DB::rollBack(); // Batalkan transaksi jika tidak ada kuota dan tanggal sudah lewat
+                        return redirect()->back()->with('error', 'Tanggal tes sudah lewat atau semua kuota sudah penuh.');
+                    }
+    
                     DB::rollBack(); // Batalkan transaksi jika tidak menemukan kuota
                     return redirect()->back()->with('error', 'Semua kuota tes minat bakat pada periode ini sudah penuh.');
                 }
@@ -610,7 +584,6 @@ class PendaftaranController extends Controller
 
         return redirect()->back()->with('success', 'Status verifikasi telah diperbarui.');
     }
-
 
     public function updateNilaiTes(Request $request, $id)
     {
@@ -673,7 +646,7 @@ class PendaftaranController extends Controller
                 $periodeJurusan = PeriodeJurusan::find($request->jurusan_diterima);
                 
                 if ($periodeJurusan) {
-                    $pendaftar->jurusan_diterima = $periodeJurusan->jurusan_id; // Simpan ID jurusan
+                    $pendaftar->jurusan_diterima = $periodeJurusan->jurusan->id; 
                     if ($periodeJurusan->kuota > 0) {
                         $pendaftar->status_pendaftaran = 'diterima';
     
@@ -752,7 +725,6 @@ class PendaftaranController extends Controller
                 'pilihan_jurusan_3' => $pilihanJurusan3 ? $pilihanJurusan3->nama : '-',
                 'base64FotoCalonSiswa' => $base64FotoCalonSiswa,
             ];
-            dd($data, $base64Left, $base64Right, $periode);
 
             $pdf = PDF::loadView('pdf.bukti_pendaftaran', $data, compact('base64Left', 'base64Right', 'periode'));
             return $pdf->download('Bukti_Pendaftaran.pdf');
@@ -830,7 +802,7 @@ class PendaftaranController extends Controller
                 $pendaftar->save();
             });
 
-            return redirect()->back()->with('success', 'Status pendaftaran berhasil diubah menjadi diterima.');
+            return redirect()->back()->with('success', 'Status pendaftaran berhasil diubah menjadi lulus.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
