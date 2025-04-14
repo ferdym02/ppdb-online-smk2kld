@@ -62,39 +62,51 @@
                                     <tr>
                                         <th class="text-center">No.</th>
                                         <th>Jurusan</th>
-                                        <th class="text-center">Kuota</th>
+                                        <th class="text-center">Kuota Tersedia</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($periodeJurusans as $item)
+                                    @forelse ($periodeJurusans as $item)
                                         <tr>
                                             <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td>{{ $item->jurusan->nama }}</td>
+                                            <td>{{ $item->jurusan->nama ?? '-' }}</td>
                                             <td class="text-center">{{ $item->kuota }}</td>
                                             <td class="text-center">
+                                                <a class="btn btn-info btn-sm" href="{{ route('periode-jurusan.show', $item->id) }}">Detail</a>
                                                 <button 
                                                     class="btn btn-warning btn-sm" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#modalEdit"
                                                     data-id="{{ $item->id }}" 
                                                     data-kuota="{{ $item->kuota }}"
+                                                    data-jurusan="{{ $item->jurusan->nama }}"
                                                 >
                                                     Edit
                                                 </button>
-                                                <form action="{{ route('periode-jurusan.destroy', $item->id) }}" method="POST" id="deleteForm{{ $item->id }}" style="display:inline;">
+                                                <button type="submit" class="btn btn-sm btn-danger btn-delete" data-id="{{ $item->id }}">Hapus</button>
+                                                <form id="deleteForm{{ $item->id }}" action="{{ route('periode-jurusan.destroy', $item->id) }}" method="POST" style="display: inline;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $item->id }}">Hapus</button>
                                                 </form>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="text-center">Tidak ada data</td>
+                                            <td colspan="6" class="text-center text-muted">Tidak ada data.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
+                                <tfoot>
+                                    @php
+                                        $totalSisaKuota = $periodeJurusans->sum('kuota');
+                                    @endphp
+                                    <tr class="fw-bold bg-light">
+                                        <td colspan="2">Total</td>
+                                        <td class="text-center">{{ $totalSisaKuota }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>                                
                             </table>
                         </div>
                     </div>
@@ -152,6 +164,7 @@
         </div>
     </div>
 
+    <!-- Modal Edit -->
     <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -164,6 +177,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <div class="form-group mb-3">
+                            <label>Jurusan</label>
+                            <p id="jurusanKeterangan" class="form-control-plaintext fw-bold"></p>
+                        </div>
+                        
                         <div class="form-group mb-3">
                             <label for="kuotaEdit">Kuota</label>
                             <input 
@@ -219,20 +237,23 @@
 </main>
 @endsection
 
-@section('scripts')
+@section('scripts') 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Handle edit modal show event
-        $('#modalEdit').on('show.bs.modal', function(event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var kuota = button.data('kuota');
+        $('#modalEdit').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var kuota = button.data('kuota');
+            var jurusan = button.data('jurusan'); // Ambil nama jurusan
 
-        var modal = $(this);
-        modal.find('#kuotaEdit').val(kuota);
-        modal.find('#formEdit').attr('action', '/admin/periode-jurusan/' + id);
+            var modal = $(this);
+            modal.find('#jurusanKeterangan').text(jurusan); // Tampilkan nama jurusan
+            modal.find('#kuotaEdit').val(kuota);
+            modal.find('#formEdit').attr('action', '/admin/periode-jurusan/' + id);
         });
     });
+
     // Show toast notification if session has 'success' or 'error'
     @if(session('success'))
         var toastSuccess = new bootstrap.Toast(document.getElementById('toastSuccess'));
@@ -256,19 +277,19 @@
                 confirmButtonText: 'Hapus',
                 cancelButtonText: 'Batal',
                 customClass: {
-                confirmButton: 'btn btn-danger me-1', // Tombol konfirmasi menjadi merah
-                cancelButton: 'btn btn-secondary' // Tombol batal menjadi abu-abu
+                    confirmButton: 'btn btn-danger me-1', // Tombol konfirmasi menjadi merah
+                    cancelButton: 'btn btn-secondary' // Tombol batal menjadi abu-abu
                 },
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('deleteForm' + id).submit();
                 }
-            })
+            });
         });
     });
 
     @if ($errors->any())
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             @if (old('form_action') === 'create')
                 // Tampilkan modal create
                 var createModal = new bootstrap.Modal(document.getElementById('modalTambah'));
@@ -286,7 +307,7 @@
             @endif
         });
     @endif
-    
+
     // Fungsi untuk memperbarui status tombol dan tooltip
     function updateTambahButton() {
         const periodeId = document.getElementById('periode_id').value;
@@ -307,20 +328,19 @@
         new bootstrap.Tooltip(tooltipWrapper); // Buat tooltip baru
     }
 
+    // DOMContentLoaded untuk tombol tambah
     document.addEventListener('DOMContentLoaded', function () {
-    const btnTambah = document.getElementById('btnTambah');
-    const periodeIdSelect = document.getElementById('periode_id');
-    const hiddenPeriodeId = document.getElementById('hiddenPeriodeId');
+        const btnTambah = document.getElementById('btnTambah');
+        const periodeIdSelect = document.getElementById('periode_id');
+        const hiddenPeriodeId = document.getElementById('hiddenPeriodeId');
 
-    // Ketika tombol "Tambah Data" diklik
-    btnTambah.addEventListener('click', function () {
-        hiddenPeriodeId.value = periodeIdSelect.value;
+        // Ketika tombol "Tambah Data" diklik
+        btnTambah.addEventListener('click', function () {
+            hiddenPeriodeId.value = periodeIdSelect.value;
+        });
+
+        // Inisialisasi tombol dan tooltip
+        updateTambahButton();
     });
-
-    // Inisialisasi tombol dan tooltip
-    updateTambahButton();
-});
-
-
 </script>
 @endsection
