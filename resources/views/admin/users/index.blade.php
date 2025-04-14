@@ -62,7 +62,7 @@
           <input type="hidden" name="role" value="user">
           <div class="form-group mb-3">
             <label for="name">Nama</label>
-            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="Masukkan nama pengguna" required>
             @error('name')
             <div class="invalid-feedback">
               {{ $message }}
@@ -71,7 +71,7 @@
           </div>
           <div class="form-group mb-3">
             <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+            <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email pengguna" required>
             @error('email')
             <div class="invalid-feedback">
               {{ $message }}
