@@ -28,53 +28,67 @@
                         <form action="{{ route('school-profile.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
+                                <p><small class="text-danger">* Wajib diisi</small></p>
+                        
                                 <div class="mb-3">
-                                    <label for="nama_sekolah" class="form-label">Nama Sekolah</label>
+                                    <label for="nama_sekolah" class="form-label">Nama Sekolah <span class="text-danger">*</span></label>
                                     <input type="text" name="nama_sekolah" id="nama_sekolah" 
                                         class="form-control @error('nama_sekolah') is-invalid @enderror" 
-                                        value="{{ old('nama_sekolah', $schoolProfile->nama_sekolah ?? '') }}" required>
+                                        value="{{ old('nama_sekolah', $schoolProfile->nama_sekolah ?? '') }}" 
+                                        placeholder="Masukkan nama sekolah" required>
                                     @error('nama_sekolah')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
-                                    <label for="npsn" class="form-label">NPSN</label>
+                                    <label for="npsn" class="form-label">NPSN <span class="text-danger">*</span></label>
                                     <input type="number" name="npsn" id="npsn" 
                                         class="form-control @error('npsn') is-invalid @enderror" 
-                                        value="{{ old('npsn', $schoolProfile->npsn ?? '') }}" required>
+                                        value="{{ old('npsn', $schoolProfile->npsn ?? '') }}" 
+                                        placeholder="Masukkan NPSN sekolah" required>
                                     @error('npsn')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
-                                    <label for="alamat_sekolah" class="form-label">Alamat Sekolah</label>
+                                    <label for="alamat_sekolah" class="form-label">Alamat Sekolah <span class="text-danger">*</span></label>
                                     <textarea name="alamat_sekolah" id="alamat_sekolah" 
-                                        class="form-control @error('alamat_sekolah') is-invalid @enderror" required>{{ old('alamat_sekolah', $schoolProfile->alamat_sekolah ?? '') }}</textarea>
+                                        class="form-control @error('alamat_sekolah') is-invalid @enderror" 
+                                        placeholder="Masukkan alamat lengkap sekolah" required>{{ old('alamat_sekolah', $schoolProfile->alamat_sekolah ?? '') }}</textarea>
                                     @error('alamat_sekolah')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
-                                    <label for="email_sekolah" class="form-label">Email Sekolah</label>
+                                    <label for="email_sekolah" class="form-label">Email Sekolah <span class="text-danger">*</span></label>
                                     <input type="email" name="email_sekolah" id="email_sekolah" 
                                         class="form-control @error('email_sekolah') is-invalid @enderror" 
-                                        value="{{ old('email_sekolah', $schoolProfile->email_sekolah ?? '') }}" required>
+                                        value="{{ old('email_sekolah', $schoolProfile->email_sekolah ?? '') }}" 
+                                        placeholder="Masukkan email resmi sekolah" required>
                                     @error('email_sekolah')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
-                                    <label for="telepon_sekolah" class="form-label">Telepon Sekolah</label>
+                                    <label for="telepon_sekolah" class="form-label">Telepon Sekolah <span class="text-danger">*</span></label>
                                     <input type="text" name="telepon_sekolah" id="telepon_sekolah" 
                                         class="form-control @error('telepon_sekolah') is-invalid @enderror" 
-                                        value="{{ old('telepon_sekolah', $schoolProfile->telepon_sekolah ?? '') }}" required>
+                                        value="{{ old('telepon_sekolah', $schoolProfile->telepon_sekolah ?? '') }}" 
+                                        placeholder="Masukkan nomor telepon sekolah" required>
                                     @error('telepon_sekolah')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
-                                    <label for="logo_sekolah" class="form-label">Logo Sekolah</label>
-                                    <input type="file" class="form-control @error('logo_sekolah') is-invalid @enderror" id="logo_sekolah" name="logo_sekolah">
+                                    <label for="logo_sekolah" class="form-label">Logo Sekolah <small class="text-muted">(Format: PNG)</small></label>
+                                    <input type="file" class="form-control @error('logo_sekolah') is-invalid @enderror" 
+                                        id="logo_sekolah" name="logo_sekolah" 
+                                        accept="image/png">
                                     @error('logo_sekolah')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -84,56 +98,68 @@
                                         <img src="{{ asset('storage/' . $schoolProfile->logo_sekolah) }}" alt="Logo Sekolah" width="150">
                                     </div>
                                 @endif
+                        
                                 <div class="mb-3">
-                                    <label for="call_center_1" class="form-label">Call Center 1</label>
+                                    <label for="call_center_1" class="form-label">Call Center 1 <span class="text-danger">*</span></label>
                                     <input type="text" name="call_center_1" id="call_center_1" 
                                         class="form-control @error('call_center_1') is-invalid @enderror" 
-                                        value="{{ old('call_center_1', $schoolProfile->call_center_1 ?? '') }}">
+                                        value="{{ old('call_center_1', $schoolProfile->call_center_1 ?? '') }}" 
+                                        placeholder="Masukkan nomor call center utama" required>
                                     @error('call_center_1')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
                                     <label for="call_center_2" class="form-label">Call Center 2</label>
                                     <input type="text" name="call_center_2" id="call_center_2" 
                                         class="form-control @error('call_center_2') is-invalid @enderror" 
-                                        value="{{ old('call_center_2', $schoolProfile->call_center_2 ?? '') }}">
+                                        value="{{ old('call_center_2', $schoolProfile->call_center_2 ?? '') }}" 
+                                        placeholder="Masukkan nomor call center alternatif (jika ada)">
                                     @error('call_center_2')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
                                     <label for="facebook" class="form-label">Facebook</label>
                                     <input type="url" name="facebook" id="facebook" 
                                         class="form-control @error('facebook') is-invalid @enderror" 
-                                        value="{{ old('facebook', $schoolProfile->facebook ?? '') }}">
+                                        value="{{ old('facebook', $schoolProfile->facebook ?? '') }}" 
+                                        placeholder="Masukkan URL Facebook sekolah">
                                     @error('facebook')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
                                     <label for="instagram" class="form-label">Instagram</label>
                                     <input type="url" name="instagram" id="instagram" 
                                         class="form-control @error('instagram') is-invalid @enderror" 
-                                        value="{{ old('instagram', $schoolProfile->instagram ?? '') }}">
+                                        value="{{ old('instagram', $schoolProfile->instagram ?? '') }}" 
+                                        placeholder="Masukkan URL Instagram sekolah">
                                     @error('instagram')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
-                                    <label for="x" class="form-label">X</label>
+                                    <label for="x" class="form-label">X (Twitter)</label>
                                     <input type="url" name="x" id="x" 
                                         class="form-control @error('x') is-invalid @enderror" 
-                                        value="{{ old('x', $schoolProfile->x ?? '') }}">
+                                        value="{{ old('x', $schoolProfile->x ?? '') }}" 
+                                        placeholder="Masukkan URL akun X (Twitter) sekolah">
                                     @error('x')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                        
                                 <div class="mb-3">
                                     <label for="tiktok" class="form-label">TikTok</label>
                                     <input type="url" name="tiktok" id="tiktok" 
                                         class="form-control @error('tiktok') is-invalid @enderror" 
-                                        value="{{ old('tiktok', $schoolProfile->tiktok ?? '') }}">
+                                        value="{{ old('tiktok', $schoolProfile->tiktok ?? '') }}" 
+                                        placeholder="Masukkan URL TikTok sekolah">
                                     @error('tiktok')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -142,7 +168,8 @@
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
-                        </form>                        
+                        </form>
+                        
                     </div>
                 </div>
             </div>
