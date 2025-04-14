@@ -32,7 +32,7 @@
                   <tr>
                     <th class="text-center">No.</th>
                     <th class="text-center">Kode</th>
-                    <th>Jurusan</th>
+                    <th>Nama Jurusan</th>
                     <th class="text-center">Action</th>
                   </tr>
                 </thead>
