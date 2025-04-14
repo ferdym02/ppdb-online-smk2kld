@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pengumumans', function (Blueprint $table) {
             $table->id(); // Primary key (UNSIGNED BIGINT)
             $table->string('judul', 255); // Judul pengumuman
+            $table->longText('isi')->nullable();
             $table->string('file_lampiran', 255)->nullable(); // File lampiran pengumuman
             $table->timestamps(); // created_at and updated_at
         });
