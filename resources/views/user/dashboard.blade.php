@@ -40,8 +40,8 @@
     <div class="row">
         <!-- Sidebar Navigasi -->
         <div class="col-md-3 mb-4">
-            <div class="card shadow-sm sticky-top" style="top: 20px;">
-                <div class="card-header text-white" style="background-color: #FFB30F">
+            <div class="card shadow-sm sticky-top" style="top: 80px;">
+                <div class="card-header text-white" style="background-color: #9D0A36">
                     <h5 class="card-title mb-0">Daftar Isi</h5>
                 </div>
                 <div class="card-body p-0">
@@ -50,7 +50,7 @@
                         <li class="list-group-item"><a href="#persyaratan" class="text-decoration-none">Persyaratan PPDB</a></li>
                         <li class="list-group-item"><a href="#panduan" class="text-decoration-none">Panduan Pendaftaran</a></li>
                         <li class="list-group-item"><a href="#jadwal" class="text-decoration-none">Jadwal PPDB</a></li>
-                        <li class="list-group-item"><a href="#test" class="text-decoration-none">Tes Minat dan Bakat</a></li>
+                        <li class="list-group-item"><a href="#test" class="text-decoration-none">Tes Minat Bakat</a></li>
                         <li class="list-group-item"><a href="#kontak" class="text-decoration-none">Kontak Panitia</a></li>
                     </ul>
                 </div>
@@ -72,7 +72,7 @@
                         </div>
                     @else
                         <div class="alert alert-danger" role="alert">
-                            Saat ini tidak ada periode pendaftaran yang aktif.
+                            Saat ini belum ada periode pendaftaran yang dibuka.
                         </div>
                     @endif
                 </div>
@@ -118,15 +118,15 @@
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fas fa-edit mr-2 text-primary me-2"></i>
-                            <span>Calon peserta didik baru melakukan pengajuan <a href="/user/pendaftaran">pendaftaran</a> mandiri dengan mengisi formulir dan mengunggah dokumen persyaratan secara online.</span>
+                            <span>Calon peserta didik baru melakukan <a href="/user/pendaftaran">pendaftaran</a> mandiri dengan mengisi formulir dan mengunggah dokumen persyaratan secara online.</span>
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fas fa-clock mr-2 text-primary me-2"></i>
-                            <span>Calon peserta didik baru menunggu verifikasi pendaftaran oleh admin yang dapat dilihat pada laman <a href="/user/pendaftaran">pendaftaran</a>.</span>
+                            <span>Calon peserta didik baru menunggu verifikasi pendaftaran oleh admin yang dapat dilihat pada halaman <a href="/user/pendaftaran">Pendaftaran</a>.</span>
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fa-solid fa-circle-xmark mr-2 text-primary me-2"></i>
-                            <span>Jika pendaftaran ditolak (belum terverifikasi), calon peserta didik baru dapat melakukan edit data pendaftaran sesuai catatan dari admin.</span>
+                            <span>Jika status pendaftaran perlu perbaikan, calon peserta didik baru dapat melakukan edit data pendaftaran sesuai dengan catatan perbaikan dari admin.</span>
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fas fa-check-circle mr-2 text-primary me-2"></i>
@@ -134,15 +134,15 @@
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fas fa-calendar-alt mr-2 text-primary me-2"></i>
-                            <span>Calon peserta didik baru mendapat jadwal Tes Minat dan Bakat yang dapat dilihat <a href="#test">disini</a>.</span>
+                            <span>Calon peserta didik baru mendapat jadwal Tes Minat Bakat yang dapat dilihat <a href="#test">disini</a>.</span>
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fas fa-clipboard-check mr-2 text-primary me-2"></i>
-                            <span>Calon peserta didik baru melakukan Tes Minat dan Bakat di SMK Negeri 2 Kalianda sesuai jadwal dan dengan tata cara yang dapat dilihat <a href="#test">disini</a>.</span>
+                            <span>Calon peserta didik baru melakukan Tes Minat Bakat di SMK Negeri 2 Kalianda sesuai jadwal dan dengan tata cara yang dapat dilihat <a href="#test">disini</a>.</span>
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fa-solid fa-eye mr-2 text-primary me-2"></i>
-                            <span>Calon peserta didik baru melihat hasil seleksi dan pengumuman secara online di laman <a href="/user/pendaftaran">pendaftaran</a> pada bagian informasi pendaftaran.</span>
+                            <span>Calon peserta didik baru melihat hasil seleksi dan pengumuman secara online di halaman <a href="/user/pendaftaran">Pendaftaran</a> pada bagian informasi pendaftaran.</span>
                         </li>
                         <li class="mb-3 d-flex justify-content-start align-items-center">
                             <i class="fas fa-bullhorn mr-2 text-primary me-2"></i>
@@ -207,10 +207,10 @@
                 </div>
             </div>
 
-            <!-- Informasi Tes Minat dan Bakat -->
+            <!-- Informasi Tes Minat Bakat -->
             <div class="card mb-4 shadow-sm" id="test">
                 <div class="card-header text-white">
-                    <h5 class="card-title mb-0">Informasi Tes Minat dan Bakat</h5>
+                    <h5 class="card-title mb-0">Informasi Tes Minat Bakat</h5>
                 </div>
                 <div class="card-body">
                     @php
@@ -220,7 +220,7 @@
                     <table class="table table-bordered">
                         <tbody>
                             <tr>
-                                <th scope="row">Tanggal Tes Minat dan Bakat</th>
+                                <th scope="row">Tanggal Tes Minat Bakat</th>
                                 <td>
                                     @if ($pendaftar && $pendaftar->tanggal_tes)
                                         {{ Carbon::parse($pendaftar->tanggal_tes)->locale('id')->translatedFormat('d F Y') }}
@@ -231,7 +231,7 @@
                             </tr>
                             @if($pendaftar && $pendaftar->status_tes == "sudah")
                                 <tr>
-                                    <th scope="row">Nilai Tes Minat dan Bakat</th>
+                                    <th scope="row">Nilai Tes Minat Bakat</th>
                                     <td>{{ $pendaftar->nilai_tes_minat_bakat }}</td>
                                 </tr>
                             @endif
@@ -240,7 +240,7 @@
 
                     <!-- Persyaratan jika sudah ada tanggal tes -->
                     <div class="mt-4">
-                        <h6>Tata Cara Pelaksanaan Tes Minat dan Bakat:</h6>
+                        <h6>Tata Cara Pelaksanaan Tes Minat Bakat:</h6>
                         <ol>
                             <li>Datang ke sekolah dengan menggunakan baju putih biru (SMP) sesuai dengan tanggal yang didapatkan saat pendaftaran sudah terverifikasi.</li>
                             <li>Membawa dokumen berikut yang dimasukkan ke dalam map di antaranya:
@@ -252,19 +252,14 @@
                                     <li>Pas foto berwarna 3 x 4 sebanyak 2 lembar</li>
                                     <li>Piagam/Sertifikat asli (jika ada)</li>
                                     <li>Surat Keterangan Peringkat Kelas/Sekolah asli (jika ada)</li>
-                                    <li>Bukti pendaftaran yang dapat di unduh di halaman <a href="/user/pendaftaran">Pendaftaran</a></li>
+                                    <li>Bukti pendaftaran yang dapat di unduh di halaman <a href="/user/pendaftaran">Pendaftaran</a> jika data pendaftaran sudah terverifikasi</li>
                                     <li>
-                                        Surat Pernyataan Tanggung Jawab Mutlak (SPTJM) yang sudah diisi dan ttd materai 10.000.
-                                        @if($sptjm && $sptjm->file_lampiran)
-                                            <a href="{{ Storage::url($sptjm->file_lampiran) }}" target="_blank">Unduh SPTJM</a>
-                                        @else
-                                            <span>File belum tersedia.</span>
-                                        @endif
-                                    </li>                                                       
+                                        Surat Pernyataan Tanggung Jawab Mutlak (SPTJM) yang sudah diisi dan ttd materai 10.000. <a href="{{ route('pengumumanUser') }}">Cek Pengumuman</a>
+                                    </li>
                                 </ul>
                             </li>
-                            <li>Tes minat dan bakat dilaksanakan dari jam 08.00-12.00 WIB.</li>
-                            <li>Apabila calon peserta didik tidak mengikuti tes minat dan bakat di hari yang sudah ditentukan tanpa alasan yang jelas maka akan dianyatakan gugur.</li>
+                            <li>Tes minat bakat dilaksanakan dari jam 08.00-12.00 WIB.</li>
+                            <li>Apabila calon peserta didik tidak mengikuti tes minat bakat di hari yang sudah ditentukan tanpa alasan yang jelas maka akan dianyatakan gugur.</li>
                         </ol>
                     </div>
                 </div>
