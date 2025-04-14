@@ -16,9 +16,9 @@ class AptitudeTestController extends Controller
     {
         session(['aptitude_tests_url' => $request->fullUrl()]);
         $name = Auth::user()->name;
-        $title = 'Tes Minat dan Bakat';
+        $title = 'Tes Minat Bakat';
         $periodes = Periode::all();
-        $aptitudes = AptitudeTest::with('periode')->get(); // Mengambil data tes dan periode terkait
+        $aptitudes = AptitudeTest::with('periode')->orderBy('created_at', 'desc')->get(); // Mengambil data tes dan periode terkait
         return view('admin.aptitude.index', compact('title', 'name', 'periodes', 'aptitudes'));
     }
 
@@ -45,7 +45,7 @@ class AptitudeTestController extends Controller
             ->get();
 
         // Judul halaman
-        $title = "Detail Tes Minat dan Bakat";
+        $title = "Detail Tes Minat Bakat";
 
         // Tampilkan view dengan data
         return view('admin.aptitude.show', compact('aptitudes', 'title', 'pendaftars', 'tanggalTes', 'statusTes'));
