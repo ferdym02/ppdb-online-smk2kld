@@ -14,8 +14,8 @@ class PengumumanController extends Controller
 {
     public function index()
     {
-        $title = 'Kelola Pengumuman';
-        $pengumumans = Pengumuman::all();
+        $title = 'Pengumuman';
+        $pengumumans = Pengumuman::orderBy('created_at', 'desc')->get();
         $name = Auth::user()->name;
         return view('admin.pengumuman.index', compact('title', 'name', 'pengumumans'));
     }
@@ -44,17 +44,38 @@ class PengumumanController extends Controller
     {
         $request->validate([
             'judul' => 'required|string|max:255',
-            'file_lampiran' => 'required|file|mimes:pdf|max:2048'
+            'isi' => 'required|string',
+            'file_lampiran' => 'nullable|file|mimes:pdf,docx|max:2048'
         ]);
 
-        // Ambil nama asli file
-        $originalFileName = $request->file('file_lampiran')->getClientOriginalName();
+        // Proses file lampiran jika ada
+        $path = null;
+        if ($request->hasFile('file_lampiran')) {
+            $originalFileName = $request->file('file_lampiran')->getClientOriginalName();
+            $path = $request->file('file_lampiran')->storeAs('pengumuman', $originalFileName, 'public');
+        }
 
-        // Simpan file dengan nama asli
-        $path = $request->file('file_lampiran')->storeAs('pengumuman', $originalFileName, 'public');
+        // Proses gambar dari Base64 ke file yang tersimpan
+        $isi = $request->isi;
+        preg_match_all('/<img[^>]+src="data:image\/([^";]+);base64,([^">]+)"/', $isi, $matches, PREG_SET_ORDER);
+        
+        foreach ($matches as $match) {
+            $imageType = $match[1]; // Contoh: png, jpeg
+            $imageData = base64_decode($match[2]);
+            $imageName = time() . '_' . uniqid() . '.' . $imageType;
+            $imagePath = 'storage/pengumuman_images/' . $imageName;
 
+            // Simpan gambar ke folder
+            file_put_contents(public_path($imagePath), $imageData);
+
+            // Ganti base64 di dalam editor dengan URL gambar sebenarnya
+            $isi = preg_replace('/<img[^>]+src="data:image\/[^";]+;base64,[^">]+">?/', '<img src="' . asset($imagePath) . '">', $isi);
+        }
+
+        // Simpan pengumuman ke database
         Pengumuman::create([
             'judul' => $request->judul,
+            'isi' => $isi,
             'file_lampiran' => $path,
         ]);
 
@@ -66,34 +87,82 @@ class PengumumanController extends Controller
         try {
             $request->validate([
                 'judul' => 'required|string|max:255',
-                'file_lampiran' => 'nullable|file|mimes:pdf|max:2048'
+                'isi' => 'required|string',
+                'file_lampiran' => 'nullable|file|mimes:pdf,docx|max:2048'
             ]);
-    
+
             $pengumuman = Pengumuman::findOrFail($id);
-            $pengumuman->judul = $request->judul;
-    
+
+            // Ambil gambar lama dari isi sebelum diperbarui
+            preg_match_all('/<img[^>]+src="([^"]+)"/', $pengumuman->isi, $oldImages);
+            $oldImagePaths = $oldImages[1] ?? [];
+
+            // Proses file lampiran jika ada
+            $path = $pengumuman->file_lampiran;
             if ($request->hasFile('file_lampiran')) {
-                // Hapus file lama jika ada
-                if ($pengumuman->file_lampiran && Storage::disk('public')->exists($pengumuman->file_lampiran)) {
-                    Storage::disk('public')->delete($pengumuman->file_lampiran);
+                // Hapus lampiran lama jika ada
+                if ($path && Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
                 }
-    
-                // Simpan file baru dengan nama asli
+
                 $originalFileName = $request->file('file_lampiran')->getClientOriginalName();
                 $path = $request->file('file_lampiran')->storeAs('pengumuman', $originalFileName, 'public');
-    
-                $pengumuman->file_lampiran = $path;
             }
-    
-            $pengumuman->save();
-    
+
+            // Proses gambar dari Base64 ke file
+            $isi = $request->isi;
+            preg_match_all('/<img[^>]+src="data:image\/([^";]+);base64,([^">]+)"/', $isi, $matches, PREG_SET_ORDER);
+
+            foreach ($matches as $match) {
+                $imageType = $match[1]; // Contoh: png, jpeg
+                $imageData = base64_decode($match[2]);
+                $imageName = time() . '_' . uniqid() . '.' . $imageType;
+                $imagePath = 'storage/pengumuman_images/' . $imageName;
+
+                // Simpan gambar ke folder
+                file_put_contents(public_path($imagePath), $imageData);
+
+                // Ganti base64 di dalam editor dengan URL gambar sebenarnya
+                $isi = preg_replace('/<img[^>]+src="data:image\/[^";]+;base64,[^">]+">?/', '<img src="' . asset($imagePath) . '">', $isi);
+            }
+
+            // Ambil gambar baru dari isi setelah diperbarui
+            preg_match_all('/<img[^>]+src="([^"]+)"/', $isi, $newImages);
+            $newImagePaths = $newImages[1] ?? [];
+
+            // Hapus gambar lama yang tidak lagi digunakan
+            foreach ($oldImagePaths as $oldImage) {
+                if (!in_array($oldImage, $newImagePaths)) {
+                    $filePath = str_replace(asset('storage/'), '', $oldImage);
+                    if (Storage::disk('public')->exists($filePath)) {
+                        Storage::disk('public')->delete($filePath);
+                    }
+                }
+            }
+
+            // Simpan perubahan
+            $pengumuman->update([
+                'judul' => $request->judul,
+                'isi' => $isi,
+                'file_lampiran' => $path,
+            ]);
+
             return redirect()->route('pengumuman.index')->with('success', 'Pengumuman berhasil diperbarui');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Jika validasi gagal, simpan action URL ke `old()`
             return redirect()->back()
                 ->withErrors($e->validator)
                 ->withInput($request->all() + ['action_url' => route('pengumuman.update', $id)]);
         }
+    }
+
+
+    public function show($id)
+    {
+        $pengumuman = Pengumuman::findOrFail($id);
+        return view('admin.pengumuman.show', [
+            'title' => 'Detail Pengumuman',
+            'pengumuman' => $pengumuman
+        ]);
     }
 
     public function destroy($id)
@@ -102,6 +171,22 @@ class PengumumanController extends Controller
 
         if ($pengumuman->file_lampiran && Storage::disk('public')->exists($pengumuman->file_lampiran)) {
             Storage::disk('public')->delete($pengumuman->file_lampiran);
+        }
+
+        // Cari semua gambar dalam isi pengumuman
+        preg_match_all('/<img[^>]+src="([^"]+)"/', $pengumuman->isi, $matches);
+        $imagePaths = $matches[1] ?? [];
+
+        foreach ($imagePaths as $imagePath) {
+            // Pastikan gambar berada di dalam direktori penyimpanan yang benar
+            if (strpos($imagePath, asset('storage/pengumuman_images/')) !== false) {
+                $filePath = str_replace(asset('storage/'), '', $imagePath);
+
+                // Hapus gambar dari penyimpanan jika ada
+                if (Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                }
+            }
         }
 
         $pengumuman->delete();
@@ -121,7 +206,40 @@ class PengumumanController extends Controller
             ->first();
 
         $isRegistrationOpen = $activePeriod ? true : false;
-        $pengumumans = Pengumuman::all();
+        $pengumumans = Pengumuman::orderBy('created_at', 'desc')->get();
         return view('user.pengumuman', compact('pengumumans', 'isRegistrationOpen', 'title'));
+    }
+
+    public function pengumumanUserShow($id)
+    {
+        $title = 'Detail Pengumuman';
+        $currentDate = now(); // Mengambil tanggal saat ini
+
+        // Mencari periode yang aktif dan berada di antara tanggal buka dan tanggal tutup
+        $activePeriod = Periode::where('status', 1)
+            ->where('tanggal_buka', '<=', $currentDate)
+            ->where('tanggal_tutup', '>=', $currentDate)
+            ->first();
+
+        $isRegistrationOpen = $activePeriod ? true : false;
+        $pengumuman = Pengumuman::findOrFail($id);
+        return view('user.pengumumanShow', compact('pengumuman', 'isRegistrationOpen', 'title'));
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('public/pengumuman_images', $fileName);
+
+            return response()->json(['url' => Storage::url($filePath)]);
+        }
+
+        return response()->json(['error' => 'Gagal mengupload gambar'], 400);
     }
 }
