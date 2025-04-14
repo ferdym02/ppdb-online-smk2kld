@@ -27,12 +27,8 @@ class UserController extends Controller
             ->where('tanggal_buka', '<=', $currentDate)
             ->where('tanggal_tutup', '>=', $currentDate)
             ->first();
-
         $isRegistrationOpen = $activePeriod ? true : false;
-
-        // Mengambil data pendaftar untuk user yang saat ini login
         $pendaftar = Pendaftar::where('user_id', auth()->id())->first();
-
         $profile = SchoolProfile::first();
         $profile->call_center = array_filter([
             $profile->call_center_1,
@@ -40,10 +36,7 @@ class UserController extends Controller
         ]);
         $jadwals = Jadwal::all();
 
-        // Mengambil file SPTJM dari tabel pengumumans berdasarkan judul
-        $sptjm = Pengumuman::where('judul', 'SPTJM')->first();
-
-        return view('user.dashboard', compact('isRegistrationOpen', 'pendaftar', 'profile', 'jadwals', 'title', 'sptjm'));
+        return view('user.dashboard', compact('isRegistrationOpen', 'pendaftar', 'profile', 'jadwals', 'title'));
     }
 
     public function showProfile()
@@ -67,17 +60,31 @@ class UserController extends Controller
 
     public function updatePassword(Request $request)
     {
-        // Validasi input
         $request->validate([
-            'new_password' => 'required|min:8|confirmed',
+            'name' => 'required|string|max:255',
+            'new_password' => 'nullable|min:8|confirmed',
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'name.string' => 'Nama harus berupa teks.',
+            'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
+            
+            'new_password.min' => 'Password harus minimal 8 karakter.',
+            'new_password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
-        // Update password user
         $user = auth()->user();
-        $user->password = Hash::make($request->new_password);
+        // Update nama jika ada
+        if ($request->filled('name')) {
+            $user->name = $request->name;
+        }
+
+        if ($request->filled('new_password')) {
+            $user->password = Hash::make($request->new_password);
+        }
+
         $user->save();
 
-        return back()->with('success', 'Password berhasil diperbarui');
+        return back()->with('success', 'Data akun berhasil diperbarui');
     }
 
     public function index() {
