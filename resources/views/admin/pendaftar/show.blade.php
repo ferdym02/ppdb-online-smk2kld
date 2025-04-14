@@ -9,22 +9,40 @@
 @endsection
 
 @section('content')
+@php
+    $statusMapping = [
+        'pending' => 'Pending',
+        'verified' => 'Terverifikasi',
+        'rejected' => 'Perlu Perbaikan',
+        'diterima' => 'Lulus',
+        'gugur' => 'Tidak Lulus',
+        'cadangan' => 'Cadangan'
+    ];
+@endphp
 <main class="app-main">
     <div class="app-content-header"> <!--begin::Container-->
         <div class="container-fluid"> <!--begin::Row-->
             <div class="row">
-                <div class="col-sm-6 d-flex align-items-center">
+                <div class="col-sm-3 d-flex align-items-center">
                     <!-- Tombol ikon kembali -->
                     <a href="{{ session('index_by_status_url') }}" class="me-3">
-                      <i class="fas fa-arrow-left"></i>
+                    <i class="fas fa-arrow-left"></i>
                     </a>
                     <h3 class="mb-0">{{ $title }}</h3>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-9">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="{{ url('/admin/dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('/admin/pendaftar') }}">Data Pendaftar</a></li>
+                        @if (!empty($status) && isset($statusMapping[$status]))
+                            <li class="breadcrumb-item">
+                                <a href="{{ url('/admin/pendaftar/status/' . $status) }}">
+                                    Data Pendaftar {{ $statusMapping[$status] }}
+                                </a>
+                            </li>
+                        @endif
                         <li class="breadcrumb-item active" aria-current="page">
-                          {{ $title }}
+                        {{ $title }}
                         </li>
                     </ol>
                 </div>
@@ -43,6 +61,14 @@
                             <div class="row">
                                 <!-- Column 1 -->
                                 <h5 class="text-center">Data Pribadi</h5>
+                                <!-- Foto Pendaftar -->
+                                <div class="text-center mb-4">
+                                    @if($pendaftar->foto_calon_siswa)
+                                        <img src="{{ asset('storage/' . $pendaftar->foto_calon_siswa) }}" alt="Foto Calon Siswa" class="img-thumbnail" style="max-width: 100px;">
+                                    @else
+                                        <p><em>Foto tidak tersedia</em></p>
+                                    @endif
+                                </div>
                                 <div class="col-md-6">
                                     <table class="table">
                                         <tr>
@@ -260,20 +286,36 @@
                                         <tr>
                                             <th>Status Pendaftaran</th>
                                             <td>:
-                                                <span class="badge 
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'pending' ? 'text-bg-secondary' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'verified' ? 'text-bg-primary' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'rejected' ? 'text-bg-warning' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'diterima' ? 'text-bg-success' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'gugur' ? 'text-bg-danger' : '' }}
-                                                    {{ strtolower($pendaftar->status_pendaftaran) == 'cadangan' ? 'text-bg-info' : '' }}">
-                                                    {{ ucfirst($pendaftar->status_pendaftaran) }}
+                                                @php
+                                                    $statusLabels = [
+                                                        'pending' => 'Pending',
+                                                        'verified' => 'Terverifikasi',
+                                                        'rejected' => 'Perlu Perbaikan',
+                                                        'diterima' => 'Lulus',
+                                                        'gugur' => 'Tidak Lulus',
+                                                        'cadangan' => 'Cadangan',
+                                                    ];
+
+                                                    $statusColors = [
+                                                        'pending' => 'text-bg-secondary',
+                                                        'verified' => 'text-bg-primary',
+                                                        'rejected' => 'text-bg-warning',
+                                                        'diterima' => 'text-bg-success',
+                                                        'gugur' => 'text-bg-danger',
+                                                        'cadangan' => 'text-bg-info',
+                                                    ];
+
+                                                    $status = strtolower($pendaftar->status_pendaftaran);
+                                                @endphp
+
+                                                <span class="badge {{ $statusColors[$status] ?? 'text-bg-dark' }}">
+                                                    {{ $statusLabels[$status] ?? ucfirst($pendaftar->status_pendaftaran) }}
                                                 </span>
                                             </td>
                                         </tr>
                                         @if ($pendaftar->catatan_penolakan)
                                         <tr>
-                                            <th>Catatan Penolakan</th>
+                                            <th>Catatan Perbaikan</th>
                                             <td>: {{ $pendaftar->catatan_penolakan }}</td>
                                         </tr>
                                         @endif
@@ -314,8 +356,16 @@
                                         @if ($pendaftar->status_pendaftaran === "diterima")
                                         <tr>
                                             <th>Daftar Ulang</th>
-                                            <td>: {{ $pendaftar->daftar_ulang ? ucfirst($pendaftar->daftar_ulang) : 'Belum' }}</td>
-                                        </tr>  
+                                            <td>:
+                                                @if ($pendaftar->daftar_ulang === 'ya')
+                                                    <span class="badge bg-success">Ya</span>
+                                                @elseif ($pendaftar->daftar_ulang === 'tidak')
+                                                    <span class="badge bg-danger">Tidak</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Belum</span>
+                                                @endif
+                                            </td>
+                                        </tr>                                         
                                         @endif
                                     </table>
                                 </div>
@@ -338,7 +388,7 @@
                                             <label for="status_pendaftaran">Status Pendaftaran:</label>
                                             <select name="status_pendaftaran" id="status_pendaftaran" class="form-control">
                                                 <option value="" disabled selected>Pilih Status</option>
-                                                <option value="diterima" {{ $pendaftar->status_pendaftaran == 'diterima' ? 'selected' : '' }}>Diterima</option>
+                                                <option class="text-success" value="diterima" {{ $pendaftar->status_pendaftaran == 'diterima' ? 'selected' : '' }}>Lulus</option>
                                             </select>
                                         </div>
                                         <button type="button" class="btn btn-primary mt-3 btn-submit">Simpan</button>
@@ -386,12 +436,12 @@
                                             <label for="status">Status Verifikasi:</label>
                                             <select name="status" id="status" class="form-control">
                                                 <option value="" disabled selected>Pilih Status Verifikasi</option>
-                                                <option value="verifikasi">Verifikasi</option>
-                                                <option value="tolak">Tolak</option>
+                                                <option value="verifikasi" class="text-success">Terverifikasi</option>
+                                                <option value="tolak" class="text-danger">Perlu Perbaikan</option>
                                             </select>
                                         </div>
                                         <div class="form-group mt-3" id="catatan_penolakan_div" style="display: none;">
-                                            <label for="catatan_penolakan">Catatan Penolakan:</label>
+                                            <label for="catatan_penolakan">Catatan Perbaikan:</label>
                                             <textarea name="catatan_penolakan" id="catatan_penolakan" class="form-control"></textarea>
                                         </div>
                                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
@@ -412,13 +462,13 @@
                                     <form id="nilaiJurusanForm" action="{{ route('pendaftar.updateNilaiTes', $pendaftar->id) }}" method="POST">
                                         @csrf
                                         <div class="form-group">
-                                            <label for="nilai_tes_minat_bakat">Nilai Tes Minat Bakat:</label>
+                                            <label for="nilai_tes_minat_bakat">Nilai Tes Minat dan Bakat:</label>
                                             <select name="nilai_tes_minat_bakat" id="nilai_tes_minat_bakat" class="form-control">
-                                                <option value="" disabled selected>Pilih Nilai Tes Minat Bakat</option>
-                                                <option value="A">A</option>
-                                                <option value="B">B</option>
-                                                <option value="C">C</option>
-                                                <option value="K">K</option>
+                                                <option value="" disabled selected>Pilih Nilai Tes Minat dan Bakat</option>
+                                                <option class="text-success" value="A">A (Lulus)</option>
+                                                <option class="text-success" value="B">B (Lulus)</option>
+                                                <option class="text-success" value="C">C (Lulus)</option>
+                                                <option class="text-danger" value="K">K (Tidak Lulus)</option>
                                             </select>
                                         </div>
                                         <div class="form-group mt-3" id="jurusan_diterima_div" style="display: none;">
@@ -450,7 +500,7 @@
                                 <form action="{{ route('pendaftar.destroy', $pendaftar->id) }}" method="POST" style="display:inline;" class="form-delete">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger mx-1">Delete</button>
+                                    <button type="submit" class="btn btn-danger mx-1">Hapus</button>
                                 </form>                                
                             </div>
                         </div>
@@ -516,46 +566,67 @@
 
             // Cek apakah form yang disubmit adalah nilaiJurusanForm
             if (form.id === 'nilaiJurusanForm') {
-                // Get selected jurusan and its kuota
-                let selectedJurusan = document.querySelector('#jurusan_diterima');
-                let selectedOption = selectedJurusan.options[selectedJurusan.selectedIndex];
-                let kuota = selectedOption.getAttribute('data-kuota');
+                // Ambil nilai dari dropdown nilai tes
+                let nilaiTes = document.querySelector('#nilai_tes_minat_bakat').value;
 
-                if (kuota <= 0) {
-                    // Show SweetAlert for kuota confirmation
+                if (nilaiTes === 'K') {
+                    // Jika tidak lulus
                     Swal.fire({
-                        title: 'Kuota Jurusan Habis',
-                        text: "Kuota jurusan yang dipilih sudah habis. Pendaftar akan menjadi cadangan. Apakah Anda ingin melanjutkan?",
-                        icon: 'info',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, lanjutkan!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit the form after confirmation
-                        }
-                    });
-                } else {
-                    // Show SweetAlert for general confirmation
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: "Pastikan data yang Anda masukkan sudah benar!",
+                        title: 'Peserta Tidak Lulus Tes',
+                        text: "Peserta dinyatakan tidak lulus berdasarkan hasil tes. Apakah Anda yakin ingin menyimpan data ini?",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, submit!',
+                        confirmButtonText: 'Ya, simpan!',
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            form.submit(); // Submit the form after confirmation
+                            form.submit(); // Submit form jika disetujui
                         }
                     });
+                } else {
+                    // Ambil nilai jurusan dan kuota
+                    let selectedJurusan = document.querySelector('#jurusan_diterima');
+                    let selectedOption = selectedJurusan.options[selectedJurusan.selectedIndex];
+                    let kuota = selectedOption ? selectedOption.getAttribute('data-kuota') : null;
+
+                    if (kuota !== null && kuota <= 0) {
+                        // Jika kuota habis
+                        Swal.fire({
+                            title: 'Kuota Jurusan Habis',
+                            text: "Kuota jurusan yang dipilih sudah habis. Pendaftar akan menjadi cadangan. Apakah Anda ingin melanjutkan?",
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Ya, lanjutkan!',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit(); // Submit form jika disetujui
+                            }
+                        });
+                    } else {
+                        // Jika kuota masih tersedia
+                        Swal.fire({
+                            title: 'Apakah Anda yakin?',
+                            text: "Pastikan data yang Anda masukkan sudah benar!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Ya, submit!',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit(); // Submit form jika disetujui
+                            }
+                        });
+                    }
                 }
             } else {
-                // Show SweetAlert for general confirmation for other forms
+                // Untuk form lain
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
                     text: "Pastikan data yang Anda masukkan sudah benar!",
@@ -567,7 +638,7 @@
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        form.submit(); // Submit the form after confirmation
+                        form.submit(); // Submit form jika disetujui
                     }
                 });
             }
