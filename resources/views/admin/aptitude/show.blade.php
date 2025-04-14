@@ -19,7 +19,7 @@
                 <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-end">
                       <li class="breadcrumb-item"><a href="{{ url('/admin/dashboard') }}">Home</a></li>
-                      <li class="breadcrumb-item"><a href="{{ route('aptitudes.index') }}">Tes Minat dan Bakat</a></li>
+                      <li class="breadcrumb-item"><a href="{{ route('aptitudes.index') }}">Tes Minat Bakat</a></li>
                       <li class="breadcrumb-item active" aria-current="page">{{ $title }}</li>
                   </ol>
                 </div>
@@ -38,7 +38,7 @@
                   <div class="card-body">
                     <div class="row">
                       <!-- Column 1 -->
-                      <h5 class="text-center">Data Tes Minat dan Bakat</h5>
+                      <h5 class="text-center">Data Tes Minat Bakat</h5>
                       <div class="col-md-6">
                         <table class="table">
                           <tr>
