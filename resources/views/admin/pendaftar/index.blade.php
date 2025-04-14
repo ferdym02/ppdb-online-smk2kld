@@ -22,9 +22,20 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
+
+                    @php
+                        $statusMapping = [
+                            'pending' => 'Pending',
+                            'verified' => 'Terverifikasi',
+                            'rejected' => 'Perlu Perbaikan',
+                            'diterima' => 'Lulus',
+                            'gugur' => 'Tidak Lulus',
+                            'cadangan' => 'Cadangan'
+                        ];
+                    @endphp
+
                     <div class="row mb-3">
                         <div class="col-md-3">
-                            <!-- Dropdown untuk memilih periode -->
                             <form method="GET" action="{{ route('admin.pendaftar.index') }}">
                                 <div class="form-group">
                                     <label for="periode_id">Periode Pendaftaran:</label>
@@ -41,61 +52,46 @@
                         </div>
                     </div>
 
-                    <!-- Tampilkan data jika ada -->
                     @if ($totalPending || $totalVerified || $totalRejected || $totalDiterima || $totalGugur || $totalCadangan)
                     <div class="card">
                         <div class="card-body">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="text-center" style="width: 10%">No.</th>
-                                        <th>Status Pendaftaran</th>
-                                        <th class="text-center">Pendaftar</th>
-                                        <th class="text-center">Aksi</th>
+                                        <th class="text-center align-middle" style="width: 10%">No.</th>
+                                        <th class="align-middle">Status Pendaftaran</th>
+                                        <th class="text-center align-middle">Pendaftar</th>
+                                        <th class="text-center align-middle">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="text-center">1</td>
-                                        <td>Pending</td>
-                                        <td class="text-center">{{ $totalPending }}</td>
-                                        <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'pending', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-secondary">Detail</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2</td>
-                                        <td>Diverifikasi</td>
-                                        <td class="text-center">{{ $totalVerified }}</td>
-                                        <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'verified', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-primary">Detail</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">3</td>
-                                        <td>Ditolak</td>
-                                        <td class="text-center">{{ $totalRejected }}</td>
-                                        <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'rejected', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-warning">Detail</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">4</td>
-                                        <td>Diterima</td>
-                                        <td class="text-center">{{ $totalDiterima }}</td>
-                                        <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'diterima', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-success">Detail</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">5</td>
-                                        <td>Gugur</td>
-                                        <td class="text-center">{{ $totalGugur }}</td>
-                                        <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'gugur', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-danger">Detail</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">6</td>
-                                        <td>Cadangan</td>
-                                        <td class="text-center">{{ $totalCadangan }}</td>
-                                        <td class="text-center"><a href="{{ route('pendaftar.status', ['status' => 'cadangan', 'periode_id' => $selectedPeriodId]) }}" class="btn btn-info">Detail</a></td>
-                                    </tr>
+                                    @php
+                                        $data = [
+                                            ['status' => 'pending', 'jumlah' => $totalPending, 'btnClass' => 'secondary'],
+                                            ['status' => 'verified', 'jumlah' => $totalVerified, 'btnClass' => 'primary'],
+                                            ['status' => 'rejected', 'jumlah' => $totalRejected, 'btnClass' => 'warning'],
+                                            ['status' => 'diterima', 'jumlah' => $totalDiterima, 'btnClass' => 'success'],
+                                            ['status' => 'gugur', 'jumlah' => $totalGugur, 'btnClass' => 'danger'],
+                                            ['status' => 'cadangan', 'jumlah' => $totalCadangan, 'btnClass' => 'info'],
+                                        ];
+                                    @endphp
+
+                                    @foreach ($data as $index => $item)
+                                        <tr>
+                                            <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                            <td class="align-middle">{{ $statusMapping[$item['status']] }}</td>
+                                            <td class="text-center align-middle">{{ $item['jumlah'] }}</td>
+                                            <td class="text-center align-middle">
+                                                <a href="{{ route('pendaftar.status', ['status' => $item['status'], 'periode_id' => $selectedPeriodId]) }}" class="btn btn-{{ $item['btnClass'] }}">Detail</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="2" class="text-start">Total Pendaftar:</th>
-                                        <td class="text-center"><strong>{{ $totalPending + $totalVerified + $totalRejected + $totalDiterima + $totalGugur + $totalCadangan }}</strong></td>
+                                        <th colspan="2" class="text-start align-middle">Total Pendaftar:</th>
+                                        <td class="text-center align-middle"><strong>{{ $totalPending + $totalVerified + $totalRejected + $totalDiterima + $totalGugur + $totalCadangan }}</strong></td>
+                                        <td></td>
                                     </tr>
                                 </tfoot>
                             </table>
