@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Pendaftar;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Illuminate\Support\Collection;
 
 class PendaftarExport implements FromCollection, WithHeadings
 {
@@ -17,57 +18,79 @@ class PendaftarExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        $query = Pendaftar::query();
+        $query = Pendaftar::with('periode') // Load relasi periode
+            ->select('pendaftars.*'); // Ambil semua kolom dari tabel pendaftar
 
-        if (isset($this->filters['jurusan'])) {
-            $query->where('jurusan_id', $this->filters['jurusan']);
+        // Filter berdasarkan permintaan
+        if (!empty($this->filters['periode'])) {
+            $query->where('periode_id', $this->filters['periode']);
         }
-        if (isset($this->filters['status_pendaftaran'])) {
+        if (!empty($this->filters['jurusan'])) {
+            $query->whereHas('jurusans', function ($q) {
+                $q->where('jurusan_id', $this->filters['jurusan']);
+            });
+        }        
+        if (!empty($this->filters['status_pendaftaran'])) {
             $query->where('status_pendaftaran', $this->filters['status_pendaftaran']);
         }
-        if (isset($this->filters['status_tes'])) {
-            $query->where('status_tes', $this->filters['status_tes']);
+        // Filter berdasarkan tanggal pendaftaran
+        if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
+            $query->whereBetween('created_at', [$this->filters['start_date'], $this->filters['end_date']]);
+        } elseif (!empty($this->filters['start_date'])) {
+            $query->whereDate('created_at', '>=', $this->filters['start_date']);
+        } elseif (!empty($this->filters['end_date'])) {
+            $query->whereDate('created_at', '<=', $this->filters['end_date']);
         }
-        if (isset($this->filters['tanggal_awal']) && isset($this->filters['tanggal_akhir'])) {
-            $query->whereBetween('tanggal_pendaftaran', [$this->filters['tanggal_awal'], $this->filters['tanggal_akhir']]);
+
+        // Ambil data dan urutkan berdasarkan periode dan nama lengkap
+        $data = $query->orderBy('periode_id')->orderBy('nama_lengkap')->get();
+
+        // Mapping status pendaftaran
+        $statusMapping = [
+            'pending' => 'Pending',
+            'verified' => 'Terverifikasi',
+            'rejected' => 'Perlu Perbaikan',
+            'diterima' => 'Lulus',
+            'gugur' => 'Tidak Lulus',
+            'cadangan' => 'Cadangan'
+        ];
+
+        // Kelompokkan berdasarkan periode
+        $groupedData = $data->groupBy('periode_id');
+
+        $finalData = new Collection();
+        foreach ($groupedData as $periodeId => $pendaftarList) {
+            $periodeNama = optional($pendaftarList->first()->periode)->tahun_pelajaran ?? 'Periode Tidak Diketahui';
+
+            // Tambahkan header periode
+            $finalData->push(['Periode: ' . $periodeNama, '', '', '', '', '', '']);
+
+            // Tambahkan header tabel setelah setiap periode
+            $finalData->push([
+                'No', 'Nomor Pendaftaran', 'NISN', 'Nama Lengkap', 'Jenis Kelamin', 'Asal Sekolah', 'Status Pendaftaran'
+            ]);
+
+            // Tambahkan data pendaftar
+            foreach ($pendaftarList as $index => $item) {
+                $status = $statusMapping[$item->status_pendaftaran] ?? $item->status_pendaftaran;
+
+                $finalData->push([
+                    $index + 1,
+                    $item->nomor_pendaftaran,
+                    $item->nisn,
+                    $item->nama_lengkap,
+                    $item->jenis_kelamin,
+                    $item->asal_sekolah,
+                    $status, // Status sudah dikonversi sesuai mapping
+                ]);
+            }
         }
 
-        // Ambil data pendaftar dan tambahkan nomor urut
-        $data = $query->orderBy('nama_lengkap')->get([
-            'nomor_pendaftaran',
-            'nisn',
-            'nama_lengkap',
-            'jenis_kelamin',
-            'asal_sekolah',
-            'status_pendaftaran',
-        ]);
-
-        // Tambahkan nomor urut
-        $dataWithNumbers = $data->map(function ($item, $index) {
-            return [
-                'No' => $index + 1, // Nomor urut
-                'Nomor Pendaftaran' => $item->nomor_pendaftaran,
-                'NISN' => $item->nisn,
-                'Nama Lengkap' => $item->nama_lengkap,
-                'Jenis Kelamin' => $item->jenis_kelamin,
-                'Asal Sekolah' => $item->asal_sekolah,
-                'Status Pendaftaran' => $item->status_pendaftaran,
-            ];
-        });
-
-        return collect($dataWithNumbers);
+        return $finalData;
     }
 
     public function headings(): array
     {
-        return [
-            'No', // Tambahkan kolom untuk nomor
-            'Nomor Pendaftaran',
-            'NISN',
-            'Nama Lengkap',
-            'Jenis Kelamin',
-            'Asal Sekolah',
-            'Status Pendaftaran',
-        ];
+        return []; // Header sudah ditangani dalam collection()
     }
 }
