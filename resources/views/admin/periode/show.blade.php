@@ -77,6 +77,16 @@
                       </div>
                     </div>
                   </div>
+                  @if ($periodes->pendaftars->where('status_pendaftaran', 'diterima')->count() > 0)
+                      <div class="card-footer d-flex justify-content-end">
+                          <a href="{{ route('laporan.pdfDiterima', ['periode_id' => $periodes->id]) }}" class="btn btn-danger">
+                              <i class="bi bi-file-earmark-pdf"></i> Cetak PDF Pendaftar Lulus
+                          </a>
+                          <a href="{{ route('laporan.excelDiterima', ['periode_id' => $periodes->id]) }}" class="btn btn-success ms-2">
+                              <i class="bi bi-file-earmark-excel"></i> Cetak Excel Pendaftar Lulus
+                          </a>
+                      </div>
+                  @endif
                 </div>
               </div>
             </div>
@@ -85,11 +95,11 @@
                 <div class="col-12">
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Data Tes Minat dan Bakat</h3>
+                            <h3 class="card-title">Data Tes Minat Bakat</h3>
                         </div>
                         <div class="card-body">
                             @if($periodes->aptitudeTests->isEmpty())
-                                <p class="text-center">Tidak ada data tes minat dan bakat untuk periode ini.</p>
+                                <p class="text-center">Tidak ada data tes minat bakat untuk periode ini.</p>
                             @else
                                 <table class="table table-bordered">
                                     <thead>
@@ -140,7 +150,7 @@
                                         <tr>
                                             <th class="text-center">No.</th>
                                             <th>Jurusan</th>
-                                            <th class="text-center">Kuota</th>
+                                            <th class="text-center">Kuota Tersedia</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -154,7 +164,7 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="2" class="text-start">Total Kuota</th>
+                                            <th colspan="2" class="text-start">Total Kuota Jurusan Tersedia</th>
                                             <td class="text-center"><strong>{{ $periodes->periodeJurusans->sum('kuota') }}</strong></td>
                                         </tr>
                                     </tfoot>
