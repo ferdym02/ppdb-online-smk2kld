@@ -22,8 +22,8 @@ class UserSeeder extends Seeder
                 'role' => 'admin', // Set role sebagai 'admin'
             ],
             [
-                'name' => 'Awaludin',
-                'email' => 'awaludin@gmail.com',
+                'name' => 'Ferdy. M',
+                'email' => 'user1@gmail.com',
                 'password' => Hash::make('password'),
                 'role' => 'user', // Default role
             ],
