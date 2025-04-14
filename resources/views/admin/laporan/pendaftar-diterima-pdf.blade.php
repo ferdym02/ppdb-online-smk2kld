@@ -142,7 +142,9 @@
     @foreach($pendaftarDiterima as $jurusanId => $pendaftar)
         @php
             $jurusan = \App\Models\Jurusan::find($jurusanId);
+            $isLast = $loop->last;
         @endphp
+        
         <div class="section-judul ">
             <p><strong>Konsentrasi Keahlian:</strong></p>
             <p><strong>{{ $jurusan ? $jurusan->nama : 'Tidak Diketahui' }}</strong></p>
@@ -197,6 +199,9 @@
             </div>
         </div>
         <div class="clear-float"></div>
+        @if (!$isLast)
+            <div style="page-break-after: always;"></div>
+        @endif
     @endforeach
 </body>
 </html>
