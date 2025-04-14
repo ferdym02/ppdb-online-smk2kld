@@ -17,12 +17,16 @@
         }
         th, td {
             border: 1px solid #000;
-            text-align: left;
             padding: 6px;
         }
         th {
             background-color: #f2f2f2;
-            text-align: center; /* Memusatkan teks di header tabel */
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-left {
+            text-align: left;
         }
         h2 {
             text-align: center;
@@ -147,32 +151,44 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 5%">No.</th> <!-- Menambahkan kolom No. -->
-                        <th style="width: 10%">Nomor Pendaftaran</th>
-                        <th style="width: 15%">NISN</th>
-                        <th>Nama Lengkap</th>
-                        <th style="width: 5%">L/P</th>
-                        <th style="width: 20%">Asal Sekolah</th>
-                        <th style="width: 10%">Status Pendaftaran</th>
+                        <th class="text-center" style="width: 5%">No.</th> <!-- Menambahkan kolom No. -->
+                        <th class="text-center" style="width: 10%">No. Pendaftaran</th>
+                        <th class="text-center" style="width: 10%">NISN</th>
+                        <th class="text-left">Nama Lengkap</th>
+                        <th class="text-center" style="width: 5%">L/P</th>
+                        <th class="text-left" style="width: 20%">Asal Sekolah</th>
+                        <th class="text-left" style="width: 10%">Status</th>
+                        <th class="text-left" style="width: 10%">Nilai Akhir</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $statusMapping = [
+                            'pending' => 'Pending',
+                            'verified' => 'Terverifikasi',
+                            'rejected' => 'Perlu Perbaikan',
+                            'diterima' => 'Lulus',
+                            'gugur' => 'Tidak Lulus',
+                            'cadangan' => 'Cadangan'
+                        ];
+                    @endphp
                     @foreach($pendaftar->sortByDesc('nilai_akhir') as $index => $p)
                         <tr>
-                            <td>{{ $index + 1 }}</td> <!-- Menampilkan nomor urut -->
-                            <td>{{ $p->nomor_pendaftaran }}</td>
-                            <td>{{ $p->nisn }}</td>
+                            <td class="text-center">{{ $index + 1 }}</td> <!-- Menampilkan nomor urut -->
+                            <td class="text-center">{{ $p->nomor_pendaftaran }}</td>
+                            <td class="text-center">{{ $p->nisn }}</td>
                             <td>{{ $p->nama_lengkap }}</td>
-                            <td>{{ $p->jenis_kelamin == 'Laki-laki' ? 'L' : 'P' }}</td>
+                            <td class="text-center">{{ $p->jenis_kelamin == 'Laki-laki' ? 'L' : 'P' }}</td>
                             <td>{{ $p->asal_sekolah }}</td>
-                            <td>{{ ucfirst($p->status_pendaftaran) }}</td>
+                            <td>{{ $statusMapping[strtolower($p->status_pendaftaran)] ?? $p->status_pendaftaran }}</td>
+                            <td>{{ $p->nilai_akhir }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
         <div id="ttd">
-            <p>Kalianda, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p> 
+            <p>Kalianda, {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}</p> 
             <p id="kepsek">Kepala Sekolah,</p>
             <div id="nama-kepsek">
                 <strong><u>NYOMAN MISTER, M.Pd</u></strong><br />
