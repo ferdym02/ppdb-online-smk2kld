@@ -55,7 +55,7 @@ return new class extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('periode_id')->references('id')->on('periodes')->onDelete('cascade');
-            $table->foreign('jurusan_diterima')->references('id')->on('periode_jurusan')->onDelete('set null');
+            $table->foreign('jurusan_diterima')->references('id')->on('jurusans')->nullOnDelete();
             $table->foreign('aptitude_tests_id')->references('id')->on('aptitude_tests')->onDelete('set null');
         });
     }
