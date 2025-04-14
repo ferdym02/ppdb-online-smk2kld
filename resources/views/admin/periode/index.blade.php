@@ -35,7 +35,7 @@
                 <thead>
                   <tr>
                     <th class="text-center">No.</th>
-                    <th class="text-center">Tahun Pelajaran</th>
+                    <th class="text-center">Tahun Ajaran</th>
                     <th class="text-center">Tanggal Buka</th>
                     <th class="text-center">Tanggal Tutup</th>
                     <th class="text-center">Kuota Penerimaan</th>
@@ -86,13 +86,14 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
+                        <label for="tahun_pelajaran" class="form-label">Tahun Ajaran</label>
                         <input 
                             type="text" 
                             class="form-control @error('tahun_pelajaran') is-invalid @enderror" 
                             id="tahun_pelajaran" 
                             name="tahun_pelajaran" 
-                            value="{{ old('tahun_pelajaran') }}" 
+                            value="{{ old('tahun_pelajaran') }}"
+                            placeholder="Contoh: 2025/2026" 
                             required>
                         @error('tahun_pelajaran')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -131,7 +132,8 @@
                             class="form-control @error('kuota_penerimaan') is-invalid @enderror" 
                             id="kuota_penerimaan" 
                             name="kuota_penerimaan" 
-                            value="{{ old('kuota_penerimaan') }}" 
+                            value="{{ old('kuota_penerimaan') }}"
+                            placeholder="Masukkan limit kuota penerimaan"
                             required>
                         @error('kuota_penerimaan')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -176,7 +178,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="edit_tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
+                        <label for="edit_tahun_pelajaran" class="form-label">Tahun Ajaran</label>
                         <input 
                             type="text" 
                             class="form-control @error('tahun_pelajaran') is-invalid @enderror" 
@@ -288,17 +290,20 @@
 
     // Handle edit button click
     $('#periode-table').on('click', '.edit-btn', function() {
-      var url = $(this).data('url');
-      var data = $(this).data('periode');
-      
-      $('#editForm').attr('action', url);
-      $('#edit_tahun_pelajaran').val(data.tahun_pelajaran);
-      $('#edit_tanggal_buka').val(data.tanggal_buka);
-      $('#edit_tanggal_tutup').val(data.tanggal_tutup);
-      $('#edit_kuota_penerimaan').val(data.kuota_penerimaan);
-      $('#edit_status').val(data.status);
-      
-      $('#editModal').modal('show');
+        var data = $(this).data('periode');
+
+        // Pastikan URL update sesuai dengan ID yang dipilih
+        $('#editForm').attr('action', '/admin/periodes/' + data.id);
+
+        // Isi form dengan data periode yang benar
+        $('#edit_tahun_pelajaran').val(data.tahun_pelajaran);
+        $('#edit_tanggal_buka').val(data.tanggal_buka);
+        $('#edit_tanggal_tutup').val(data.tanggal_tutup);
+        $('#edit_kuota_penerimaan').val(data.kuota_penerimaan);
+        $('#edit_status').val(data.status ? "1" : "0"); // Ubah menjadi string "1" atau "0"
+
+        // Tampilkan modal edit
+        $('#editModal').modal('show');
     });
 
     // Handle delete confirmation with SweetAlert
