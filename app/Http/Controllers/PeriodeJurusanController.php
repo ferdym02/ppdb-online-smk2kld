@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\PeriodeJurusan;
 use App\Models\Jurusan;
 use App\Models\Periode;
+use App\Models\Pendaftar;
 
 class PeriodeJurusanController extends Controller
 {
@@ -17,13 +18,42 @@ class PeriodeJurusanController extends Controller
         $title = 'Kuota Jurusan';
         $name = Auth::user()->name;
         $periode_id = $request->query('periode_id');
-        $periodes = Periode::all(); // Untuk dropdown filter
-        $jurusans = Jurusan::all(); // Untuk dropdown tambah/edit
+
+        $periodes = Periode::all(); // Dropdown filter
+        $jurusans = Jurusan::all(); // Dropdown tambah/edit
+
         $periodeJurusans = PeriodeJurusan::where('periode_id', $periode_id)
             ->with('jurusan', 'periode')
             ->get();
 
+        // foreach ($periodeJurusans as $item) {
+        //     $jumlahTerpakai = \App\Models\Pendaftar::where('periode_id', $item->periode_id)
+        //         ->where('jurusan_diterima', $item->jurusan_id)
+        //         ->count();
+
+        //     $item->terpakai = $jumlahTerpakai;
+        // }
+
         return view('admin.periode-jurusan.index', compact('periodes', 'jurusans', 'periodeJurusans', 'periode_id', 'name', 'title'));
+    }
+
+    public function show($id)
+    {
+        $title = 'Detail Kuota Jurusan';
+        $name = Auth::user()->name;
+        $periodeJurusan = PeriodeJurusan::with(['jurusan', 'periode'])->findOrFail($id);
+
+        // Ambil pendaftar yang diterima di jurusan dan periode ini
+        $pendaftarDiterima = Pendaftar::where('status_pendaftaran', 'diterima')
+            ->where('periode_id', $periodeJurusan->periode_id)
+            ->where('jurusan_diterima', $periodeJurusan->jurusan_id)
+            ->get();
+
+        // Hitung jumlah terpakai lalu tambahkan sebagai properti dinamis
+        $jumlahTerpakai = $pendaftarDiterima->count();
+        $periodeJurusan->terpakai = $jumlahTerpakai;
+
+        return view('admin.periode-jurusan.show', compact('pendaftarDiterima', 'periodeJurusan', 'name', 'title'));
     }
 
     // Menyimpan data baru
@@ -32,7 +62,7 @@ class PeriodeJurusanController extends Controller
         $request->validate([
             'periode_id' => 'required|exists:periodes,id',
             'jurusan_id' => 'required|exists:jurusans,id',
-            'kuota' => 'required|integer|min:0',
+            'kuota' => 'required|integer|min:1',
         ]);
     
         // Ambil periode terkait
