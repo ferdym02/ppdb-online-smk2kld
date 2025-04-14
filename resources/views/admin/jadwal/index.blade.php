@@ -91,14 +91,14 @@
         <div class="modal-body">
           <div class="form-group mb-3">
             <label for="kegiatan">Kegiatan</label>
-            <input type="text" name="kegiatan" class="form-control @error('kegiatan') is-invalid @enderror" value="{{ old('kegiatan') }}" required placeholder="Cont: MPLS">
+            <input type="text" name="kegiatan" class="form-control @error('kegiatan') is-invalid @enderror" value="{{ old('kegiatan') }}" required placeholder="Contoh: MPLS">
             @error('kegiatan')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
           <div class="form-group mb-3">
             <label for="lokasi">Lokasi</label>
-            <input type="text" name="lokasi" class="form-control @error('lokasi') is-invalid @enderror" value="{{ old('lokasi') }}" required placeholder="Cont: Online/Di Sekolah">
+            <input type="text" name="lokasi" class="form-control @error('lokasi') is-invalid @enderror" value="{{ old('lokasi') }}" required placeholder="Contoh: Online/Di Sekolah">
             @error('lokasi')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -119,7 +119,7 @@
           </div>
           <div class="form-group mb-3">
             <label for="waktu">Waktu</label>
-            <input type="text" name="waktu" class="form-control @error('waktu') is-invalid @enderror" value="{{ old('waktu') }}" required placeholder="Cont: 07.00-08.00 WIB">
+            <input type="text" name="waktu" class="form-control @error('waktu') is-invalid @enderror" value="{{ old('waktu') }}" required placeholder="Contoh: 07.00-08.00 WIB">
             @error('waktu')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
