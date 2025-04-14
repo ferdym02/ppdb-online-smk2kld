@@ -113,7 +113,7 @@
               <h1>PPDB Online {{ $profile->nama_sekolah }} {{ $currentYear }}/{{ $nextYear }}</h1>
               <p>Melalui halaman ini, Anda dapat mendaftar sebagai calon peserta didik baru secara online dengan mudah dan cepat.</p>
               <div class="d-flex">
-                <a href="/register" class="btn-get-started">Daftar</a>
+                <a href="/register" class="btn-get-started">Daftar di Sini</a>
               </div>
             </div>
             <div class="col-lg-6 order-1 order-lg-2 hero-img d-flex justify-content-center" data-aos="zoom-out" data-aos-delay="100">
