@@ -14,7 +14,7 @@ class PeriodeController extends Controller
         session(['periodes_url' => $request->fullUrl()]);
         $name = Auth::user()->name;
         $title = 'Periode Pendaftaran';
-        $periodes = Periode::all();
+        $periodes = Periode::orderBy('created_at', 'desc')->get();
         return view('admin.periode.index', compact('title', 'name', 'periodes'));
     }
 
