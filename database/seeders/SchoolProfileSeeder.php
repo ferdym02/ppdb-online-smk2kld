@@ -20,7 +20,6 @@ class SchoolProfileSeeder extends Seeder
             'alamat_sekolah' => 'Jl. Soekarno-Hatta Km No.52, Kedaton, Kec. Kalianda, Kabupaten Lampung Selatan, Lampung 35551',
             'email_sekolah' => 'smkn02kalianda@gmail.com',
             'telepon_sekolah' => '(0727) 322282',
-            'logo_sekolah' => 'logos/school-logo.png',
             'facebook' => 'https://www.facebook.com/smk2kld/',
             'instagram' => 'https://www.instagram.com/smk2kld/',
             'call_center_1' => '081234567890',
