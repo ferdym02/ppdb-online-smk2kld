@@ -33,16 +33,16 @@
                     <th class="text-center">No.</th>
                     <th class="text-center">Kode</th>
                     <th>Nama Jurusan</th>
-                    <th class="text-center">Action</th>
+                    <th class="text-center">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   @forelse($jurusans as $key => $jurusan)
                     <tr>
-                      <td class="text-center">{{ $loop->iteration }}</td>
-                      <td class="text-center">{{ $jurusan->kode }}</td>
-                      <td>{{ $jurusan->nama }}</td>
-                      <td class="text-center">
+                      <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                      <td class="text-center align-middle">{{ $jurusan->kode }}</td>
+                      <td class="align-middle">{{ $jurusan->nama }}</td>
+                      <td class="text-center align-middle">
                         <button class="btn btn-warning btn-sm" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#jurusanModal" 
