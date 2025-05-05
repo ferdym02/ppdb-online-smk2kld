@@ -14,7 +14,7 @@ class PeriodeController extends Controller
         session(['periodes_url' => $request->fullUrl()]);
         $name = Auth::user()->name;
         $title = 'Periode Pendaftaran';
-        $periodes = Periode::orderBy('created_at', 'desc')->get();
+        $periodes = Periode::orderByDesc('status')->orderBy('created_at', 'desc')->get();
         return view('admin.periode.index', compact('title', 'name', 'periodes'));
     }
 
@@ -92,6 +92,18 @@ class PeriodeController extends Controller
         $periode = Periode::findOrFail($id);
         if ($periode->status == 1) {
             return redirect()->back()->with('error', 'Periode yang sedang aktif tidak dapat dihapus.');
+        }
+
+        if ($periode->pendaftars()->exists()) {
+            return redirect()->back()->with('error', 'Tidak dapat menghapus periode karena sudah digunakan oleh data pendaftar.');
+        }
+
+        if ($periode->aptitudeTests()->exists()) {
+            return redirect()->back()->with('error', 'Tidak dapat menghapus periode karena sudah digunakan oleh data tes minat bakat.');
+        }
+
+        if ($periode->periodeJurusans()->exists()) {
+            return redirect()->back()->with('error', 'Tidak dapat menghapus periode karena sudah digunakan oleh data kuota jurusan.');
         }
 
         $periode->delete();
