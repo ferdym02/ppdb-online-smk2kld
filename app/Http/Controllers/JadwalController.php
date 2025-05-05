@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class JadwalController extends Controller
 {
-    // Menampilkan daftar jadwal
     public function index()
     {
         $name = Auth::user()->name;
@@ -17,7 +16,6 @@ class JadwalController extends Controller
         return view('admin.jadwal.index', compact('title', 'name', 'jadwals'));
     }
 
-    // Menyimpan data jadwal baru
     public function store(Request $request)
     {
         $request->validate([
@@ -51,7 +49,6 @@ class JadwalController extends Controller
         ]);
     }
 
-    // Memperbarui data jadwal yang ada
     public function update(Request $request, $id)
     {
         try {
@@ -83,7 +80,6 @@ class JadwalController extends Controller
         }
     }
 
-    // Menghapus data jadwal
     public function destroy($id)
     {
         $jadwal = Jadwal::findOrFail($id);
