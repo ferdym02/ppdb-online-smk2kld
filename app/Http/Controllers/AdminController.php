@@ -22,6 +22,7 @@ class AdminController extends Controller
         $totalJurusan = Jurusan::count();
         $schoolProfile = SchoolProfile::first();
         $tahunSekarang = date('Y');
+
         // Ambil periode aktif
         $periodeAktif = Periode::where('status', 1)->first();
 
@@ -35,18 +36,15 @@ class AdminController extends Controller
                 ->where('status_pendaftaran', 'diterima')->count();
             $totalGugur = Pendaftar::where('periode_id', $periodeAktif->id)
                 ->where('status_pendaftaran', 'gugur')->count();
-        }
 
-        if ($periodeAktif) {
-            $tanggalTutup = Carbon::parse($periodeAktif->tanggal_tutup);
-
-            // Cek apakah hari ini sudah lewat dari tanggal tutup
-            if (now()->greaterThan($tanggalTutup)) {
-                $pendaftarYangDiperbarui = Pendaftar::whereIn('status_pendaftaran', ['rejected', 'verified'])->get();
+            $tanggalTutup = $periodeAktif->tanggal_tutup ? Carbon::parse($periodeAktif->tanggal_tutup) : null;
+            
+            if ($tanggalTutup && now()->greaterThan($tanggalTutup)) {
+                $pendaftarYangDiperbarui = Pendaftar::where('status_pendaftaran', 'rejected')->get();
 
                 if ($pendaftarYangDiperbarui->count() > 0) {
-                    Pendaftar::whereIn('status_pendaftaran', ['rejected', 'verified'])
-                        ->update(['status_pendaftaran' => 'gugur']);
+                    Pendaftar::where('status_pendaftaran', 'rejected')
+                    ->update(['status_pendaftaran' => 'gugur']);
 
                     Log::info('Status pendaftar otomatis diperbarui ke "gugur" karena periode telah berakhir', [
                         'jumlah_pendaftar' => $pendaftarYangDiperbarui->count()
@@ -63,7 +61,6 @@ class AdminController extends Controller
             ->pluck('total', 'tahun')
             ->toArray();
 
-        // Ambil data jumlah pendaftar yang "diterima" per tahun
         $dataDiterima = Pendaftar::where('status_pendaftaran', 'diterima')
             ->selectRaw('YEAR(created_at) as tahun, COUNT(*) as total')
             ->groupBy('tahun')
@@ -72,7 +69,6 @@ class AdminController extends Controller
             ->pluck('total', 'tahun')
             ->toArray();
 
-        // Ambil data jumlah pendaftar yang "gugur" per tahun
         $dataGugur = Pendaftar::where('status_pendaftaran', 'gugur')
             ->selectRaw('YEAR(created_at) as tahun, COUNT(*) as total')
             ->groupBy('tahun')
@@ -81,11 +77,10 @@ class AdminController extends Controller
             ->pluck('total', 'tahun')
             ->toArray();
 
-        // Tentukan tahun pertama dan tahun terakhir
-        $tahunPertama = min(array_keys($dataPendaftar)); 
-        $tahunSekarang = date('Y');
+        // Cek apakah array data tidak kosong sebelum mengambil min/max
+        $tahunPertama = !empty($dataPendaftar) ? min(array_keys($dataPendaftar)) : $tahunSekarang;
         $tahunBatas = $tahunSekarang + 5;
-        $tahunTerakhir = max($tahunBatas, max(array_keys($dataPendaftar)));
+        $tahunTerakhir = !empty($dataPendaftar) ? max($tahunBatas, max(array_keys($dataPendaftar))) : $tahunBatas;
 
         $pendaftarPerTahun = [];
         $diterimaPerTahun = [];
@@ -98,12 +93,12 @@ class AdminController extends Controller
         }
 
         $totalLakiLaki = Pendaftar::whereYear('created_at', $tahunSekarang)
-        ->where('jenis_kelamin', 'Laki-laki')
-        ->count();
+            ->where('jenis_kelamin', 'Laki-laki')
+            ->count();
 
         $totalPerempuan = Pendaftar::whereYear('created_at', $tahunSekarang)
-        ->where('jenis_kelamin', 'Perempuan')
-        ->count();
+            ->where('jenis_kelamin', 'Perempuan')
+            ->count();
 
         return view('admin.dashboard', compact(
             'title', 'user', 'totalPendaftar', 'totalDiterima', 'totalGugur', 'totalJurusan',
@@ -114,9 +109,8 @@ class AdminController extends Controller
     public function adminProfile()
     {
         $title = "Profil Admin";
-        $user = Auth::user();
         $admin = Auth::user();
-        return view('admin.profile', compact('title', 'user', 'admin'));
+        return view('admin.profile', compact('title', 'admin'));
     }
 
     public function adminUpdate(Request $request)
@@ -124,7 +118,7 @@ class AdminController extends Controller
         $admin = Auth::user();
         $request->validate([
             'name' => 'required|string|max:255',
-            'password' => 'nullable|min:6|confirmed',
+            'password' => 'nullable|min:8|confirmed',
         ]);
         $admin->name = $request->input('name');
         if ($request->filled('password')) {
@@ -146,7 +140,7 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:8|confirmed',
             'role' => 'required'
         ]);
 
