@@ -12,8 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous"><!--end::Fonts--><!--begin::Third Party Plugin(OverlayScrollbars)-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/styles/overlayscrollbars.min.css" integrity="sha256-dSokZseQNT08wYEWiz5iLI8QPlKxG+TswNRD8k35cpg=" crossorigin="anonymous"><!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Third Party Plugin(Bootstrap Icons)-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css" integrity="sha256-Qsx5lrStHZyR9REqhUF8iQt73X06c8LGIUPzpOhwRrI=" crossorigin="anonymous"><!--end::Third Party Plugin(Bootstrap Icons)--><!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="{{ asset('new-lte/dist/css/adminlte.css') }}"><!--end::Required Plugin(AdminLTE)--><!-- apexcharts -->
-    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css" integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous"><!-- jsvectormap --> --}}
+    <link rel="stylesheet" href="{{ asset('new-lte/dist/css/adminlte.css') }}"><!--end::Required Plugin(AdminLTE)-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css" integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous">
     <!-- Favicons -->
@@ -197,10 +196,10 @@
         <!--begin::Footer-->
         <footer class="app-footer"> <!--begin::Copyright-->
             <strong>
-                Copyright &copy; 2024&nbsp;
+                Hak Cipta &copy; 2025&nbsp;
                 <a href="#" class="text-decoration-none">PPDB SMKN 2 Kalianda</a>.
             </strong>
-            All rights reserved.
+            Semua hak dilindungi.
             <!--end::Copyright-->
         </footer> <!--end::Footer-->
     </div> <!--end::App Wrapper--> <!--begin::Script--> <!--begin::Third Party Plugin(OverlayScrollbars)-->
@@ -230,89 +229,10 @@
                 });
             }
         });
-    </script> <!--end::OverlayScrollbars Configure--> <!-- OPTIONAL SCRIPTS --> <!-- sortablejs -->
-    {{-- <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js" integrity="sha256-ipiJrswvAR4VAx/th+6zWsdeYmVae0iJuiR+6OqHJHQ=" crossorigin="anonymous"></script> <!-- sortablejs -->
-    <script>
-        const connectedSortables =
-            document.querySelectorAll(".connectedSortable");
-        connectedSortables.forEach((connectedSortable) => {
-            let sortable = new Sortable(connectedSortable, {
-                group: "shared",
-                handle: ".card-header",
-            });
-        });
-
-        const cardHeaders = document.querySelectorAll(
-            ".connectedSortable .card-header",
-        );
-        cardHeaders.forEach((cardHeader) => {
-            cardHeader.style.cursor = "move";
-        });
-    </script> <!-- apexcharts -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js" integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8=" crossorigin="anonymous"></script> <!-- ChartJS -->
-    <script>
-        // NOTICE!! DO NOT USE ANY OF THIS JAVASCRIPT
-        // IT'S ALL JUST JUNK FOR DEMO
-        // ++++++++++++++++++++++++++++++++++++++++++
-
-        const sales_chart_options = {
-            series: [{
-                    name: "Digital Goods",
-                    data: [28, 48, 40, 19, 86, 27, 90],
-                },
-                {
-                    name: "Electronics",
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                },
-            ],
-            chart: {
-                height: 300,
-                type: "area",
-                toolbar: {
-                    show: false,
-                },
-            },
-            legend: {
-                show: false,
-            },
-            colors: ["#0d6efd", "#20c997"],
-            dataLabels: {
-                enabled: false,
-            },
-            stroke: {
-                curve: "smooth",
-            },
-            xaxis: {
-                type: "datetime",
-                categories: [
-                    "2023-01-01",
-                    "2023-02-01",
-                    "2023-03-01",
-                    "2023-04-01",
-                    "2023-05-01",
-                    "2023-06-01",
-                    "2023-07-01",
-                ],
-            },
-            tooltip: {
-                x: {
-                    format: "MMMM yyyy",
-                },
-            },
-        };
-
-        const sales_chart = new ApexCharts(
-            document.querySelector("#revenue-chart"),
-            sales_chart_options,
-        );
-        sales_chart.render();
-    </script> <!-- jsvectormap -->
-    <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js" integrity="sha256-/t1nN2956BT869E6H4V1dnt0X5pAQHPytli+1nTZm2Y=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js" integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY=" crossorigin="anonymous"></script> <!-- jsvectormap --> --}}
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script><!--end::Script-->
+    </script> <!--end::OverlayScrollbars Configure-->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     {{-- SA --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('scripts')
 </body><!--end::Body-->
-
 </html>
