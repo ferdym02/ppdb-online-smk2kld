@@ -16,7 +16,7 @@ class AuthController extends Controller
 {
     public function showRegisterForm()
     {
-        $title = "Register";
+        $title = "Daftar Akun";
         return view('auth.register', compact('title'));
     }
 
@@ -46,7 +46,7 @@ class AuthController extends Controller
 
     public function userLoginForm()
     {
-        $title = "Login";
+        $title = "Login Calon Siswa";
         return view('auth.user-login', compact('title'));
     }
 
@@ -74,7 +74,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $role = Auth::user()->role;
 
-            if ($role != 'admin') {
+            if ($role == 'user') {
                 return redirect()->back()->with('successLogin', 'Login berhasil, Anda akan diarahkan ke dashboard.');
             } else {
                 Auth::logout();
@@ -93,19 +93,30 @@ class AuthController extends Controller
 
     public function adminLogin(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:8',
+        ],
+        [
+            'email.required' => 'Email tidak boleh kosong',
+            'email.email' => 'Email tidak valid',
+            'password.required' => 'Password tidak boleh kosong',
+            'password.min' => 'Password minimal 8 karakter',
+        ]);
+
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             $role = Auth::user()->role;
             if ($role == 'admin' || $role == 'superadmin') {
-                return redirect()->intended('admin/dashboard');
+                return redirect()->back()->with('successLogin', 'Login berhasil, Anda akan diarahkan ke Dashboard Admin.');
             } else {
                 return back()->with('error', 'Login gagal!');
             }
         }
 
-        return back()->with('error', 'Login gagal!')->withInput();
+        return back()->with('error', 'Email atau password salah')->withInput();
     }
 
     public function logout(Request $request)
@@ -171,11 +182,11 @@ class AuthController extends Controller
         
         $customMessage = [
             'password.required' => 'Password tidak boleh kosong',
-            'password.min'      => 'Password minimal 6 karakter',
+            'password.min'      => 'Password minimal 8 karakter',
         ];
         
         $request->validate([
-            'password' => 'required|min:6|confirmed'
+            'password' => 'required|min:8|confirmed'
         ], $customMessage);
         
         $token = PasswordResetToken::where('token', $request->token)->first();
