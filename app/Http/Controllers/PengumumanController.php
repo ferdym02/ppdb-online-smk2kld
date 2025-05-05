@@ -155,7 +155,6 @@ class PengumumanController extends Controller
         }
     }
 
-
     public function show($id)
     {
         $pengumuman = Pengumuman::findOrFail($id);
@@ -224,22 +223,5 @@ class PengumumanController extends Controller
         $isRegistrationOpen = $activePeriod ? true : false;
         $pengumuman = Pengumuman::findOrFail($id);
         return view('user.pengumumanShow', compact('pengumuman', 'isRegistrationOpen', 'title'));
-    }
-
-    public function uploadImage(Request $request)
-    {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('public/pengumuman_images', $fileName);
-
-            return response()->json(['url' => Storage::url($filePath)]);
-        }
-
-        return response()->json(['error' => 'Gagal mengupload gambar'], 400);
     }
 }
