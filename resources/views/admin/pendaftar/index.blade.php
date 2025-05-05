@@ -22,7 +22,6 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-
                     @php
                         $statusMapping = [
                             'pending' => 'Pending',
@@ -33,7 +32,6 @@
                             'cadangan' => 'Cadangan'
                         ];
                     @endphp
-
                     <div class="row mb-3">
                         <div class="col-md-3">
                             <form method="GET" action="{{ route('admin.pendaftar.index') }}">
@@ -98,9 +96,9 @@
                         </div>
                     </div>
                     @else
-                        <div class="alert alert-danger" role="alert">
-                            Belum ada data pendaftar untuk periode yang dipilih.
-                        </div>
+                    <div class="alert alert-danger" role="alert">
+                        Belum ada data pendaftar untuk periode yang dipilih.
+                    </div>
                     @endif
                 </div>
             </div>
