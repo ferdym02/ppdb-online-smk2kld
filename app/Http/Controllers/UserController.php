@@ -67,7 +67,6 @@ class UserController extends Controller
             'name.required' => 'Nama wajib diisi.',
             'name.string' => 'Nama harus berupa teks.',
             'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
-            
             'new_password.min' => 'Password harus minimal 8 karakter.',
             'new_password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
