@@ -45,6 +45,9 @@ class JurusanController extends Controller
 
     public function destroy(Jurusan $jurusan)
     {
+        if ($jurusan->periodeJurusans()->count() > 0) {
+            return redirect()->route('jurusan.index')->with('error', 'Tidak bisa menghapus jurusan yang masih digunakan dalam data kuota jurusan.');
+        }
         // Hapus jurusan
         $jurusan->delete();
 
