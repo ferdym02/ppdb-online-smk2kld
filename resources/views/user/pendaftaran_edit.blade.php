@@ -1,4 +1,16 @@
 @extends('user.layouts.app')
+@section('css')
+    <style>
+        @media (max-width: 768px) {
+            .responsive-btn {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+                line-height: 1.5;
+                border-radius: 0.2rem;
+            }
+        } 
+    </style>
+@endsection
 
 @section('content')
 <div class="card bg-light mt-3 text-dark">
@@ -14,36 +26,33 @@
             <strong>Jam Pendaftaran:</strong> 
             {{ $pendaftar->created_at->format('H:i:s') }}
         </p>
-        <p class="card-text">
-            
-            @if ($pendaftar->status_pendaftaran == 'rejected')
-                <p>
-                    <strong>Status Pendaftaran:</strong> 
-                    <span class="bg-warning" style="padding: 5px 10px; border-radius: 5px;">Ditolak</span>
-                </p>
-                <p class="card-text"><strong>Catatan Penolakan:</strong> {{ $pendaftar->catatan_penolakan }}</p>
-            @elseif ($pendaftar->status_pendaftaran == 'pending')
-                <p>
-                    <strong>Status Pendaftaran:</strong> 
-                    <span class="bg-secondary" style="color: white; padding: 5px 10px; border-radius: 5px;">Pending</span>
-            @endif
-        </p>            
+        @if ($pendaftar->status_pendaftaran == 'rejected')
+            <p class="card-text">
+                <strong>Status Pendaftaran:</strong> 
+                <span class="bg-warning px-2 py-1 rounded">Perlu Perbaikan</span>
+            </p>
+            <p class="card-text"><strong>Catatan Perbaikan:</strong> {{ $pendaftar->catatan_penolakan }}</p>
+        @elseif ($pendaftar->status_pendaftaran == 'pending')
+            <p class="card-text">
+                <strong>Status Pendaftaran:</strong> 
+                <span class="bg-secondary text-white px-2 py-1 rounded">Pending</span>
+        @endif
     </div>
 </div>
 <div class="card my-4">
     <div class="card-header text-white">
+        <a href="{{ route('user.pendaftaran') }}" class="btn me-2 p-0">
+            <i class="fas fa-arrow-left"></i>
+        </a>
         Edit Data Pendaftaran
     </div>
     <div class="card-body">
         <div class="alert alert-warning mt-3">
-            <strong>Perhatian:</strong> Khusus untuk pendaftarannya yang <strong>perlu perbaikan</strong>, perhatikan catatan perbaikan dari admin dan pastikan Anda memperbaiki data yang keliru supaya pendaftaran Anda dapat terverifikasi.
+            <strong>Perhatian:</strong> Khusus untuk status pendaftaran <strong>perlu perbaikan</strong>, perhatikan catatan perbaikan dari admin dan pastikan Anda memperbaiki data yang keliru supaya pendaftaran Anda dapat terverifikasi.
         </div>
         <form id="pendaftaranForm" method="POST" action="{{ route('pendaftaran.update', $pendaftar->id) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
-
-            <!-- Hidden Field for Resubmission -->
-            {{-- <input type="hidden" name="resubmission" value="true"> --}}
             <!-- Tahap 1: Data Diri -->
             <div id="formTahap1" class="form-tahap">
                 <h3 class="mb-4 mt-1">Tahap 1: Data Diri</h3>
@@ -77,14 +86,29 @@
                             @enderror
                         </div>
                         <div class="form-group mb-3">
-                            <label for="asal_sekolah">Asal Sekolah <span class="text-danger">*</span>:</label>
-                            <input type="text" class="form-control @error('asal_sekolah') is-invalid @enderror" id="asal_sekolah" name="asal_sekolah" value="{{ old('asal_sekolah', $pendaftar->asal_sekolah) }}" required>
-                            @error('asal_sekolah')
+                            <label for="jenis_kelamin">Jenis Kelamin <span class="text-danger">*</span>:</label>
+                            <select class="form-control @error('jenis_kelamin') is-invalid @enderror" id="jenis_kelamin" name="jenis_kelamin" required>
+                                <option value="" disabled {{ old('jenis_kelamin', $pendaftar->jenis_kelamin) ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
+                                <option value="Laki-laki" {{ old('jenis_kelamin', $pendaftar->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="Perempuan" {{ old('jenis_kelamin', $pendaftar->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
                             @enderror
                         </div>
+                        <div class="form-group mb-3">
+                            <label for="alamat">Alamat <span class="text-danger">*</span>:</label>
+                            <textarea class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat" rows="3" required>{{ old('alamat', $pendaftar->alamat) }}</textarea>
+                            @error('alamat')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label for="nisn">NISN <span class="text-danger">*</span>:</label>
                             <input type="text" class="form-control @error('nisn') is-invalid @enderror" id="nisn" name="nisn" value="{{ old('nisn', $pendaftar->nisn) }}" required>
@@ -94,16 +118,10 @@
                                 </div>
                             @enderror
                         </div>
-                    </div>
-                    <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="jenis_kelamin">Jenis Kelamin <span class="text-danger">*</span>:</label>
-                            <select class="form-control @error('jenis_kelamin') is-invalid @enderror" id="jenis_kelamin" name="jenis_kelamin" required>
-                                <option value="" disabled {{ old('jenis_kelamin', $pendaftar->jenis_kelamin) ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
-                                <option value="Laki-laki" {{ old('jenis_kelamin', $pendaftar->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                                <option value="Perempuan" {{ old('jenis_kelamin', $pendaftar->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                            </select>
-                            @error('jenis_kelamin')
+                            <label for="asal_sekolah">Asal Sekolah <span class="text-danger">*</span>:</label>
+                            <input type="text" class="form-control @error('asal_sekolah') is-invalid @enderror" id="asal_sekolah" name="asal_sekolah" value="{{ old('asal_sekolah', $pendaftar->asal_sekolah) }}" required>
+                            @error('asal_sekolah')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
@@ -136,15 +154,6 @@
                                 </div>
                             @enderror
                         </div>
-                        <div class="form-group mb-3">
-                            <label for="alamat">Alamat <span class="text-danger">*</span>:</label>
-                            <textarea class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat" rows="3" required>{{ old('alamat', $pendaftar->alamat) }}</textarea>
-                            @error('alamat')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -156,6 +165,9 @@
                                 <option value="1" {{ old('prestasi_akademik', $pendaftar->prestasi_akademik) == '1' ? 'selected' : '' }}>Ya</option>
                                 <option value="0" {{ old('prestasi_akademik', $pendaftar->prestasi_akademik) == '0' ? 'selected' : '' }}>Tidak</option>
                             </select>
+                            <small class="form-text text-muted">
+                                (Pernah Rank 1- 10 dikelas 1,2,3)
+                            </small>
                             @error('prestasi_akademik')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -171,6 +183,9 @@
                                 <option value="1" {{ old('prestasi_non_akademik', $pendaftar->prestasi_non_akademik) == '1' ? 'selected' : '' }}>Ya</option>
                                 <option value="0" {{ old('prestasi_non_akademik', $pendaftar->prestasi_non_akademik) == '0' ? 'selected' : '' }}>Tidak</option>
                             </select>
+                            <small class="form-text text-muted">
+                                (Lomba Minimal Tingkat Kecamatan)
+                            </small>
                             @error('prestasi_non_akademik')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -180,7 +195,7 @@
                     </div>
                 </div>
                 <div style="text-align: right;">
-                    <button type="button" class="btn btn-primary btn-sm" id="nextTahap2">Selanjutnya: Tahap 2</button>
+                    <button type="button" class="btn btn-primary responsive-btn" id="nextTahap2">Selanjutnya: Tahap 2</button>
                 </div>
             </div>
             
@@ -194,115 +209,115 @@
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label for="kartu_keluarga">Kartu Keluarga <span class="text-danger">*</span>:</label>
-                            <input type="file" class="form-control @error('kartu_keluarga') is-invalid @enderror" id="kartu_keluarga" name="kartu_keluarga">
+                            <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('kartu_keluarga') is-invalid @enderror" id="kartu_keluarga" name="kartu_keluarga">
                             @error('kartu_keluarga')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
                             @enderror
                             @if ($pendaftar->kartu_keluarga)
-                                <a href="{{ asset('storage/'.$pendaftar->kartu_keluarga) }}" target="_blank">Lihat file lama</a>
+                                <a href="{{ route('dokumen.lihat', basename($pendaftar->kartu_keluarga)) }}" target="_blank">Lihat file lama</a>
                             @endif
-                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg</small>
+                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg/pdf</small>
                         </div>
                         <div class="form-group mb-3">
                             <label for="ktp_orang_tua">KTP Orang Tua/Wali <span class="text-danger">*</span>:</label>
-                            <input type="file" class="form-control @error('ktp_orang_tua') is-invalid @enderror" id="ktp_orang_tua" name="ktp_orang_tua">
+                            <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('ktp_orang_tua') is-invalid @enderror" id="ktp_orang_tua" name="ktp_orang_tua">
                             @error('ktp_orang_tua')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
                             @enderror
                             @if ($pendaftar->ktp_orang_tua)
-                                <a href="{{ asset('storage/'.$pendaftar->ktp_orang_tua) }}" target="_blank">Lihat file lama</a>
+                                <a href="{{ route('dokumen.lihat', basename($pendaftar->ktp_orang_tua)) }}" target="_blank">Lihat file lama</a>
                             @endif
-                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg</small>
+                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg/pdf</small>
                         </div>
                         <div class="form-group mb-3">
                             <label for="akte_kelahiran">Akte Kelahiran <span class="text-danger">*</span>:</label>
-                            <input type="file" class="form-control @error('akte_kelahiran') is-invalid @enderror" id="akte_kelahiran" name="akte_kelahiran">
+                            <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('akte_kelahiran') is-invalid @enderror" id="akte_kelahiran" name="akte_kelahiran">
                             @error('akte_kelahiran')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
                             @enderror
                             @if ($pendaftar->akte_kelahiran)
-                                <a href="{{ asset('storage/'.$pendaftar->akte_kelahiran) }}" target="_blank">Lihat file lama</a>
+                                <a href="{{ route('dokumen.lihat', basename($pendaftar->akte_kelahiran)) }}" target="_blank">Lihat file lama</a>
                             @endif
-                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg</small>
+                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg/pdf</small>
                         </div>
                         <div class="form-group mb-3">
                             <label for="ijazah">Ijazah/Surat Keterangan Lulus <span class="text-danger">*</span>:</label>
-                            <input type="file" class="form-control @error('ijazah') is-invalid @enderror" id="ijazah" name="ijazah">
+                            <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('ijazah') is-invalid @enderror" id="ijazah" name="ijazah">
                             @error('ijazah')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
                             @enderror
                             @if ($pendaftar->ijazah)
-                                <a href="{{ asset('storage/'.$pendaftar->ijazah) }}" target="_blank">Lihat file lama</a>
+                                <a href="{{ route('dokumen.lihat', basename($pendaftar->ijazah)) }}" target="_blank">Lihat file lama</a>
                             @endif
-                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg</small>
+                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg/pdf</small>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label for="foto_calon_siswa">Foto Calon Siswa Ukuran 3x4 <span class="text-danger">*</span>:</label>
-                            <input type="file" class="form-control @error('foto_calon_siswa') is-invalid @enderror" id="foto_calon_siswa" name="foto_calon_siswa">
+                            <input type="file" accept=".jpg, .jpeg" class="form-control @error('foto_calon_siswa') is-invalid @enderror" id="foto_calon_siswa" name="foto_calon_siswa">
                             @error('foto_calon_siswa')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
                             @enderror
                             @if ($pendaftar->foto_calon_siswa)
-                                <a href="{{ asset('storage/'.$pendaftar->foto_calon_siswa) }}" target="_blank">Lihat file lama</a>
+                                <a href="{{ route('dokumen.lihat', basename($pendaftar->foto_calon_siswa)) }}" target="_blank">Lihat file lama</a>
                             @endif
                             <small class="d-block form-text text-muted">Tipe file: jpg/jpeg</small>
                         </div>
                         <div class="form-group mb-3">
                             <label for="raport">Rapor Semester 1-5 <span class="text-danger">*</span>:</label>
-                            <input type="file" class="form-control @error('raport') is-invalid @enderror" id="raport" name="raport">
+                            <input type="file" accept=".pdf" class="form-control @error('raport') is-invalid @enderror" id="raport" name="raport">
                             @error('raport')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
                             @enderror
                             @if ($pendaftar->raport)
-                                <a href="{{ asset('storage/'.$pendaftar->raport) }}" target="_blank">Lihat file lama</a>
+                                <a href="{{ route('dokumen.lihat', basename($pendaftar->raport)) }}" target="_blank">Lihat file lama</a>
                             @endif
                             <small class="d-block form-text text-muted">Tipe file: pdf</small>
                         </div>
                         <div class="form-group mb-3">
-                            <label for="piagam">Piagam/Sertifikat (Jika Ada):</label>
-                            <input type="file" class="form-control @error('piagam') is-invalid @enderror" id="piagam" name="piagam">
-                            @error('piagam')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                            @if ($pendaftar->piagam)
-                                <a href="{{ asset('storage/'.$pendaftar->piagam) }}" target="_blank">Lihat file lama</a>
-                            @endif
-                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg</small>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="surat_keterangan">Surat Keterangan Peringkat Kelas/Sekolah (Jika Ada):</label>
-                            <input type="file" class="form-control @error('surat_keterangan') is-invalid @enderror" id="surat_keterangan" name="surat_keterangan">
+                            <label for="surat_keterangan">Surat Keterangan Peringkat Kelas/Sekolah (Akademik):</label>
+                            <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('surat_keterangan') is-invalid @enderror" id="surat_keterangan" name="surat_keterangan">
                             @error('surat_keterangan')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
                             @enderror
                             @if ($pendaftar->surat_keterangan)
-                                <a href="{{ asset('storage/'.$pendaftar->surat_keterangan) }}" target="_blank">Lihat file lama</a>
+                                <a href="{{ route('dokumen.lihat', basename($pendaftar->surat_keterangan)) }}" target="_blank">Lihat file lama</a>
                             @endif
-                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg</small>
+                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg/pdf</small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="piagam">Piagam/Sertifikat (Non Akademik) Jika Ada:</label>
+                            <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('piagam') is-invalid @enderror" id="piagam" name="piagam">
+                            @error('piagam')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                            @if ($pendaftar->piagam)
+                                <a href="{{ route('dokumen.lihat', basename($pendaftar->piagam)) }}" target="_blank">Lihat file lama</a>
+                            @endif
+                            <small class="d-block form-text text-muted">Tipe file: jpg/jpeg/pdf</small>
                         </div>
                     </div>
                 </div>
                 <div style="text-align: right;">
-                    <button type="button" class="btn btn-secondary btn-sm" id="prevTahap1">Kembali: Tahap 1</button>
-                    <button type="button" class="btn btn-primary btn-sm" id="nextTahap3">Selanjutnya: Tahap 3</button>
+                    <button type="button" class="btn btn-secondary responsive-btn" id="prevTahap1">Kembali: Tahap 1</button>
+                    <button type="button" class="btn btn-primary responsive-btn" id="nextTahap3">Selanjutnya: Tahap 3</button>
                 </div>
             </div>
 
@@ -336,8 +351,8 @@
                 @endfor
                 <div class="mt-1">
                     <div style="text-align: right;">
-                        <button type="button" class="btn btn-secondary btn-sm" id="prevTahap2">Kembali: Tahap 2</button>
-                        <button type="submit" class="btn btn-success btn-sm">Submit</button>
+                        <button type="button" class="btn btn-secondary responsive-btn" id="prevTahap2">Kembali: Tahap 2</button>
+                        <button type="submit" class="btn btn-success responsive-btn">Simpan Pembaruan</button>
                     </div>
                 </div>
             </div>
@@ -427,7 +442,7 @@
             input.addEventListener('input', function() {
                 var errorText = document.createElement('div');
                 errorText.classList.add('invalid-feedback');
-                errorText.innerText = 'Wajib diisi';
+                errorText.innerText = 'Harap isi dengan benar';
 
                 if (!input.checkValidity()) {
                     input.classList.add('is-invalid');

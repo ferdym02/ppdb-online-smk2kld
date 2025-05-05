@@ -42,9 +42,9 @@
   <div class="app-content">
       <div class="container-fluid">
         @if ($periode)
-            <div class="alert alert-info mt-3">
-                Periode Pendaftaran: <strong>{{ $periode->tahun_pelajaran }}</strong>
-            </div>
+        <div class="alert alert-info mt-3">
+            Periode Pendaftaran: <strong>{{ $periode->tahun_pelajaran }}</strong>
+        </div>
         @endif
         @if ($status === 'diterima') <!-- Filter hanya muncul jika status "diterima" -->
         <div class="row mb-3">
@@ -57,29 +57,28 @@
           </div>
         </div>
         @endif
-
-          <div class="row">
-              <div class="col-12">
-                  <div class="card">
-                    <div class="card-body">
-                      <table id="pendaftar-status-table" class="table table-bordered table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th class="text-center">No.</th>
-                                <th class="text-center">No. Pendaftaran</th>
-                                <th class="text-center">NISN</th>
-                                <th>Nama Lengkap</th>
-                                <th class="text-center">L/P</th>
-                                <th>Asal Sekolah</th>
-                                <th class="text-center">Tgl Pendaftaran</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                    </table>
-                    </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                  <div class="card-body">
+                    <table id="pendaftar-status-table" class="table table-bordered table-striped table-hover">
+                      <thead>
+                          <tr>
+                              <th class="text-center">No.</th>
+                              <th class="text-center">No. Pendaftaran</th>
+                              <th class="text-center">NISN</th>
+                              <th>Nama Lengkap</th>
+                              <th class="text-center">L/P</th>
+                              <th>Asal Sekolah</th>
+                              <th class="text-center">Tgl Pendaftaran</th>
+                              <th class="text-center">Aksi</th>
+                          </tr>
+                      </thead>
+                  </table>
                   </div>
-              </div>
-          </div>
+                </div>
+            </div>
+        </div>
       </div>
   </div>
 
@@ -108,46 +107,45 @@
 <script src="https://cdn.datatables.net/v/bs5/dt-2.1.5/datatables.min.js"></script>
 <script>
   $(document).ready(function () {
-    const table = $('#pendaftar-status-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: "{{ route('pendaftar.status.data', $status) }}",
-            data: function (d) {
-                d.daftar_ulang = $('#filterDaftarUlang').val(); // Kirim nilai filter daftar_ulang
-            }
-        },
-        columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
-            { data: 'nomor_pendaftaran', name: 'nomor_pendaftaran', className: 'text-center' },
-            { data: 'nisn', name: 'nisn', className: 'text-center' },
-            { data: 'nama_lengkap', name: 'nama_lengkap' },
-            {
-              data: 'jenis_kelamin',
-              name: 'jenis_kelamin',
-              className: 'text-center'
-            },
-            { data: 'asal_sekolah', name: 'asal_sekolah' },
-            { data: 'tanggal_pendaftaran', name: 'tanggal_pendaftaran', className: 'text-center' },
-            {
-                data: 'id',
-                name: 'id',
-                orderable: false,
-                searchable: false,
-                className: 'text-center',
-                render: function (data) {
-                    return `<a href="/admin/pendaftar/${data}?status={{ $status }}" class="btn btn-sm btn-primary">Detail</a>`;
-                }
-            }
-        ]
-    });
+      const table = $('#pendaftar-status-table').DataTable({
+          processing: true,
+          serverSide: true,
+          ajax: {
+              url: "{{ route('pendaftar.status.data', $status) }}",
+              data: function (d) {
+                  d.daftar_ulang = $('#filterDaftarUlang').val(); // Kirim nilai filter daftar_ulang
+              }
+          },
+          columns: [
+              { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
+              { data: 'nomor_pendaftaran', name: 'nomor_pendaftaran', className: 'text-center' },
+              { data: 'nisn', name: 'nisn', className: 'text-center' },
+              { data: 'nama_lengkap', name: 'nama_lengkap' },
+              {
+                data: 'jenis_kelamin',
+                name: 'jenis_kelamin',
+                className: 'text-center'
+              },
+              { data: 'asal_sekolah', name: 'asal_sekolah' },
+              { data: 'tanggal_pendaftaran', name: 'tanggal_pendaftaran', className: 'text-center' },
+              {
+                  data: 'id',
+                  name: 'id',
+                  orderable: false,
+                  searchable: false,
+                  className: 'text-center',
+                  render: function (data) {
+                      return `<a href="/admin/pendaftar/${data}?status={{ $status }}" class="btn btn-sm btn-primary">Detail</a>`;
+                  }
+              }
+          ]
+      });
 
-    // Event listener untuk filter
-    $('#filterDaftarUlang').on('change', function () {
-        table.ajax.reload(); // Reload data tabel dengan parameter filter baru
-    });
-});
-
+      // Event listener untuk filter
+      $('#filterDaftarUlang').on('change', function () {
+          table.ajax.reload(); // Reload data tabel dengan parameter filter baru
+      });
+  });
 
   // Show toast notification if session has 'success' or 'error'
   @if(session('success'))
@@ -160,5 +158,4 @@
     toastError.show();
   @endif
 </script>
-
 @endsection

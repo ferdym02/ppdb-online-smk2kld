@@ -69,10 +69,10 @@
                                 <tbody>
                                     @forelse ($periodeJurusans as $item)
                                         <tr>
-                                            <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td>{{ $item->jurusan->nama ?? '-' }}</td>
-                                            <td class="text-center">{{ $item->kuota }}</td>
-                                            <td class="text-center">
+                                            <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                            <td class="align-middle">{{ $item->jurusan->nama ?? '-' }}</td>
+                                            <td class="text-center align-middle">{{ $item->kuota }}</td>
+                                            <td class="text-center align-middle">
                                                 <a class="btn btn-info btn-sm" href="{{ route('periode-jurusan.show', $item->id) }}">Detail</a>
                                                 <button 
                                                     class="btn btn-warning btn-sm" 
@@ -102,11 +102,11 @@
                                         $totalSisaKuota = $periodeJurusans->sum('kuota');
                                     @endphp
                                     <tr class="fw-bold bg-light">
-                                        <td colspan="2">Total</td>
-                                        <td class="text-center">{{ $totalSisaKuota }}</td>
+                                        <td class="align-middle" colspan="2">Total</td>
+                                        <td class="text-center align-middle">{{ $totalSisaKuota }}</td>
                                         <td></td>
                                     </tr>
-                                </tfoot>                                
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="kuota">Kuota</label>
-                            <input type="number" name="kuota" id="kuota" class="form-control @error('kuota') is-invalid @enderror" value="{{ old('kuota') }}" required>
+                            <input type="number" name="kuota" id="kuota" class="form-control @error('kuota') is-invalid @enderror" value="{{ old('kuota') }}" placeholder="Masukkan limit kuota jurusan" required>
                             @error('kuota')
                                 <div class="invalid-feedback">
                                     {{ $message }}

@@ -35,6 +35,9 @@
                 <label for="email">Email</label>
                 <div class="invalid-feedback" id="emailFeedback"></div>
             </div>
+            <small class="text-start text-muted d-block mb-3" style="margin-top: -10px;">
+                Harap gunakan email aktif yang dapat diakses.
+            </small>
             <div class="form-floating position-relative mb-3">
                 <input type="password" class="form-control" id="password" name="password" required placeholder="Password">
                 <label for="password">Password</label>

@@ -36,7 +36,7 @@
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password (Kosongkan jika tidak ingin mengubah)</label>
-                            <input type="password" class="form-control" id="password" name="password">
+                            <input type="password" class="form-control" id="password" name="password" min="8">
                             @error('password')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -77,17 +77,17 @@
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    // Show toast notification if session has 'success' or 'error'
-    @if(session('success'))
-    var toastSuccess = new bootstrap.Toast(document.getElementById('toastSuccess'));
-    toastSuccess.show();
-    @endif
+    $(document).ready(function() {
+        // Show toast notification if session has 'success' or 'error'
+        @if(session('success'))
+        var toastSuccess = new bootstrap.Toast(document.getElementById('toastSuccess'));
+        toastSuccess.show();
+        @endif
 
-    @if(session('error'))
-    var toastError = new bootstrap.Toast(document.getElementById('toastError'));
-    toastError.show();
-    @endif
-});
+        @if(session('error'))
+        var toastError = new bootstrap.Toast(document.getElementById('toastError'));
+        toastError.show();
+        @endif
+    });
 </script>
 @endsection

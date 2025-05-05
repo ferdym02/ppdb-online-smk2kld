@@ -41,7 +41,7 @@
       }
 
       .registration-step i {
-        font-size: 24px;
+        font-size: 16px;
         color: #007bff;
         margin-right: 15px;
       }
@@ -96,7 +96,11 @@
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
-        <a class="btn-getstarted" href="/login">Login</a>
+        @auth
+            <a class="btn-getstarted" href="{{ route('user.dashboard') }}">{{ Auth::user()->name }}</a>
+        @else
+            <a class="btn-getstarted" href="/login">Login</a>
+        @endauth
       </div>
     </header>
 
@@ -110,7 +114,7 @@
               $nextYear = $currentYear + 1;
             @endphp
             <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="fade-up">
-              <h1>PPDB Online {{ $profile->nama_sekolah }} {{ $currentYear }}/{{ $nextYear }}</h1>
+              <h1>PPDB Online {{ $profile->nama_sekolah }} {{ $currentYear }}/{{ $nextYear }} Jalur Reguler</h1>
               <p>Melalui halaman ini, Anda dapat mendaftar sebagai calon peserta didik baru secara online dengan mudah dan cepat.</p>
               <div class="d-flex">
                 <a href="/register" class="btn-get-started">Daftar di Sini</a>
@@ -171,7 +175,8 @@
 
         <div class="container">
           <div class="row gy-4 d-flex justify-content-center align-items-center">
-            <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="100">
+            <div class="col-lg-6 content position-relative align-self-start" data-aos="fade-up" data-aos-delay="100">
+              <h3 class="text-center m-0">Video Profil Sekolah</h3>
               <img src="{{ asset('assets/img/about-2.png') }}" class="img-fluid" alt="" />
               <a href="https://youtu.be/BKnnKlXq4-c" class="glightbox pulsating-play-btn"></a>
             </div>
@@ -342,7 +347,7 @@
                         <li class="list-group-item">c. Ijazah/Surat Keterangan Lulus</li>
                         <li class="list-group-item">d. Pas foto berwarna 3 x 4</li>
                         <li class="list-group-item">e. Raport semester 1-5</li>
-                        <li class="list-group-item">f. Piagam/Sertifikat (jika ada)</li>
+                        <li class="list-group-item">f. Piagam/Sertifikat (Jika ada)</li>
                         <li class="list-group-item">g. Surat Keterangan Peringkat Kelas/Sekolah (jika ada)</li>
                       </ul>
                     </li>
@@ -357,27 +362,31 @@
                 <h3 class="text-center">Alur Pendaftaran</h3>
                 <div class="registration-step">
                   <i class="bi bi-r-circle"></i>
-                  <p>Buat akun PPDB dengan cara klik login yang ada bagian atas kemudian pilih "Daftar".</p>
+                  <p>Buat akun PPDB dengan cara klik login yang ada bagian atas kemudian pilih "Daftar"</p>
                 </div>
                 <div class="registration-step">
                   <i class="bi bi-pencil-square"></i>
-                  <p>Isi formulir pendaftaran dengan data diri yang benar.</p>
+                  <p>Isi formulir pendaftaran dengan data diri yang benar</p>
                 </div>
                 <div class="registration-step">
                   <i class="bi bi-cloud-upload"></i>
-                  <p>Upload dokumen yang diperlukan sesuai dengan ketentuan.</p>
+                  <p>Upload dokumen yang diperlukan sesuai dengan ketentuan</p>
+                </div>
+                <div class="registration-step">
+                  <i class="bi bi-list-ol"></i>
+                  <p>Mengisi Nilai Rapor (MTK, IPA, B. Indonesia, B. Inggris) Semester 1-5</p>
                 </div>
                 <div class="registration-step">
                   <i class="bi bi-check-circle"></i>
-                  <p>Verifikasi data dan dokumen oleh panitia PPDB.</p>
+                  <p>Verifikasi data pendaftaran oleh panitia PPDB</p>
                 </div>
                 <div class="registration-step">
                   <i class="bi bi-book"></i>
-                  <p>Melakukan Tes Minat dan Bakat</p>
+                  <p>Melakukan Tes Minat Bakat</p>
                 </div>
                 <div class="registration-step">
                   <i class="bi bi-megaphone"></i>
-                  <p>Pengumuman hasil seleksi melalui website PPDB.</p>
+                  <p>Pengumuman hasil seleksi melalui website PPDB</p>
                 </div>
               </div>
             </div>
@@ -553,14 +562,7 @@
       </div>
 
       <div class="container copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">PPDB SMK Negeri 2 Kalianada</strong> <span>All Rights Reserved</span></p>
-        <div class="credits">
-          <!-- All the links in the footer should remain intact. -->
-          <!-- You can delete the links only if you've purchased the pro version. -->
-          <!-- Licensing information: https://bootstrapmade.com/license/ -->
-          <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-          <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> -->
-        </div>
+        <p>© <span>Hak Cipta</span> <strong class="px-1 sitename">PPDB SMK Negeri 2 Kalianada</strong> <span>Semua hak dilindungi</span></p>
       </div>
     </footer>
 

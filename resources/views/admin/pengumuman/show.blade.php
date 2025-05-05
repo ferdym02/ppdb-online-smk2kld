@@ -2,7 +2,7 @@
 @section('css')
 <style>
   .pengumuman-content img {
-      max-width: 100%;
+      max-width: 500px;
       height: auto;
       display: block;
       margin: 10px auto;

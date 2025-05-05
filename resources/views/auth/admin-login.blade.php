@@ -49,17 +49,27 @@
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Login Administrator</p>
                 <!-- Alert Gagal Login -->
-                @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
+                        <div>
+                            @foreach ($errors->all() as $error)
+                                {{ $error }}<br>
+                            @endforeach
+                        </div>
+                        <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
+                        <div>{{ session('error') }}</div>
+                        <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 @endif
                 <form id="loginForm" action="{{ route('admin.login') }}" method="POST">
                     @csrf
                     <div class="input-group mb-1">
                         <div class="form-floating">
-                            <input id="loginEmail" name="email" type="email" class="form-control" value="{{ old('email') }}" placeholder="">
+                            <input id="loginEmail" name="email" type="email" class="form-control" value="{{ old('email') }}" placeholder="" required>
                             <label for="loginEmail">Email</label>
                         </div>
                         <div class="input-group-text">
@@ -67,7 +77,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-1">
-                        <div class="form-floating"> <input id="loginPassword" name="password" type="password" class="form-control" placeholder=""> <label for="loginPassword">Password</label> </div>
+                        <div class="form-floating"> <input id="loginPassword" name="password" type="password" class="form-control" placeholder="" required> <label for="loginPassword">Password</label> </div>
                         <div class="input-group-text"> <span class="bi bi-lock-fill"></span> </div>
                     </div> <!--begin::Row-->
                     <!-- Spinner & Button -->
@@ -92,28 +102,22 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha256-whL0tQWoY1Ku1iskqPFvmZ+CHsvmRWx/PIoEvIeWh4I=" crossorigin="anonymous"></script> <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha256-YMa+wAM6QkVyz999odX7lPRxkoYAan8suedu4k2Zur8=" crossorigin="anonymous"></script> <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="{{ asset('new-lte') }}/dist/js/adminlte.js"></script> <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
-        const Default = {
-            scrollbarTheme: "os-theme-light",
-            scrollbarAutoHide: "leave",
-            scrollbarClickScroll: true,
-        };
-        document.addEventListener("DOMContentLoaded", function() {
-            const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-            if (
-                sidebarWrapper &&
-                typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== "undefined"
-            ) {
-                OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-                    scrollbars: {
-                        theme: Default.scrollbarTheme,
-                        autoHide: Default.scrollbarAutoHide,
-                        clickScroll: Default.scrollbarClickScroll,
-                    },
-                });
-            }
-        });
+        @if(session('successLogin'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Berhasil',
+                text: '{{ session('successLogin') }}',
+                timer: 1000, // Durasi 1 detik sebelum dialihkan
+                showConfirmButton: false,
+                didClose: () => {
+                    // Redirect setelah SweetAlert ditutup
+                    window.location.href = "{{ url('/admin/dashboard') }}";
+                }
+            });
+        @endif
+
         document.getElementById('loginForm').addEventListener('submit', function() {
             // Tampilkan spinner
             document.getElementById('loadingSpinner').classList.remove('d-none');
@@ -123,5 +127,4 @@
         });
     </script> <!--end::OverlayScrollbars Configure--> <!--end::Script-->
 </body><!--end::Body-->
-
 </html>

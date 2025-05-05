@@ -2,61 +2,57 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center mt-3">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header text-white">Profil Pengguna</div>
-            
-                <div class="card-body text-center">
-                    <!-- Alert Sukses -->
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-            
-                    <!-- Alert Error -->
-                    @if ($errors->any())
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <ul class="m-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-            
-                    <!-- Foto Calon Siswa -->
-                    @if($pendaftar && $pendaftar->foto_calon_siswa)
-                        <img src="{{ asset('storage/' . $pendaftar->foto_calon_siswa) }}" 
-                            class="img-thumbnail mb-3" 
-                            alt="User Profile Picture" 
-                            width="150" height="150">
-                    @endif
-
-                    
-                    <!-- NISN dan Asal Sekolah -->
-                    <div class="d-flex justify-content-center">
-                        <table style="border-collapse: collapse;">
-                            <tr style="border-bottom: 1px solid #ddd;">
-                                <th style="text-align: left; padding-right: 10px; padding-bottom: 8px;">Nama</th>
-                                <td style="text-align: left; padding-bottom: 8px;">: {{ $user->name }}</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #ddd;">
-                                <th style="text-align: left; padding-right: 10px; padding-bottom: 8px;">Email</th>
-                                <td style="text-align: left; padding-bottom: 8px;">: {{ $user->email }}</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- Tombol Edit Data -->
-                    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#editPasswordModal">
-                        Edit Data
-                    </button>
+    <div class="card shadow-sm mt-3 mx-auto" style="max-width: 750px;">
+        <div class="card-header text-white">Profil Pengguna</div>
+    
+        <div class="card-body text-center">
+            <!-- Alert Sukses -->
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+            @endif
+    
+            <!-- Alert Error -->
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <ul class="m-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+    
+            <!-- Foto Calon Siswa -->
+            @if($pendaftar && $pendaftar->foto_calon_siswa)
+                <img src="{{ route('foto.lihat', basename($pendaftar->foto_calon_siswa)) }}" 
+                    class="img-thumbnail mb-3" 
+                    alt="User Profile Picture" 
+                    width="150" height="150">
+            @endif
+
+            
+            <!-- NISN dan Asal Sekolah -->
+            <div class="d-flex justify-content-center">
+                <table style="border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <th style="text-align: left; padding-right: 10px; padding-bottom: 8px;">Nama</th>
+                        <td style="text-align: left; padding-bottom: 8px;">: {{ $user->name }}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <th style="text-align: left; padding-right: 10px; padding-bottom: 8px;">Email</th>
+                        <td style="text-align: left; padding-bottom: 8px;">: {{ $user->email }}</td>
+                    </tr>
+                </table>
             </div>
+
+            <!-- Tombol Edit Data -->
+            <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#editPasswordModal">
+                Edit Data
+            </button>
         </div>
     </div>
 </div>

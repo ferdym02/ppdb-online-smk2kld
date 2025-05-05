@@ -2,17 +2,24 @@
 @section('css')
 <style>
     .pengumuman-content img {
-        max-width: 100%;
+        width: 100%;
         height: auto;
+        max-width: 100%;
         display: block;
         margin: 10px auto;
+        object-fit: contain;
+    }
+
+    @media (min-width: 768px) {
+        .pengumuman-content img {
+            max-width: 500px;
+        }
     }
 </style>
 @endsection
 @section('content')
 <div class="card mb-4 shadow-sm mt-3 mx-auto" style="max-width: 1000px;">
     <div class="card-header text-white d-flex align-items-center">
-        <!-- Tombol kembali dengan ikon saja -->
         <a href="{{ route('pengumumanUser') }}" class="btn me-2 p-0">
             <i class="fas fa-arrow-left"></i>
         </a>
@@ -35,5 +42,4 @@
         @endif
     </div>
 </div>
-
 @endsection

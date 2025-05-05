@@ -48,123 +48,123 @@
   </div>
 
   <!-- Modal Tambah Data -->
-<div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form action="{{ route('users.store') }}" method="POST">
-        @csrf
-        <input type="hidden" name="form_action" value="create">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalTambahLabel">Tambah Data Pengguna</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="role" value="user">
-          <div class="form-group mb-3">
-            <label for="name">Nama</label>
-            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="Masukkan nama pengguna" required>
-            @error('name')
-            <div class="invalid-feedback">
-              {{ $message }}
-            </div>
-            @enderror
+  <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ route('users.store') }}" method="POST">
+          @csrf
+          <input type="hidden" name="form_action" value="create">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTambahLabel">Tambah Data Pengguna</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="form-group mb-3">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email pengguna" required>
-            @error('email')
-            <div class="invalid-feedback">
-              {{ $message }}
+          <div class="modal-body">
+            <input type="hidden" name="role" value="user">
+            <div class="form-group mb-3">
+              <label for="name">Nama</label>
+              <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="Masukkan nama pengguna" required>
+              @error('name')
+              <div class="invalid-feedback">
+                {{ $message }}
+              </div>
+              @enderror
             </div>
-            @enderror
-          </div>
-          <div class="form-group mb-3">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
-            @error('password')
-            <div class="invalid-feedback">
-              {{ $message }}
+            <div class="form-group mb-3">
+              <label for="email">Email</label>
+              <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email pengguna" required>
+              @error('email')
+              <div class="invalid-feedback">
+                {{ $message }}
+              </div>
+              @enderror
             </div>
-            @enderror
-          </div>
-          <div class="form-group mb-3">
-            <label for="password_confirmation">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" required>
-            @error('password_confirmation')
-            <div class="invalid-feedback">
-              {{ $message }}
+            <div class="form-group mb-3">
+              <label for="password">Password</label>
+              <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
+              @error('password')
+              <div class="invalid-feedback">
+                {{ $message }}
+              </div>
+              @enderror
             </div>
-            @enderror
+            <div class="form-group mb-3">
+              <label for="password_confirmation">Konfirmasi Password</label>
+              <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" required>
+              @error('password_confirmation')
+              <div class="invalid-feedback">
+                {{ $message }}
+              </div>
+              @enderror
+            </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-          <button type="submit" class="btn btn-primary">Kirim</button>
-        </div>
-      </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            <button type="submit" class="btn btn-primary">Kirim</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Modal Edit Data -->
-<div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="editForm" method="POST" action="{{ old('action_url', '') }}">
-        @csrf
-        @method('PUT')
-        <input type="hidden" name="form_action" value="edit">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalEditLabel">Edit Pengguna</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="role" value="user">
-          <div class="form-group mb-3">
-            <label for="editName">Nama</label>
-            <input type="text" name="name" id="editName" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
-            @error('name')
-            <div class="invalid-feedback">
-              {{ $message }}
-            </div>
-            @enderror
+  <!-- Modal Edit Data -->
+  <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="editForm" method="POST" action="{{ old('action_url', '') }}">
+          @csrf
+          @method('PUT')
+          <input type="hidden" name="form_action" value="edit">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEditLabel">Edit Pengguna</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="form-group mb-3">
-            <label for="editEmail">Email</label>
-            <input type="email" name="email" id="editEmail" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
-            @error('email')
-            <div class="invalid-feedback">
-              {{ $message }}
+          <div class="modal-body">
+            <input type="hidden" name="role" value="user">
+            <div class="form-group mb-3">
+              <label for="editName">Nama</label>
+              <input type="text" name="name" id="editName" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+              @error('name')
+              <div class="invalid-feedback">
+                {{ $message }}
+              </div>
+              @enderror
             </div>
-            @enderror
-          </div>
-          <div class="form-group mb-3">
-            <label for="editPassword">Password (Biarkan kosong jika tidak ingin mengubah)</label>
-            <input type="password" name="password" id="editPassword" class="form-control @error('password') is-invalid @enderror">
-            @error('password')
-            <div class="invalid-feedback">
-              {{ $message }}
+            <div class="form-group mb-3">
+              <label for="editEmail">Email</label>
+              <input type="email" name="email" id="editEmail" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+              @error('email')
+              <div class="invalid-feedback">
+                {{ $message }}
+              </div>
+              @enderror
             </div>
-            @enderror
-          </div>
-          <div class="form-group mb-3">
-            <label for="edit_password_confirmation">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" id="edit_password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror">
-            @error('password_confirmation')
-            <div class="invalid-feedback">
-              {{ $message }}
+            <div class="form-group mb-3">
+              <label for="editPassword">Password (Biarkan kosong jika tidak ingin mengubah)</label>
+              <input type="password" name="password" id="editPassword" class="form-control @error('password') is-invalid @enderror">
+              @error('password')
+              <div class="invalid-feedback">
+                {{ $message }}
+              </div>
+              @enderror
             </div>
-            @enderror
+            <div class="form-group mb-3">
+              <label for="edit_password_confirmation">Konfirmasi Password</label>
+              <input type="password" name="password_confirmation" id="edit_password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror">
+              @error('password_confirmation')
+              <div class="invalid-feedback">
+                {{ $message }}
+              </div>
+              @enderror
+            </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-          <button type="submit" class="btn btn-primary">Perbarui</button>
-        </div>
-      </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            <button type="submit" class="btn btn-primary">Perbarui</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 
   <!-- Toast Element -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -209,11 +209,11 @@
           name: 'no', 
           orderable: true, 
           searchable: false,
-          className: 'text-center'
+          className: 'text-center align-middle'
         },
-        { data: 'name', name: 'name' },
-        { data: 'email', name: 'email' },
-        { data: 'action', name: 'action', className: 'text-center', orderable: false, searchable: false }
+        { data: 'name', name: 'name', className: 'align-middle' },
+        { data: 'email', name: 'email', className: 'align-middle' },
+        { data: 'action', name: 'action', className: 'text-center align-middle', orderable: false, searchable: false }
       ]
     });
 

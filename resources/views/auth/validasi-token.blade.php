@@ -51,7 +51,7 @@
             </span>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Reset Password</button>
+        <button type="submit" class="btn btn-primary w-100 text-white btn-login">Reset Password</button>
     </form>
 
     <div class="footer mt-3">

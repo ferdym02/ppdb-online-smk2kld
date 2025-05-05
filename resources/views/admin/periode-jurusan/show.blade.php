@@ -27,7 +27,6 @@
 
   <div class="app-content">
     <div class="container-fluid">
-
       <div class="card card-secondary card-outline">
         <div class="card-body">
           <div class="row">

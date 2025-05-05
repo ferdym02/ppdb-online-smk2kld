@@ -45,17 +45,17 @@
                 <tbody>
                   @foreach($pengumumans as $index => $pengumuman)
                   <tr>
-                    <td class="text-center">{{ $index + 1 }}</td>
-                    <td>{{ \Illuminate\Support\Str::limit(strip_tags($pengumuman->judul), 25, '...') }}</td>
-                    <td>{{ \Illuminate\Support\Str::limit(strip_tags($pengumuman->isi), 50, '...') }}</td> <!-- Tambahkan ini -->
-                    <td class="text-center">
+                    <td class="text-center align-middle">{{ $index + 1 }}</td>
+                    <td class="align-middle">{{ \Illuminate\Support\Str::limit(strip_tags($pengumuman->judul), 25, '...') }}</td>
+                    <td class="align-middle">{{ \Illuminate\Support\Str::limit(strip_tags($pengumuman->isi), 50, '...') }}</td> <!-- Tambahkan ini -->
+                    <td class="text-center align-middle">
                       @if($pengumuman->file_lampiran)
                       <a href="{{ asset('storage/' . $pengumuman->file_lampiran) }}" target="_blank">Download</a>
                       @else
                       Tidak Ada File
                       @endif
                     </td>
-                    <td class="text-center">
+                    <td class="text-center align-middle">
                       <a href="{{ route('pengumuman.show', $pengumuman->id) }}" class="btn btn-sm btn-info">
                         Detail
                       </a>
@@ -395,4 +395,3 @@
   @endif
 </script>
 @endsection
-

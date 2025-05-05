@@ -46,13 +46,13 @@
                 <tbody>
                   @foreach ($periodes as $index => $periode)
                   <tr>
-                    <td class="text-center">{{ $index + 1 }}</td>
-                    <td class="text-center">{{ $periode->tahun_pelajaran }}</td>
-                    <td class="text-center">{{ \Carbon\Carbon::parse($periode->tanggal_buka)->format('d-m-Y') }}</td>
-                    <td class="text-center">{{ \Carbon\Carbon::parse($periode->tanggal_tutup)->format('d-m-Y') }}</td>
-                    <td class="text-center">{{ $periode->kuota_penerimaan }}</td>
-                    <td class="text-center">{{ $periode->status ? 'Aktif' : 'Tidak Aktif' }}</td>
-                    <td class="text-center">
+                    <td class="text-center align-middle">{{ $index + 1 }}</td>
+                    <td class="text-center align-middle">{{ $periode->tahun_pelajaran }}</td>
+                    <td class="text-center align-middle">{{ \Carbon\Carbon::parse($periode->tanggal_buka)->format('d-m-Y') }}</td>
+                    <td class="text-center align-middle">{{ \Carbon\Carbon::parse($periode->tanggal_tutup)->format('d-m-Y') }}</td>
+                    <td class="text-center align-middle">{{ $periode->kuota_penerimaan }}</td>
+                    <td class="text-center align-middle">{{ $periode->status ? 'Aktif' : 'Tidak Aktif' }}</td>
+                    <td class="text-center align-middle">
                       <a href="{{ route('periodes.show', $periode->id) }}" class="btn btn-info btn-sm">Detail</a>
                       <!-- Tambahkan tombol aksi (edit/delete) sesuai kebutuhan -->
                       <button class="btn btn-warning btn-sm edit-btn" data-periode="{{ $periode }}">Edit</button>

@@ -199,17 +199,17 @@
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    // Show toast notification if session has 'success' or 'error'
-    @if(session('success'))
-    var toastSuccess = new bootstrap.Toast(document.getElementById('toastSuccess'));
-    toastSuccess.show();
-    @endif
+    $(document).ready(function() {
+        // Show toast notification if session has 'success' or 'error'
+        @if(session('success'))
+        var toastSuccess = new bootstrap.Toast(document.getElementById('toastSuccess'));
+        toastSuccess.show();
+        @endif
 
-    @if(session('error'))
-    var toastError = new bootstrap.Toast(document.getElementById('toastError'));
-    toastError.show();
-    @endif
-});
+        @if(session('error'))
+        var toastError = new bootstrap.Toast(document.getElementById('toastError'));
+        toastError.show();
+        @endif
+    });
 </script>
 @endsection

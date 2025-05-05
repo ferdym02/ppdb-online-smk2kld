@@ -4,12 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }} | PPDB Online SMKN 2 Kalianda</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap CSS CDN untuk styling dasar -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="...">
+    <!-- Ikon tambahan dari Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <!-- Custom CSS milik aplikasi -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <!-- Font Awesome untuk ikon tambahan -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts untuk font Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Favicons -->
+    <!-- Favicon untuk ikon browser tab -->
     <link href="{{ asset('assets/img/favicon-32x32.png') }}" rel="icon">
     <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
     @yield('css')
@@ -125,14 +130,15 @@
         Semua hak dilindungi.
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Bootstrap Bundle JS untuk komponen interaktif -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="..."></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const backToTopButton = document.getElementById('backToTop');
-    
-            // Tampilkan tombol jika halaman di-scroll ke bawah
+
+            // Logika tampilkan tombol saat scroll ke bawah
             window.addEventListener('scroll', () => {
-                if (window.scrollY > 200) { // Jika scroll lebih dari 200px
+                if (window.scrollY > 200) {
                     backToTopButton.classList.remove('d-none');
                     backToTopButton.style.opacity = '1';
                     backToTopButton.style.transform = 'scale(1)';
@@ -142,7 +148,7 @@
                     setTimeout(() => backToTopButton.classList.add('d-none'), 300);
                 }
             });
-    
+
             // Scroll halus ke atas saat tombol diklik
             backToTopButton.addEventListener('click', () => {
                 window.scrollTo({

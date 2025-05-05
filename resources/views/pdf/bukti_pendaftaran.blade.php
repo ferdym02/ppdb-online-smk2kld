@@ -6,15 +6,12 @@
         body {
             font-family: Times New Roman, Times, serif; /* Menggunakan Times New Roman untuk seluruh body */
         }
-
         header, .header-text h1, .header-text h3, .header-text p {
             font-family: Arial, sans-serif; /* Menggunakan Arial untuk bagian header */
         }
-
         h2 {
             text-align: center;
         }
-
         /* Menghilangkan border pada tabel header-table */
         .header-table {
             width: 100%;
@@ -69,7 +66,6 @@
             font-size: 14px;
             margin-top: 25px;
         }
-
         .section-judul p {
             margin: 0;
             padding: 0;
@@ -102,7 +98,6 @@
             background-color: #c0c0c0;
             text-align: center; /* Memusatkan teks di header tabel */
         }
-
         /* Tabel untuk Info Pendaftaran */
         .info-pendaftaran-table {
             width: 100%;
@@ -118,7 +113,6 @@
             padding: 8px;
             text-align: center;
         }
-
         /* Custom styling for Data Calon Peserta and Daftar Pilihan Jurusan sections */
         .data-diri-table, .jurusan-table {
             margin-top: 20px;
@@ -127,16 +121,13 @@
             border: 1px solid black;
             border-collapse: collapse;
         }
-
         .data-diri-table th, .data-diri-table td {
             padding: 8px;
         }
-
         .jurusan-table td {
             padding: 6px;
             text-align: center;
         }
-
         .data-diri-header {
             width: 25%; /* Atur lebar sesuai kebutuhan */
             text-align: left;

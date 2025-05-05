@@ -1,4 +1,16 @@
 @extends('user.layouts.app')
+@section('css')
+    <style>
+        @media (max-width: 768px) {
+            .responsive-btn {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+                line-height: 1.5;
+                border-radius: 0.2rem;
+            }
+        } 
+    </style>
+@endsection
 
 @section('content')
 @if (!$isRegistrationOpen)
@@ -18,94 +30,113 @@
 </div>
 @else
 @if ($pendaftar)
-    <div class="card mt-3 text-dark">
-        <div class="card-header text-white">
-            Informasi Pendaftaran
-        </div>
-        <div class="card-body">
-            <p class="card-text">
-                <strong>Tanggal Pendaftaran:</strong> 
-                {{ $pendaftar->created_at->format('d-m-Y') }}
-            </p>
-            <p class="card-text">
-                <strong>Jam Pendaftaran:</strong> 
-                {{ $pendaftar->created_at->format('H:i:s') }} WIB
-            </p>
-            <p class="card-text">
-                @if($pendaftar->status_pendaftaran == 'verified')
-                    <p>
-                        <strong>Status Pendaftaran:</strong> 
-                        <span class="bg-primary" style="color: white; padding: 5px 10px; border-radius: 5px;">Terverifikasi</span>
-                    </p>
-                    <p class="alert alert-success">
-                        Pendaftaran Anda sudah terverifikasi, silakan cek jadwal Tes Minat Bakat Anda di <a href="/user/dashboard">dashboard</a>.
-                    </p>
-                    <p class="alert alert-info">
-                        Silakan menunggu hasil tes pada halaman ini setelah Anda melakukan Tes Minat Bakat.
-                    </p>
-                    <a href="{{ route('pendaftar.cetakBukti', $pendaftar->id) }}" class="btn btn-success"><i class="fas fa-print"></i> Cetak Bukti Pendaftaran</a>
-                @elseif ($pendaftar->status_pendaftaran == 'rejected')
-                    <p>
-                        <strong>Status Pendaftaran:</strong> 
-                        <span class="bg-warning" style="padding: 5px 10px; border-radius: 5px;">Perlu Perbaikan</span>
-                    </p>
-                    <p class="card-text"><strong>Catatan Perbaikan:</strong> {{ $pendaftar->catatan_penolakan }}</p>
-                    <div class="alert alert-warning mt-3">
-                        <strong>Perhatian:</strong> Segera edit data yang perlu perbaikan sesuai dengan informasi dari catatan perbaikan supaya data pendaftaran Anda dapat segera diverifikasi kembali oleh admin.
-                    </div>
-                    <a href="{{ route('pendaftaran.edit', $pendaftar->id) }}" class="btn btn-warning">Edit Data</a>
-                @elseif ($pendaftar->status_pendaftaran == 'pending')
-                    <p>
-                        <strong>Status Pendaftaran:</strong> 
-                        <span class="bg-secondary" style="color: white; padding: 5px 10px; border-radius: 5px;">Pending</span>
-                        <div class="alert alert-info mt-3">
-                            Silakan menunggu data pendaftaran Anda diverifikasi oleh admin dan cek secara berkala.
-                        </div>
-                    </p>
-                    <a href="{{ route('pendaftaran.edit', $pendaftar->id) }}" class="btn btn-warning">Edit Data</a>
-                @elseif ($pendaftar->status_pendaftaran == 'gugur')
-                    <p>
-                        <strong>Status Pendaftaran:</strong> 
-                        <span class="bg-danger" style="color: white; padding: 5px 10px; border-radius: 5px;">Tidak Lulus</span>
-                        <div class="alert alert-info mt-3">
-                            Kami menyesal untuk memberitahukan bahwa Anda <strong>tidak lulus</strong> dalam seleksi penerimaan. Kami mengapresiasi usaha dan waktu yang telah Anda berikan. Jangan menyerah, teruslah berusaha dan semoga sukses di kesempatan berikutnya!
-                        </div>
-                    </p>
-                @elseif ($pendaftar->status_pendaftaran == 'cadangan')
-                    <p>
-                        <strong>Status Pendaftaran:</strong> 
-                        <span class="bg-info" style="padding: 5px 10px; border-radius: 5px;">Cadangan</span>
-                        <p><strong>Cadangan di jurusan:</strong> {{ $pendaftar->jurusanDiterima->nama }}</p>
-                        <div class="alert alert-info mt-3">
-                            Saat ini status Anda sebagai cadangan di jurusan tersebut. Anda dapat menunggu pihak panitia mengontak Anda jika ada calon peserta didik baru yang mengundurkan diri dan Anda akan otomatis <strong>lulus</strong>.
-                        </div>
-                    </p>
-                    <a href="{{ route('pendaftar.cetakBukti', $pendaftar->id) }}" class="btn btn-success"><i class="fas fa-print"></i> Cetak Bukti Pendaftaran</a>
-                @elseif ($pendaftar->status_pendaftaran == 'diterima')
-                    <p>
-                        <strong>Status Pendaftaran:</strong> 
-                        <span class="bg-success" style="color: white; padding: 5px 10px; border-radius: 5px;">Lulus</span>
-                        <p><strong>Diterima di jurusan:</strong> {{ $pendaftar->jurusanDiterima->nama }}</p>
-                        <strong>Status Daftar Ulang:</strong>
-                        @if (is_null($pendaftar->daftar_ulang))
-                            <span>Belum</span>
-                        @elseif ($pendaftar->daftar_ulang === 'tidak')
-                            <span>Tidak</span>
-                        @elseif ($pendaftar->daftar_ulang === 'ya')
-                            <span>Sudah</span>
-                        @endif
-                        <div class="alert alert-info mt-3">
-                            Selamat! Anda telah diterima dalam proses PPDB. Silakan segera melakukan <strong>daftar ulang</strong> sesuai dengan tanggal yang ada di jadwal. Terkait tata cara daftar ulang dapat dilihat pada menu <a href="/user/pengumuman">Pengumuman</a>.
-                        </div>
-                    <a href="{{ route('pendaftar.cetakBukti', $pendaftar->id) }}" class="btn btn-success"><i class="fas fa-print"></i> Cetak Bukti Pendaftaran</a>
-                @endif
-            </p>            
-        </div>
+<div class="card my-3 text-dark">
+    <div class="card-header text-white">
+        Informasi Pendaftaran
     </div>
+    <div class="card-body">
+        <p class="card-text">
+            <strong>Tanggal Pendaftaran:</strong> {{ $pendaftar->created_at->format('d-m-Y') }}
+        </p>
+        <p class="card-text">
+            <strong>Jam Pendaftaran:</strong> {{ $pendaftar->created_at->format('H:i:s') }} WIB
+        </p>
+
+        @if ($pendaftar->status_pendaftaran == 'verified')
+            <p class="card-text">
+                <strong>Status Pendaftaran:</strong>
+                <span class="bg-primary text-white px-2 py-1 rounded">Terverifikasi</span>
+            </p>
+            <div class="alert alert-success">
+                Pendaftaran Anda sudah terverifikasi, silakan cek jadwal Tes Minat Bakat Anda di 
+                <a href="/user/dashboard">dashboard</a>.
+            </div>
+            <div class="alert alert-info">
+                Silakan menunggu hasil tes pada halaman ini setelah Anda melakukan Tes Minat Bakat.
+            </div>
+            <a href="{{ route('pendaftar.cetakBukti', $pendaftar->id) }}" class="btn btn-success">
+                <i class="fas fa-print"></i> Cetak Bukti Pendaftaran
+            </a>
+        @elseif ($pendaftar->status_pendaftaran == 'rejected')
+            <p class="card-text">
+                <strong>Status Pendaftaran:</strong>
+                <span class="bg-warning px-2 py-1 rounded">Perlu Perbaikan</span>
+            </p>
+            <p class="card-text">
+                <strong>Catatan Perbaikan:</strong> {{ $pendaftar->catatan_penolakan }}
+            </p>
+            <div class="alert alert-warning mt-3">
+                <strong>Perhatian:</strong> Segera edit data yang perlu perbaikan sesuai dengan informasi dari catatan 
+                perbaikan supaya data pendaftaran Anda dapat segera diverifikasi kembali oleh admin.
+            </div>
+            <a href="{{ route('pendaftaran.edit', $pendaftar->id) }}" class="btn btn-warning">Edit Data</a>
+        @elseif ($pendaftar->status_pendaftaran == 'pending')
+            <p class="card-text">
+                <strong>Status Pendaftaran:</strong>
+                <span class="bg-secondary text-white px-2 py-1 rounded">Pending</span>
+            </p>
+            <div class="alert alert-info mt-3">
+                Silakan menunggu data pendaftaran Anda diverifikasi oleh admin dan cek secara berkala.
+            </div>
+            <a href="{{ route('pendaftaran.edit', $pendaftar->id) }}" class="btn btn-warning">Edit Data</a>
+        @elseif ($pendaftar->status_pendaftaran == 'gugur')
+            <p class="card-text">
+                <strong>Status Pendaftaran:</strong>
+                <span class="bg-danger text-white px-2 py-1 rounded">Tidak Lulus</span>
+            </p>
+            <div class="alert alert-info mt-3">
+                Kami menyesal untuk memberitahukan bahwa Anda <strong>tidak lulus</strong> dalam seleksi penerimaan. Kami mengapresiasi usaha dan waktu yang telah Anda berikan. Jangan menyerah, teruslah berusaha dan semoga sukses di kesempatan berikutnya!
+            </div>
+        @elseif ($pendaftar->status_pendaftaran == 'cadangan')
+            <p class="card-text">
+                <strong>Status Pendaftaran:</strong>
+                <span class="bg-info text-white px-2 py-1 rounded">Cadangan</span>
+            </p>
+            <p class="card-text">
+                <strong>Cadangan di jurusan:</strong> {{ $pendaftar->jurusanDiterima->nama }}
+            </p>
+            <div class="alert alert-info mt-3">
+                Saat ini status Anda sebagai cadangan di jurusan tersebut. Anda dapat menunggu pihak panitia mengontak Anda jika ada calon peserta didik baru yang mengundurkan diri dan Anda akan otomatis 
+                <strong>lulus</strong>.
+            </div>
+            <a href="{{ route('pendaftar.cetakBukti', $pendaftar->id) }}" class="btn btn-success">
+                <i class="fas fa-print"></i> Cetak Bukti Pendaftaran
+            </a>
+        @elseif ($pendaftar->status_pendaftaran == 'diterima')
+            <p class="card-text">
+                <strong>Status Pendaftaran:</strong>
+                <span class="bg-success text-white px-2 py-1 rounded">Lulus</span>
+            </p>
+            <p class="card-text">
+                <strong>Diterima di jurusan:</strong> {{ $pendaftar->jurusanDiterima->nama }}
+            </p>
+            <p class="card-text">
+                <strong>Status Daftar Ulang:</strong>
+                @if (is_null($pendaftar->daftar_ulang))
+                    <span>Belum</span>
+                @elseif ($pendaftar->daftar_ulang === 'tidak')
+                    <span>Tidak</span>
+                @elseif ($pendaftar->daftar_ulang === 'ya')
+                    <span>Sudah</span>
+                @endif
+            </p>
+            <div class="alert alert-info mt-3">
+                Selamat! Anda telah lulus dalam proses PPDB. Silakan segera melakukan <strong>daftar ulang</strong> sesuai dengan tanggal yang ada di jadwal. Terkait tata cara daftar ulang dapat dilihat pada menu 
+                <a href="/user/pengumuman">Pengumuman</a>.
+            </div>
+            <a href="{{ route('pendaftar.cetakBukti', $pendaftar->id) }}" class="btn btn-success">
+                <i class="fas fa-print"></i> Cetak Bukti Pendaftaran
+            </a>
+        @endif
+    </div>
+</div>
 @else
     <h5 class="mt-3">Silakan isi formulir untuk melakukan pendaftaran</h5>
     <div class="alert alert-warning mt-3">
-        <strong>Perhatian:</strong> Pastikan Anda mengisi semua data dengan benar dan hati-hati. Data yang Anda masukkan akan digunakan dalam proses seleksi, jadi periksa kembali setiap informasi sebelum menyimpan. Kesalahan dalam pengisian data dapat mempengaruhi hasil pendaftaran Anda. Terima kasih.
+        <strong>Perhatian:</strong> Pengisian formulir pendaftaran ini terdiri dari 3 tahap. <strong>Tahap 1: Data Diri, Tahap 2: Upload Dokumen Pendukung, dan Tahap 3: Nilai Rapor.</strong> Silakan isi semua data dengan benar dan lengkap sebelum ke tahap selanjutnya. Jangan refresh halaman ketika sedang melakukan pengisian untuk menghindari data harus diisi kembali.
+    </div>
+    <div class="alert alert-success mt-3">
+        <strong>Tips:</strong> Scan terlebih dahulu dokumen pendukung kemudian kumpulkan dalam satu folder sebelum di upload untuk kemudahan proses upload.
     </div>
     <div class="alert alert-info mt-3">
         <strong>Catatan:</strong> Field yang ditandai dengan <span class="text-danger">*</span> wajib diisi.
@@ -210,9 +241,7 @@
                             <td>
                                 :
                                 @if ($pendaftar->kartu_keluarga)
-                                    <img src="{{ asset('storage/' . $pendaftar->kartu_keluarga) }}" alt="Kartu Keluarga" style="max-width: 150px;">
-                                    
-                                    <a href="{{ asset('storage/' . $pendaftar->kartu_keluarga) }}" target="_blank">Lihat</a>
+                                    <a href="{{ route('dokumen.lihat', basename($pendaftar->kartu_keluarga)) }}" target="_blank">Lihat</a>
                                 @else
                                     Tidak Ada
                                 @endif
@@ -223,9 +252,7 @@
                             <td>
                                 :
                                 @if ($pendaftar->ktp_orang_tua)
-                                    <img src="{{ asset('storage/' . $pendaftar->ktp_orang_tua) }}" alt="KTP Orang Tua/Wali" style="max-width: 150px;">
-                                    
-                                    <a href="{{ asset('storage/' . $pendaftar->ktp_orang_tua) }}" target="_blank">Lihat</a>
+                                    <a href="{{ route('dokumen.lihat', basename($pendaftar->ktp_orang_tua)) }}" target="_blank">Lihat</a>
                                 @else
                                     Tidak Ada
                                 @endif
@@ -236,9 +263,7 @@
                             <td>
                                 :
                                 @if ($pendaftar->akte_kelahiran)
-                                    <img src="{{ asset('storage/' . $pendaftar->akte_kelahiran) }}" alt="Akte Kelahiran" style="max-width: 150px;">
-                                    
-                                    <a href="{{ asset('storage/' . $pendaftar->akte_kelahiran) }}" target="_blank">Lihat</a>
+                                    <a href="{{ route('dokumen.lihat', basename($pendaftar->akte_kelahiran)) }}" target="_blank">Lihat</a>
                                 @else
                                     Tidak Ada
                                 @endif
@@ -249,9 +274,7 @@
                             <td>
                                 :
                                 @if ($pendaftar->ijazah)
-                                    <img src="{{ asset('storage/' . $pendaftar->ijazah) }}" alt="Ijazah" style="max-width: 150px;">
-                                    
-                                    <a href="{{ asset('storage/' . $pendaftar->ijazah) }}" target="_blank">Lihat</a>
+                                    <a href="{{ route('dokumen.lihat', basename($pendaftar->ijazah)) }}" target="_blank">Lihat</a>
                                 @else
                                     Tidak Ada
                                 @endif
@@ -262,13 +285,11 @@
                 <div class="col-md-6">
                     <table class="table">
                         <tr>
-                            <th style="width: 50%">Foto Calon Siswa Ukuran 3x4</th>
+                            <th style="width: 50%">Foto Calon Siswa</th>
                             <td>
                                 :
                                 @if ($pendaftar->foto_calon_siswa)
-                                    <img src="{{ asset('storage/' . $pendaftar->foto_calon_siswa) }}" alt="Foto Calon Siswa" style="max-width: 150px;">
-                                    
-                                    <a href="{{ asset('storage/' . $pendaftar->foto_calon_siswa) }}" target="_blank">Lihat</a>
+                                    <a href="{{ route('dokumen.lihat', basename($pendaftar->foto_calon_siswa)) }}" target="_blank">Lihat</a>
                                 @else
                                     Tidak Ada
                                 @endif
@@ -279,33 +300,29 @@
                             <td>
                                 :
                                 @if ($pendaftar->raport)
-                                    <a href="{{ asset('storage/' . $pendaftar->raport) }}" target="_blank">Lihat</a>
+                                    <a href="{{ route('dokumen.lihat', basename($pendaftar->raport)) }}" target="_blank">Lihat</a>
                                 @else
                                     Tidak Ada
                                 @endif
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 50%">Piagam/Sertifikat</th>
-                            <td>
-                                :
-                                @if ($pendaftar->piagam)
-                                    <img src="{{ asset('storage/' . $pendaftar->piagam) }}" alt="Piagam/Sertifikat" style="max-width: 150px;">
-                                    
-                                    <a href="{{ asset('storage/' . $pendaftar->piagam) }}" target="_blank">Lihat</a>
-                                @else
-                                    Tidak Ada
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <th style="width: 50%">Surat Keterangan Peringkat Kelas/Sekolah</th>
+                            <th style="width: 50%">Surat Keterangan Peringkat Kelas/Sekolah (Akademik)</th>
                             <td>
                                 :
                                 @if ($pendaftar->surat_keterangan)
-                                    <img src="{{ asset('storage/' . $pendaftar->surat_keterangan) }}" alt="Surat Keterangan" style="max-width: 150px;">
-                                    
-                                    <a href="{{ asset('storage/' . $pendaftar->surat_keterangan) }}" target="_blank">Lihat</a>
+                                    <a href="{{ route('dokumen.lihat', basename($pendaftar->surat_keterangan)) }}" target="_blank">Lihat</a>
+                                @else
+                                    Tidak Ada
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width: 50%">Piagam/Sertifikat (Non Akademik)</th>
+                            <td>
+                                :
+                                @if ($pendaftar->piagam)
+                                    <a href="{{ route('dokumen.lihat', basename($pendaftar->piagam)) }}" target="_blank">Lihat</a>
                                 @else
                                     Tidak Ada
                                 @endif
@@ -406,7 +423,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="nama_lengkap">Nama Lengkap <span class="text-danger">*</span>:</label>
-                                <input type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required>
+                                <input type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap') }}" placeholder="Masukkan nama lengkap" required>
                                 @error('nama_lengkap')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -415,7 +432,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="tempat_lahir">Tempat Lahir <span class="text-danger">*</span>:</label>
-                                <input type="text" class="form-control @error('tempat_lahir') is-invalid @enderror" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}" required>
+                                <input type="text" class="form-control @error('tempat_lahir') is-invalid @enderror" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}" placeholder="Masukkan tempat lahir" required>
                                 @error('tempat_lahir')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -446,7 +463,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="alamat">Alamat <span class="text-danger">*</span>:</label>
-                                <textarea class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat" rows="3" required>{{ old('alamat') }}</textarea>
+                                <textarea class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat" rows="3" placeholder="Masukkan alamat" required>{{ old('alamat') }}</textarea>
                                 @error('alamat')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -457,7 +474,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="nisn">NISN <span class="text-danger">*</span>:</label>
-                                <input type="text" class="form-control @error('nisn') is-invalid @enderror" id="nisn" name="nisn" value="{{ old('nisn') }}" required>
+                                <input type="text" class="form-control @error('nisn') is-invalid @enderror" id="nisn" name="nisn" value="{{ old('nisn') }}" placeholder="Masukkan NISN" required>
                                 @error('nisn')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -466,7 +483,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="asal_sekolah">Asal Sekolah <span class="text-danger">*</span>:</label>
-                                <input type="text" class="form-control @error('asal_sekolah') is-invalid @enderror" id="asal_sekolah" name="asal_sekolah" value="{{ old('asal_sekolah') }}" required>
+                                <input type="text" class="form-control @error('asal_sekolah') is-invalid @enderror" id="asal_sekolah" name="asal_sekolah" value="{{ old('asal_sekolah') }}" placeholder="Masukkan asal sekolah" required>
                                 @error('asal_sekolah')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -475,7 +492,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="nama_ayah">Nama Ayah <span class="text-danger">*</span>:</label>
-                                <input type="text" class="form-control @error('nama_ayah') is-invalid @enderror" id="nama_ayah" name="nama_ayah" value="{{ old('nama_ayah') }}" required>
+                                <input type="text" class="form-control @error('nama_ayah') is-invalid @enderror" id="nama_ayah" name="nama_ayah" value="{{ old('nama_ayah') }}" placeholder="Masukkan nama ayah" required>
                                 @error('nama_ayah')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -484,7 +501,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="nama_ibu">Nama Ibu <span class="text-danger">*</span>:</label>
-                                <input type="text" class="form-control @error('nama_ibu') is-invalid @enderror" id="nama_ibu" name="nama_ibu" value="{{ old('nama_ibu') }}" required>
+                                <input type="text" class="form-control @error('nama_ibu') is-invalid @enderror" id="nama_ibu" name="nama_ibu" value="{{ old('nama_ibu') }}" placeholder="Masukkan nama ibu" required>
                                 @error('nama_ibu')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -493,7 +510,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="nomor_wa">Nomor WA <span class="text-danger">*</span>:</label>
-                                <input type="text" class="form-control @error('nomor_wa') is-invalid @enderror" id="nomor_wa" name="nomor_wa" value="{{ old('nomor_wa') }}" required>
+                                <input type="text" class="form-control @error('nomor_wa') is-invalid @enderror" id="nomor_wa" name="nomor_wa" value="{{ old('nomor_wa') }}" placeholder="Masukkan nomor WhatsApp" required>
                                 @error('nomor_wa')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -511,6 +528,9 @@
                                     <option value="1" {{ old('prestasi_akademik') == '1' ? 'selected' : '' }}>Ya</option>
                                     <option value="0" {{ old('prestasi_akademik') == '0' ? 'selected' : '' }}>Tidak</option>
                                 </select>
+                                <small class="form-text text-muted">
+                                    (Pernah Rank 1- 10 dikelas 1,2,3)
+                                </small>
                                 @error('prestasi_akademik')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -526,6 +546,9 @@
                                     <option value="1" {{ old('prestasi_non_akademik') == '1' ? 'selected' : '' }}>Ya</option>
                                     <option value="0" {{ old('prestasi_non_akademik') == '0' ? 'selected' : '' }}>Tidak</option>
                                 </select>
+                                <small class="form-text text-muted">
+                                    (Lomba Minimal Tingkat Kecamatan)
+                                </small>
                                 @error('prestasi_non_akademik')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -535,45 +558,65 @@
                         </div>
                     </div>
                     <div class="alert alert-info mt-3">
-                        <strong>Catatan:</strong> Jurusan <strong>Teknik Komputer dan Jaringan</strong>, <strong>Teknik Kendaraan Ringan</strong>, dan <strong>Teknik Sepeda Motor</strong> hanya bisa dipilih di Pilihan Jurusan 1.
+                        <strong>Catatan:</strong>
+                        <ul>
+                            <li>
+                                Jurusan <strong>Teknik Komputer dan Jaringan</strong>, <strong>Teknik Kendaraan Ringan</strong>, dan <strong>Teknik Sepeda Motor</strong> hanya bisa dipilih di Pilihan Jurusan 1.
+                            </li>
+                            <li>
+                                Pilihan Jurusan 1, 2, dan 3 tidak boleh sama.
+                            </li>
+                        </ul>
                     </div>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="pilihan_jurusan_1">Pilihan Jurusan 1 <span class="text-danger">*</span>:</label>
-                                <select class="form-control" id="pilihan_jurusan_1" name="pilihan_jurusan_1" required>
+                                <select class="form-control @error('pilihan_jurusan_1') is-invalid @enderror" id="pilihan_jurusan_1" name="pilihan_jurusan_1" required>
                                     <option value="" disabled selected>Pilih Jurusan 1</option>
                                     @foreach($jurusans as $jurusan)
                                         <option value="{{ $jurusan->id }}" data-code="{{ $jurusan->kode }}" {{ old('pilihan_jurusan_1') == $jurusan->id ? 'selected' : '' }}>{{ $jurusan->nama }}</option>
                                     @endforeach
                                 </select>
+                                @error('pilihan_jurusan_1')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
+                        
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="pilihan_jurusan_2">Pilihan Jurusan 2 <span class="text-danger">*</span>:</label>
-                                <select class="form-control" id="pilihan_jurusan_2" name="pilihan_jurusan_2" required>
+                                <select class="form-control @error('pilihan_jurusan_2') is-invalid @enderror" id="pilihan_jurusan_2" name="pilihan_jurusan_2" required>
                                     <option value="" disabled selected>Pilih Jurusan 2</option>
                                     @foreach($jurusans as $jurusan)
                                         <option value="{{ $jurusan->id }}" data-code="{{ $jurusan->kode }}" {{ old('pilihan_jurusan_2') == $jurusan->id ? 'selected' : '' }}>{{ $jurusan->nama }}</option>
                                     @endforeach
                                 </select>
+                                @error('pilihan_jurusan_2')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
+                        
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="pilihan_jurusan_3">Pilihan Jurusan 3 <span class="text-danger">*</span>:</label>
-                                <select class="form-control" id="pilihan_jurusan_3" name="pilihan_jurusan_3" required>
+                                <select class="form-control @error('pilihan_jurusan_3') is-invalid @enderror" id="pilihan_jurusan_3" name="pilihan_jurusan_3" required>
                                     <option value="" disabled selected>Pilih Jurusan 3</option>
                                     @foreach($jurusans as $jurusan)
                                         <option value="{{ $jurusan->id }}" data-code="{{ $jurusan->kode }}" {{ old('pilihan_jurusan_3') == $jurusan->id ? 'selected' : '' }}>{{ $jurusan->nama }}</option>
                                     @endforeach
                                 </select>
+                                @error('pilihan_jurusan_3')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <button type="button" class="btn btn-primary btn-sm" id="nextTahap2">Selanjutnya: Tahap 2</button>
+                        
+                        <button type="button" class="btn btn-primary responsive-btn" id="nextTahap2">Selanjutnya: Tahap 2</button>
                     </div>
                 </div>
             
@@ -587,7 +630,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="kartu_keluarga">Kartu Keluarga <span class="text-danger">*</span>:</label>
-                                <input type="file"  class="form-control @error('kartu_keluarga') is-invalid @enderror" id="kartu_keluarga" name="kartu_keluarga" required>
+                                <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('kartu_keluarga') is-invalid @enderror" id="kartu_keluarga" name="kartu_keluarga" required>
                                 @error('kartu_keluarga')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -597,7 +640,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="ktp_orang_tua">KTP Orang Tua/Wali <span class="text-danger">*</span>:</label>
-                                <input type="file" class="form-control @error('ktp_orang_tua') is-invalid @enderror" id="ktp_orang_tua" name="ktp_orang_tua" required>
+                                <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('ktp_orang_tua') is-invalid @enderror" id="ktp_orang_tua" name="ktp_orang_tua" required>
                                 @error('kartu_keluarga')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -607,7 +650,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="akte_kelahiran">Akte Kelahiran <span class="text-danger">*</span>:</label>
-                                <input type="file" class="form-control @error('akte_kelahiran') is-invalid @enderror" id="akte_kelahiran" name="akte_kelahiran" required>
+                                <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('akte_kelahiran') is-invalid @enderror" id="akte_kelahiran" name="akte_kelahiran" required>
                                 @error('akte_kelahiran')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -617,7 +660,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="ijazah">Ijazah/Surat Keterangan Lulus <span class="text-danger">*</span>:</label>
-                                <input type="file" class="form-control @error('ijazah') is-invalid @enderror" id="ijazah" name="ijazah" required>
+                                <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('ijazah') is-invalid @enderror" id="ijazah" name="ijazah" required>
                                 @error('ijazah')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -629,7 +672,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="foto">Foto Calon Siswa Ukuran 3x4 <span class="text-danger">*</span>:</label>
-                                <input type="file" class="form-control @error('foto_calon_siswa') is-invalid @enderror" id="foto" name="foto_calon_siswa" required>
+                                <input type="file" accept=".jpg, .jpeg" class="form-control @error('foto_calon_siswa') is-invalid @enderror" id="foto" name="foto_calon_siswa" required>
                                 @error('foto_calon_siswa')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -639,7 +682,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="raport">Rapor Semester 1-5 <span class="text-danger">*</span>:</label>
-                                <input type="file" class="form-control @error('raport') is-invalid @enderror" id="raport" name="raport" required>
+                                <input type="file" accept=".pdf" class="form-control @error('raport') is-invalid @enderror" id="raport" name="raport" required>
                                 @error('raport')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -650,9 +693,9 @@
                                 </small>
                             </div>
                             <div class="form-group mb-3">
-                                <label for="piagam">Piagam/Sertifikat (Non Akademik) Jika Ada:</label>
-                                <input type="file" class="form-control @error('piagam') is-invalid @enderror" id="piagam" name="piagam">
-                                @error('piagam')
+                                <label for="surat_keterangan">Surat Keterangan Peringkat Kelas/Sekolah (Akademik) Jika Ada:</label>
+                                <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('surat_keterangan') is-invalid @enderror" id="surat_keterangan" name="surat_keterangan">
+                                @error('surat_keterangan')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
@@ -662,9 +705,9 @@
                                 </small>
                             </div>
                             <div class="form-group mb-3">
-                                <label for="surat_keterangan">Surat Keterangan Peringkat Kelas/Sekolah (Akademik) Jika Ada:</label>
-                                <input type="file" class="form-control @error('surat_keterangan') is-invalid @enderror" id="surat_keterangan" name="surat_keterangan">
-                                @error('surat_keterangan')
+                                <label for="piagam">Piagam/Sertifikat (Non Akademik) Jika Ada:</label>
+                                <input type="file" accept=".jpg, .jpeg, .pdf" class="form-control @error('piagam') is-invalid @enderror" id="piagam" name="piagam">
+                                @error('piagam')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
@@ -676,8 +719,8 @@
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <button type="button" class="btn btn-secondary btn-sm" id="prevTahap1">Kembali: Tahap 1</button>
-                        <button type="button" class="btn btn-primary btn-sm" id="nextTahap3">Selanjutnya: Tahap 3</button>
+                        <button type="button" class="btn btn-secondary responsive-btn" id="prevTahap1">Kembali: Tahap 1</button>
+                        <button type="button" class="btn btn-primary responsive-btn" id="nextTahap3">Selanjutnya: Tahap 3</button>
                     </div>
                 </div>
 
@@ -685,56 +728,68 @@
                 <div id="formTahap3" class="form-tahap d-none">
                     <p class="mb-4 mt-1"><strong>Tahap 3: Nilai Rapor Semester 1-5</strong></p>
                     <div class="alert alert-warning mt-3">
-                        <strong>Perhatian:</strong> Gunakan tanda "," (koma) jika nilainya desimal. <strong>Contoh: "80,5"</strong>.
+                        <strong>Perhatian:</strong> Gunakan tanda "." (titik) jika nilainya desimal. <strong>Contoh: "80.25"</strong> (Maksimal 2 angka di belakang koma).
                     </div>
                     @for ($semester = 1; $semester <= 5; $semester++)
                         <h4 class="mt-3">Semester {{ $semester }}</h4>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-2">
-                                    <label for="mtk_semester_{{ $semester }}">Nilai MTK:</label>
+                                    <label for="mtk_semester_{{ $semester }}">Nilai MTK <span class="text-danger">*</span>:</label>
                                     <input 
                                         type="number"
                                         step="0.01"
+                                        min="0"
+                                        max="100"
                                         class="form-control" 
                                         id="mtk_semester_{{ $semester }}" 
                                         name="nilai_rapor[{{ $semester }}][mtk]" 
                                         value="{{ old('nilai_rapor.' . $semester . '.mtk') }}" 
+                                        placeholder="Masukkan nilai MTK semester {{ $semester }}"
                                         required>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <label for="bahasa_indonesia_semester_{{ $semester }}">Nilai Bahasa Indonesia:</label>
+                                    <label for="bahasa_indonesia_semester_{{ $semester }}">Nilai Bahasa Indonesia <span class="text-danger">*</span>:</label>
                                     <input 
                                         type="number"
                                         step="0.01" 
+                                        min="0"
+                                        max="100"
                                         class="form-control" 
                                         id="bahasa_indonesia_semester_{{ $semester }}" 
                                         name="nilai_rapor[{{ $semester }}][bahasa_indonesia]" 
                                         value="{{ old('nilai_rapor.' . $semester . '.bahasa_indonesia') }}" 
+                                        placeholder="Masukkan nilai B. Indonesia semester {{ $semester }}"
                                         required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-2">
-                                    <label for="ipa_semester_{{ $semester }}">Nilai IPA:</label>
+                                    <label for="ipa_semester_{{ $semester }}">Nilai IPA <span class="text-danger">*</span>:</label>
                                     <input 
                                         type="number"
-                                        step="0.01" 
+                                        step="0.01"
+                                        min="0"
+                                        max="100"
                                         class="form-control" 
                                         id="ipa_semester_{{ $semester }}" 
                                         name="nilai_rapor[{{ $semester }}][ipa]" 
                                         value="{{ old('nilai_rapor.' . $semester . '.ipa') }}" 
+                                        placeholder="Masukkan nilai IPA semester {{ $semester }}"
                                         required>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <label for="bahasa_inggris_semester_{{ $semester }}">Nilai Bahasa Inggris:</label>
+                                    <label for="bahasa_inggris_semester_{{ $semester }}">Nilai Bahasa Inggris <span class="text-danger">*</span>:</label>
                                     <input 
                                         type="number"
-                                        step="0.01" 
+                                        step="0.01"
+                                        min="0"
+                                        max="100"
                                         class="form-control" 
                                         id="bahasa_inggris_semester_{{ $semester }}" 
                                         name="nilai_rapor[{{ $semester }}][bahasa_inggris]" 
                                         value="{{ old('nilai_rapor.' . $semester . '.bahasa_inggris') }}" 
+                                        placeholder="Masukkan nilai B. Inggris semester {{ $semester }}"
                                         required>
                                 </div>
                             </div>
@@ -742,8 +797,8 @@
                     @endfor
                     <div class="mt-3">
                         <div style="text-align: right;">
-                            <button type="button" class="btn btn-secondary btn-sm" id="prevTahap2">Kembali: Tahap 2</button>
-                            <button type="submit" class="btn btn-success btn-sm">Submit</button>
+                            <button type="button" class="btn btn-secondary responsive-btn" id="prevTahap2">Kembali: Tahap 2</button>
+                            <button type="submit" class="btn btn-success responsive-btn">Submit</button>
                         </div>
                     </div>
                 </div>
@@ -801,13 +856,13 @@
             const selectedCode2 = selectedJurusan2 ? selectedJurusan2.getAttribute('data-code') : null;
             const selectedCode3 = selectedJurusan3 ? selectedJurusan3.getAttribute('data-code') : null;
 
-            // Update jurusan2 options
+            // Menonaktifkan opsi pada pilihan jurusan kedua yang sama dengan pilihan pertama atau termasuk jurusan khusus
             for (let option of jurusan2.options) {
                 const code = option.getAttribute('data-code');
                 option.disabled = restrictedCodes.includes(code) || code === selectedCode1;
             }
-            
-            // Update jurusan3 options
+
+            // Menonaktifkan opsi pada pilihan jurusan ketiga yang sama dengan pilihan pertama/kedua atau termasuk jurusan khusus
             for (let option of jurusan3.options) {
                 const code = option.getAttribute('data-code');
                 option.disabled = restrictedCodes.includes(code) || code === selectedCode1 || code === selectedCode2;
@@ -888,43 +943,6 @@
         // document.getElementById('formTahap3').classList.remove('d-none');
     });
 
-    // Event listener untuk tombol "Kembali ke Tahap 1"
-    document.getElementById('prevTahap1').addEventListener('click', function() {
-        document.getElementById('formTahap2').classList.add('d-none');
-        document.getElementById('formTahap1').classList.remove('d-none');
-    });
-
-    // Event listener untuk tombol "Kembali ke Tahap 2"
-    document.getElementById('prevTahap2').addEventListener('click', function() {
-        document.getElementById('formTahap3').classList.add('d-none');
-        document.getElementById('formTahap2').classList.remove('d-none');
-    });
-
-    // Menambahkan event listener untuk setiap input di Tahap 1 dan Tahap 2 agar pesan invalid hilang saat input diisi
-    function setupLiveValidation(formId) {
-        var inputs = document.querySelectorAll(formId + ' .form-control');
-
-        inputs.forEach(function(input) {
-            input.addEventListener('input', function() {
-                var errorText = document.createElement('div');
-                errorText.classList.add('invalid-feedback');
-                errorText.innerText = 'Wajib diisi';
-
-                if (!input.checkValidity()) {
-                    input.classList.add('is-invalid');
-                    if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
-                        input.after(errorText);
-                    }
-                } else {
-                    input.classList.remove('is-invalid');
-                    if (input.nextElementSibling && input.nextElementSibling.classList.contains('invalid-feedback')) {
-                        input.nextElementSibling.remove();
-                    }
-                }
-            });
-        });
-    }
-
     document.getElementById('pendaftaranForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Cegah submit langsung
 
@@ -936,26 +954,13 @@
             var errorText = document.createElement('div');
             errorText.classList.add('invalid-feedback');
 
-            // Hapus pesan kesalahan sebelumnya jika ada
-            if (input.nextElementSibling && input.nextElementSibling.classList.contains('invalid-feedback')) {
-                input.nextElementSibling.remove();
-            }
-
-            if (input.value.trim() === '') {
+            if (!input.checkValidity()) {
                 errorText.innerText = 'Wajib diisi';
                 isValid = false;
                 input.classList.add('is-invalid');
-                input.after(errorText);
-            } else if (input.value > 100) {
-                errorText.innerText = 'Maksimal nilai 100';
-                isValid = false;
-                input.classList.add('is-invalid');
-                input.after(errorText);
-            } else if (input.value < 0) {
-                errorText.innerText = 'Minimal nilai 0';
-                isValid = false;
-                input.classList.add('is-invalid');
-                input.after(errorText);
+                if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
+                    input.after(errorText);
+                }
             } else {
                 input.classList.remove('is-invalid');
                 if (input.nextElementSibling && input.nextElementSibling.classList.contains('invalid-feedback')) {
@@ -964,6 +969,7 @@
             }
         });
 
+        // Tampilkan dialog konfirmasi sebelum mengirim form
         if (isValid) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',
@@ -982,6 +988,43 @@
             });
         }
     });
+
+    // Event listener untuk tombol "Kembali ke Tahap 1"
+    document.getElementById('prevTahap1').addEventListener('click', function() {
+        document.getElementById('formTahap2').classList.add('d-none');
+        document.getElementById('formTahap1').classList.remove('d-none');
+    });
+
+    // Event listener untuk tombol "Kembali ke Tahap 2"
+    document.getElementById('prevTahap2').addEventListener('click', function() {
+        document.getElementById('formTahap3').classList.add('d-none');
+        document.getElementById('formTahap2').classList.remove('d-none');
+    });
+
+    // Setup validasi langsung untuk setiap input agar pesan error muncul/hilang saat mengetik
+    function setupLiveValidation(formId) {
+        var inputs = document.querySelectorAll(formId + ' .form-control');
+
+        inputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                var errorText = document.createElement('div');
+                errorText.classList.add('invalid-feedback');
+                errorText.innerText = 'Harap isi dengan benar';
+
+                if (!input.checkValidity()) {
+                    input.classList.add('is-invalid');
+                    if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
+                        input.after(errorText);
+                    }
+                } else {
+                    input.classList.remove('is-invalid');
+                    if (input.nextElementSibling && input.nextElementSibling.classList.contains('invalid-feedback')) {
+                        input.nextElementSibling.remove();
+                    }
+                }
+            });
+        });
+    }
 
     // Menyiapkan validasi langsung untuk setiap tahap
     setupLiveValidation('#formTahap1');

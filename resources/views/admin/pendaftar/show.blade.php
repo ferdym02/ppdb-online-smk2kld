@@ -64,7 +64,7 @@
                                 <!-- Foto Pendaftar -->
                                 <div class="text-center mb-4">
                                     @if($pendaftar->foto_calon_siswa)
-                                        <img src="{{ asset('storage/' . $pendaftar->foto_calon_siswa) }}" alt="Foto Calon Siswa" class="img-thumbnail" style="max-width: 100px;">
+                                        <img src="{{ route('foto.lihat', basename($pendaftar->foto_calon_siswa)) }}" alt="Foto Calon Siswa" class="img-thumbnail" style="max-width: 100px;">
                                     @else
                                         <p><em>Foto tidak tersedia</em></p>
                                     @endif
@@ -173,19 +173,19 @@
                                     <table class="table">
                                         <tr>
                                             <th>Kartu Keluarga</th>
-                                            <td>: <a href="{{ asset('storage/' . $pendaftar->kartu_keluarga) }}" target="_blank">Lihat File</a></td>
+                                            <td>: <a href="{{ route('dokumen.lihat', basename($pendaftar->kartu_keluarga)) }}" target="_blank">Lihat File</a></td>
                                         </tr>
                                         <tr>
                                             <th>KTP Orang Tua</th>
-                                            <td>: <a href="{{ asset('storage/' . $pendaftar->ktp_orang_tua) }}" target="_blank">Lihat File</a></td>
+                                            <td>: <a href="{{ route('dokumen.lihat', basename($pendaftar->ktp_orang_tua)) }}" target="_blank">Lihat File</a></td>
                                         </tr>
                                         <tr>
                                             <th>Akte Kelahiran</th>
-                                            <td>: <a href="{{ asset('storage/' . $pendaftar->akte_kelahiran) }}" target="_blank">Lihat File</a></td>
+                                            <td>: <a href="{{ route('dokumen.lihat', basename($pendaftar->akte_kelahiran)) }}" target="_blank">Lihat File</a></td>
                                         </tr>
                                         <tr>
                                             <th>Ijazah</th>
-                                            <td>: <a href="{{ asset('storage/' . $pendaftar->ijazah) }}" target="_blank">Lihat File</a></td>
+                                            <td>: <a href="{{ route('dokumen.lihat', basename($pendaftar->ijazah)) }}" target="_blank">Lihat File</a></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -193,17 +193,17 @@
                                     <table class="table">
                                         <tr>
                                             <th>Foto Calon Siswa</th>
-                                            <td>: <a href="{{ asset('storage/' . $pendaftar->foto_calon_siswa) }}" target="_blank">Lihat File</a></td>
+                                            <td>: <a href="{{ route('dokumen.lihat', basename($pendaftar->foto_calon_siswa)) }}" target="_blank">Lihat File</a></td>
                                         </tr>
                                         <tr>
                                             <th>Raport</th>
-                                            <td>: <a href="{{ asset('storage/' . $pendaftar->raport) }}" target="_blank">Lihat File</a></td>
+                                            <td>: <a href="{{ route('dokumen.lihat', basename($pendaftar->raport)) }}" target="_blank">Lihat File</a></td>
                                         </tr>
                                         <tr>
                                             <th>Piagam/Sertifikat</th>
                                             <td>: 
                                                 @if ($pendaftar->piagam)
-                                                    <a href="{{ asset('storage/' . $pendaftar->piagam) }}" target="_blank">Lihat File</a>
+                                                <a href="{{ route('dokumen.lihat', basename($pendaftar->piagam)) }}" target="_blank">Lihat File</a>
                                                 @else
                                                     Tidak ada
                                                 @endif
@@ -213,7 +213,7 @@
                                             <th>Surat Keterangan Peringkat Kelas/Sekolah</th>
                                             <td>:
                                             @if ($pendaftar->surat_keterangan) 
-                                                <a href="{{ asset('storage/' . $pendaftar->surat_keterangan) }}" target="_blank">Lihat File</a>
+                                            <a href="{{ route('dokumen.lihat', basename($pendaftar->surat_keterangan)) }}" target="_blank">Lihat File</a>
                                             @else
                                                 Tidak ada
                                             @endif
@@ -353,6 +353,7 @@
                                             <td>: {{ $pendaftar->nilai_akhir }}</td>
                                         </tr>
                                         @endif
+
                                         @if ($pendaftar->status_pendaftaran === "diterima")
                                         <tr>
                                             <th>Daftar Ulang</th>
@@ -365,6 +366,21 @@
                                                     <span class="badge bg-secondary">Belum</span>
                                                 @endif
                                             </td>
+                                        </tr>                                         
+                                        @endif
+
+                                        @if ($pendaftar->status_pendaftaran === "gugur")
+                                        <tr>
+                                            @if ($pendaftar->daftar_ulang != null)
+                                            <th>Daftar Ulang</th>
+                                            <td>:
+                                                @if ($pendaftar->daftar_ulang === 'ya')
+                                                    <span class="badge bg-success">Ya</span>
+                                                @else ($pendaftar->daftar_ulang === 'tidak')
+                                                    <span class="badge bg-danger">Tidak</span>
+                                                @endif
+                                            </td>
+                                            @endif
                                         </tr>                                         
                                         @endif
                                     </table>
@@ -595,7 +611,7 @@
                         // Jika kuota habis
                         Swal.fire({
                             title: 'Kuota Jurusan Habis',
-                            text: "Kuota jurusan yang dipilih sudah habis. Pendaftar akan menjadi cadangan. Apakah Anda ingin melanjutkan?",
+                            text: "Kuota jurusan yang dipilih sudah habis. Pendaftar akan menjadi Cadangan. Apakah Anda ingin melanjutkan?",
                             icon: 'info',
                             showCancelButton: true,
                             confirmButtonColor: '#3085d6',
@@ -681,7 +697,7 @@
 
         Swal.fire({
             title: 'Apakah Anda yakin?',
-            text: "Status pendaftaran akan diubah menjadi 'diterima'.",
+            text: "Status pendaftaran akan diubah menjadi 'Lulus'.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
