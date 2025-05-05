@@ -12,7 +12,7 @@
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="{{ url('/admin/dashboard') }}">Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">
-                          {{ $title }}
+                            {{ $title }}
                         </li>
                     </ol>
                 </div>
@@ -148,7 +148,7 @@
                                             <label class="form-label" for="kartu_keluarga">Kartu Keluarga:</label>
                                             <input type="file" class="form-control @error('kartu_keluarga') is-invalid @enderror" id="kartu_keluarga" name="kartu_keluarga">
                                             @if ($pendaftar->kartu_keluarga)
-                                                <p><a href="{{ asset('storage/' . $pendaftar->kartu_keluarga) }}" target="_blank">Lihat</a></p>
+                                                <p><a href="{{ route('dokumen.lihat', basename($pendaftar->kartu_keluarga)) }}" target="_blank">Lihat File</a></p>
                                             @endif
                                             @error('kartu_keluarga')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -158,7 +158,7 @@
                                             <label class="form-label" for="ktp_orang_tua">KTP Orang Tua/Wali:</label>
                                             <input type="file" class="form-control @error('ktp_orang_tua') is-invalid @enderror" id="ktp_orang_tua" name="ktp_orang_tua">
                                             @if ($pendaftar->ktp_orang_tua)
-                                                <p><a href="{{ asset('storage/' . $pendaftar->ktp_orang_tua) }}" target="_blank">Lihat</a></p>
+                                                <p><a href="{{ route('dokumen.lihat', basename($pendaftar->ktp_orang_tua)) }}" target="_blank">Lihat File</a></p>
                                             @endif
                                             @error('ktp_orang_tua')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -168,7 +168,7 @@
                                             <label class="form-label" for="akte_kelahiran">Akte Kelahiran:</label>
                                             <input type="file" class="form-control @error('akte_kelahiran') is-invalid @enderror" id="akte_kelahiran" name="akte_kelahiran">
                                             @if ($pendaftar->akte_kelahiran)
-                                                <p><a href="{{ asset('storage/' . $pendaftar->akte_kelahiran) }}" target="_blank">Lihat</a></p>
+                                                <p><a href="{{ route('dokumen.lihat', basename($pendaftar->akte_kelahiran)) }}" target="_blank">Lihat File</a></p>
                                             @endif
                                             @error('akte_kelahiran')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -178,7 +178,7 @@
                                             <label class="form-label" for="piagam">Piagam/Sertifikat (jika ada):</label>
                                             <input type="file" class="form-control @error('piagam') is-invalid @enderror" id="piagam" name="piagam">
                                             @if ($pendaftar->piagam)
-                                                <p><a href="{{ asset('storage/' . $pendaftar->piagam) }}" target="_blank">Lihat</a></p>
+                                                <p><a href="{{ route('dokumen.lihat', basename($pendaftar->piagam)) }}" target="_blank">Lihat File</a></p>
                                             @endif
                                             @error('piagam')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -190,7 +190,7 @@
                                             <label class="form-label" for="foto_calon_siswa">Foto Calon Siswa (3x4):</label>
                                             <input type="file" class="form-control @error('foto_calon_siswa') is-invalid @enderror" id="foto_calon_siswa" name="foto_calon_siswa">
                                             @if ($pendaftar->foto_calon_siswa)
-                                                <p><a href="{{ asset('storage/' . $pendaftar->foto_calon_siswa) }}" target="_blank">Lihat</a></p>
+                                                <p><a href="{{ route('dokumen.lihat', basename($pendaftar->foto_calon_siswa)) }}" target="_blank">Lihat File</a></p>
                                             @endif
                                             @error('foto_calon_siswa')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -200,7 +200,7 @@
                                             <label class="form-label" for="raport">Raport Semester 1 - 5:</label>
                                             <input type="file" class="form-control @error('raport') is-invalid @enderror" id="raport" name="raport">
                                             @if ($pendaftar->raport)
-                                                <p><a href="{{ asset('storage/' . $pendaftar->raport) }}" target="_blank">Lihat</a></p>
+                                                <p><a href="{{ route('dokumen.lihat', basename($pendaftar->raport)) }}" target="_blank">Lihat File</a></p>
                                             @endif
                                             @error('raport')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -210,7 +210,7 @@
                                             <label class="form-label" for="ijazah">Ijazah/Surat Keterangan Lulus:</label>
                                             <input type="file" class="form-control @error('ijazah') is-invalid @enderror" id="ijazah" name="ijazah">
                                             @if ($pendaftar->ijazah)
-                                                <p><a href="{{ asset('storage/' . $pendaftar->ijazah) }}" target="_blank">Lihat</a></p>
+                                                <p><a href="{{ route('dokumen.lihat', basename($pendaftar->ijazah)) }}" target="_blank">Lihat File</a></p>
                                             @endif
                                             @error('ijazah')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -220,7 +220,7 @@
                                             <label class="form-label" for="surat_keterangan">Surat Keterangan Peringkat Kelas/Sekolah (jika ada):</label>
                                             <input type="file" class="form-control @error('surat_keterangan') is-invalid @enderror" id="surat_keterangan" name="surat_keterangan">
                                             @if ($pendaftar->surat_keterangan)
-                                                <p><a href="{{ asset('storage/' . $pendaftar->surat_keterangan) }}" target="_blank">Lihat</a></p>
+                                                <p><a href="{{ route('dokumen.lihat', basename($pendaftar->surat_keterangan)) }}" target="_blank">Lihat File</a></p>
                                             @endif
                                             @error('surat_keterangan')
                                                 <div class="invalid-feedback">{{ $message }}</div>
