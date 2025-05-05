@@ -88,7 +88,7 @@
                           <div class="form-group">
                             <label for="tanggal_tes">Pilih Tanggal Tes</label>
                             <select name="tanggal_tes" id="tanggal_tes" class="form-control">
-                              <option value="">-- Semua Tanggal --</option>
+                              <option value="">Semua Tanggal</option>
                               @foreach (range(strtotime($aptitudes->tanggal_buka_tes), strtotime($aptitudes->tanggal_tutup_tes), 86400) as $date)
                                 <option value="{{ date('Y-m-d', $date) }}" {{ $tanggalTes == date('Y-m-d', $date) ? 'selected' : '' }}>
                                   {{ date('d-m-Y', $date) }}
@@ -99,9 +99,9 @@
                         </div>
                         <div class="col-md-4">
                           <div class="form-group">
-                            <label for="status_tes">Status Tes</label>
+                            <label for="status_tes">Pilih Status Tes</label>
                             <select name="status_tes" id="status_tes" class="form-control">
-                              <option value="">-- Semua Status --</option>
+                              <option value="">Semua Status</option>
                               <option value="belum" {{ $statusTes == 'belum' ? 'selected' : '' }}>Belum</option>
                               <option value="sudah" {{ $statusTes == 'sudah' ? 'selected' : '' }}>Sudah</option>
                             </select>
@@ -125,22 +125,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                          @foreach ($pendaftars as $index => $pendaftar)
-                            <tr>
-                              <td class="text-center">{{ $index + 1 }}</td>
-                              <td class="text-center">{{ $pendaftar->nomor_pendaftaran }}</td>
-                              <td>{{ $pendaftar->nama_lengkap }}</td>
-                              <td class="text-center">{{ $pendaftar->jenis_kelamin === 'Laki-laki' ? 'L' : 'P' }}</td>
-                              <td class="text-center">{{ \Carbon\Carbon::parse($pendaftar->tanggal_tes)->format('d-m-Y') }}</td>
-                              <td class="text-center">{{ ucfirst($pendaftar->status_tes) }}</td>
-                              <td class="text-center">
-                                <a href="{{ url('/admin/pendaftar/' . $pendaftar->id) }}" class="btn btn-sm btn-info">
-                                    Detail
-                                </a>
-                              </td>
-                            </tr>
-                          @endforeach
-                      </tbody>                    
+                      </tbody>
                     </table>
                   </div>
                 </div>
@@ -154,18 +139,36 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.datatables.net/v/bs5/dt-2.0.8/datatables.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.5/datatables.min.js"></script>
 <script>
   $(document).ready(function() {
-    // Inisialisasi DataTable
     $('#pendaftarTable').DataTable({
-      "paging": true,
-      "lengthChange": true,
-      "searching": true,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true
+      processing: true,
+      serverSide: true,
+      responsive: true,
+      ajax: {
+        url: "{{ route('aptitudes.pendaftar', $aptitudes->id) }}",
+        data: function (d) {
+          d.tanggal_tes = $('#tanggal_tes').val();
+          d.status_tes = $('#status_tes').val();
+        }
+      },
+      columns: [
+        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
+        { data: 'nomor_pendaftaran', name: 'nomor_pendaftaran', className: 'text-center' },
+        { data: 'nama_lengkap', name: 'nama_lengkap' },
+        { data: 'jenis_kelamin', name: 'jenis_kelamin', className: 'text-center' },
+        { data: 'tanggal_tes', name: 'tanggal_tes', className: 'text-center' },
+        { data: 'status_tes', name: 'status_tes', className: 'text-center' },
+        { data: 'aksi', name: 'aksi', orderable: false, searchable: false, className: 'text-center' },
+      ],
+      order: [[1, 'asc']],
+    });
+
+    // reload datatable saat filter berubah
+    $('form').on('submit', function(e) {
+      e.preventDefault();
+      $('#pendaftarTable').DataTable().ajax.reload();
     });
   });
 </script>
