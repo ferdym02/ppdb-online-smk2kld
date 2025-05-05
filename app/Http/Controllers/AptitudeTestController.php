@@ -18,8 +18,46 @@ class AptitudeTestController extends Controller
         $name = Auth::user()->name;
         $title = 'Tes Minat Bakat';
         $periodes = Periode::all();
-        $aptitudes = AptitudeTest::with('periode')->orderBy('created_at', 'desc')->get(); // Mengambil data tes dan periode terkait
+        $aptitudes = AptitudeTest::with('periode')
+            ->orderByDesc('status') // Status aktif (true) di atas
+            ->orderBy('created_at', 'desc') // Baru berdasarkan waktu dibuat
+            ->get();
         return view('admin.aptitude.index', compact('title', 'name', 'periodes', 'aptitudes'));
+    }
+
+    public function getPendaftarData(Request $request, $id)
+    {
+        $query = Pendaftar::where('aptitude_tests_id', $id);
+
+        if ($request->tanggal_tes) {
+            $query->whereDate('tanggal_tes', $request->tanggal_tes);
+        }
+
+        if ($request->status_tes) {
+            if ($request->status_tes == 'belum') {
+                $query->where('status_tes', 'belum');
+            } elseif ($request->status_tes == 'sudah') {
+                $query->where('status_tes', 'sudah');
+            }
+        }
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->editColumn('jenis_kelamin', function ($row) {
+                return $row->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
+            })
+            ->editColumn('tanggal_tes', function ($row) {
+                return \Carbon\Carbon::parse($row->tanggal_tes)->format('d-m-Y');
+            })
+            ->editColumn('status_tes', function ($row) {
+                return ucfirst($row->status_tes);
+            })
+            ->addColumn('aksi', function($row) {
+                $url = url('/admin/pendaftar/' . $row->id);
+                return '<a href="'.$url.'" class="btn btn-sm btn-info">Detail</a>';
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
     }
 
     public function show($id, Request $request)
@@ -33,22 +71,11 @@ class AptitudeTestController extends Controller
         $tanggalTes = $request->get('tanggal_tes');
         $statusTes = $request->get('status_tes'); // Tambahkan status_tes
 
-        // Filter data pendaftar
-        $pendaftars = Pendaftar::query()
-            ->where('aptitude_tests_id', $id) // Tambahkan filter untuk mencocokkan aptitude_test_id
-            ->when($tanggalTes, function ($query, $tanggalTes) {
-                return $query->whereDate('tanggal_tes', $tanggalTes);
-            })
-            ->when($statusTes, function ($query, $statusTes) {
-                return $query->where('status_tes', $statusTes);
-            })
-            ->get();
-
         // Judul halaman
         $title = "Detail Tes Minat Bakat";
 
         // Tampilkan view dengan data
-        return view('admin.aptitude.show', compact('aptitudes', 'title', 'pendaftars', 'tanggalTes', 'statusTes'));
+        return view('admin.aptitude.show', compact('aptitudes', 'title', 'tanggalTes', 'statusTes'));
     }
     
     public function store(Request $request)
@@ -73,9 +100,12 @@ class AptitudeTestController extends Controller
             return redirect()->route('aptitudes.index')->with('error', 'Tanggal buka tes tidak boleh kurang dari tanggal buka pendaftaran (' . $tanggalBukaPendaftaran . ').');
         }
 
-        if ($request->tanggal_tutup_tes > $periode->tanggal_tutup) {
-            $tanggalTutupPendaftaran = Carbon::parse($periode->tanggal_tutup)->format('d-m-Y');
-            return redirect()->route('aptitudes.index')->with('error', 'Tanggal tutup tes tidak boleh melebihi tanggal tutup pendaftaran (' . $tanggalTutupPendaftaran . ').');
+        // Hitung maksimal tanggal_tutup_tes (1 hari setelah tanggal tutup pendaftaran)
+        $maxTanggalTes = Carbon::parse($periode->tanggal_tutup)->addDay(); // Tambah 1 hari
+
+        if (Carbon::parse($request->tanggal_tutup_tes)->gt($maxTanggalTes)) {
+            $tanggalMaxTes = $maxTanggalTes->format('d-m-Y');
+            return redirect()->route('aptitudes.index')->with('error', 'Tanggal tutup tes maksimal sampai ' . $tanggalMaxTes . '.');
         }
 
         // Jika status yang diinginkan adalah aktif (1)
@@ -119,10 +149,13 @@ class AptitudeTestController extends Controller
                 return redirect()->route('aptitudes.index')->with('error', 'Tanggal buka tes tidak boleh kurang dari tanggal buka pendaftaran (' . $tanggalBukaPendaftaran . ').');
             }
     
-            if ($request->tanggal_tutup_tes > $periode->tanggal_tutup) {
-                $tanggalTutupPendaftaran = Carbon::parse($periode->tanggal_tutup)->format('d-m-Y');
-                return redirect()->route('aptitudes.index')->with('error', 'Tanggal tutup tes tidak boleh melebihi tanggal tutup pendaftaran (' . $tanggalTutupPendaftaran . ').');
-            }      
+            // Hitung maksimal tanggal_tutup_tes (1 hari setelah tanggal tutup pendaftaran)
+            $maxTanggalTes = Carbon::parse($periode->tanggal_tutup)->addDay(); // Tambah 1 hari
+
+            if (Carbon::parse($request->tanggal_tutup_tes)->gt($maxTanggalTes)) {
+                $tanggalMaxTes = $maxTanggalTes->format('d-m-Y');
+                return redirect()->route('aptitudes.index')->with('error', 'Tanggal tutup tes maksimal sampai ' . $tanggalMaxTes . '.');
+            }
     
             // Jika status yang diinginkan adalah aktif (1) dan status yang sekarang belum aktif
             if ($request->status && $aptitudeTest->status != 1) {
@@ -138,7 +171,7 @@ class AptitudeTestController extends Controller
             // Update data tes minat dan bakat
             $aptitudeTest->update($request->all());
     
-            return redirect()->route('aptitudes.index')->with('success', 'Data Tes Minat dan Bakat berhasil diperbarui');
+            return redirect()->route('aptitudes.index')->with('success', 'Data Tes Minat Bakat berhasil diperbarui');
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Jika validasi gagal, simpan action URL ke `old()`
             return redirect()->back()
@@ -152,10 +185,15 @@ class AptitudeTestController extends Controller
     {
         $aptitudeTest = AptitudeTest::findOrFail($id);
         if ($aptitudeTest->status == 1) {
-            return redirect()->back()->with('error', 'Tes minat dan bakat yang sedang aktif tidak dapat dihapus.');
+            return redirect()->back()->with('error', 'Tes minat bakat yang sedang aktif tidak dapat dihapus.');
         }
+
+        if ($aptitudeTest->pendaftars()->exists()) {
+            return redirect()->back()->with('error', 'Tidak dapat menghapus tes minat bakat karena sudah digunakan oleh data pendaftar.');
+        }
+        
         $aptitudeTest->delete();
 
-        return redirect()->route('aptitudes.index')->with('success', 'Data Tes Minat dan Bakat berhasil dihapus');
+        return redirect()->route('aptitudes.index')->with('success', 'Data Tes Minat Bakat berhasil dihapus');
     }
 }
