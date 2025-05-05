@@ -171,14 +171,11 @@
       </div>
     </div>
   </div>
-
 </main>
-
 @endsection
 
 @section('scripts')
 <script src="https://cdn.datatables.net/v/bs5/dt-2.1.5/datatables.min.js"></script>
-
 <!-- Inisialisasi DataTables -->
 <script>
   $(document).ready(function() {
@@ -192,11 +189,11 @@
                 name: 'no', 
                 orderable: true,
                 searchable: false, 
-                className: 'text-center',
+                className: 'text-center align-middle',
             },
-            { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' },
-            { data: 'action', name: 'action', className: 'text-center', orderable: false, searchable: false }
+            { data: 'name', name: 'name', className: 'align-middle' },
+            { data: 'email', name: 'email', className: 'align-middle' },
+            { data: 'action', name: 'action', className: 'text-center align-middle', orderable: false, searchable: false }
         ]
     });
 
