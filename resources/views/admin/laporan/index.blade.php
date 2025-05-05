@@ -135,7 +135,6 @@
       </div>
     </div>
   </div>
-  
 </main>
 @endsection
 
@@ -145,7 +144,7 @@
 <script>
   $(document).ready(function() {
     $('.datepicker').datepicker({
-      format: 'yyyy-mm-dd',
+      format: 'dd-mm-yyyy',
       autoclose: true
     });
 
@@ -172,41 +171,43 @@
           orderable: false,
           searchable: false,
           width: '5%',
-          className: 'text-center'
+          className: 'text-center align-middle'
         },
-        { data: 'nomor_pendaftaran', name: 'nomor_pendaftaran', className: 'text-center', },
-        { data: 'nisn', name: 'nisn', className: 'text-center', },
-        { data: 'nama_lengkap', name: 'nama_lengkap' },
+        { data: 'nomor_pendaftaran', name: 'nomor_pendaftaran', className: 'text-center align-middle', },
+        { data: 'nisn', name: 'nisn', className: 'text-center align-middle', },
+        { data: 'nama_lengkap', name: 'nama_lengkap', className: 'align-middle', },
         { 
             data: 'jenis_kelamin', 
             name: 'jenis_kelamin',
             render: function(data, type, row) {
                 return data === 'Laki-laki' ? 'L' : 'P';
             },
-            className: 'text-center'
+            className: 'text-center align-middle'
         },
-        { data: 'asal_sekolah', name: 'asal_sekolah' },
+        { data: 'asal_sekolah', name: 'asal_sekolah', className: 'align-middle', },
         { 
           data: 'status_pendaftaran', 
           name: 'status_pendaftaran',
           render: function(data, type, row) {
-              var statusMapping = {
-                  'pending': 'Pending',
-                  'verified': 'Terverifikasi',
-                  'rejected': 'Perlu Perbaikan',
-                  'diterima': 'Lulus',
-                  'gugur': 'Tidak Lulus',
-                  'cadangan': 'Cadangan'
-              };
-              return statusMapping[data.toLowerCase()] || data;
+            var statusMapping = {
+                'pending': { label: 'Pending', class: 'badge bg-secondary' },
+                'verified': { label: 'Terverifikasi', class: 'badge bg-primary' },
+                'rejected': { label: 'Perlu Perbaikan', class: 'badge bg-warning text-dark' },
+                'diterima': { label: 'Lulus', class: 'badge bg-success' },
+                'gugur': { label: 'Tidak Lulus', class: 'badge bg-danger' },
+                'cadangan': { label: 'Cadangan', class: 'badge bg-info text-dark' }
+            };
+            var status = statusMapping[data.toLowerCase()];
+            return status ? `<span class="${status.class}">${status.label}</span>` : data
           },
+          className: 'align-middle',
         },
         {
           data: 'id',
           name: 'aksi',
           orderable: false,
           searchable: false,
-          className: 'text-center',
+          className: 'text-center align-middle',
           render: function(data, type, row, meta) {
             return `<a href="/admin/pendaftar/${data}" class="btn btn-sm btn-info">
                       <i class="bi bi-eye"></i>
