@@ -46,13 +46,13 @@
                 <tbody>
                   @foreach($aptitudes as $index => $aptitude)
                     <tr>
-                      <td class="text-center">{{ $index + 1 }}</td>
-                      <td class="text-center">{{ $aptitude->periode->tahun_pelajaran }}</td>
-                      <td class="text-center">{{ \Carbon\Carbon::parse($aptitude->tanggal_buka_tes)->format('d-m-Y') }}</td>
-                      <td class="text-center">{{ \Carbon\Carbon::parse($aptitude->tanggal_tutup_tes)->format('d-m-Y') }}</td>                      
-                      <td class="text-center">{{ $aptitude->kuota_per_hari }}</td>
-                      <td class="text-center">{{ $aptitude->status ? 'Aktif' : 'Tidak Aktif' }}</td>
-                      <td class="text-center">
+                      <td class="text-center align-middle">{{ $index + 1 }}</td>
+                      <td class="text-center align-middle">{{ $aptitude->periode->tahun_pelajaran }}</td>
+                      <td class="text-center align-middle">{{ \Carbon\Carbon::parse($aptitude->tanggal_buka_tes)->format('d-m-Y') }}</td>
+                      <td class="text-center align-middle">{{ \Carbon\Carbon::parse($aptitude->tanggal_tutup_tes)->format('d-m-Y') }}</td>                      
+                      <td class="text-center align-middle">{{ $aptitude->kuota_per_hari }}</td>
+                      <td class="text-center align-middle">{{ $aptitude->status ? 'Aktif' : 'Tidak Aktif' }}</td>
+                      <td class="text-center align-middle">
                         <a href="{{ route('aptitudes.show', $aptitude->id) }}" class="btn btn-info btn-sm">Detail</a>
                         <button class="btn btn-warning btn-edit btn-sm" data-id="{{ $aptitude->id }}" 
                           data-periode="{{ $aptitude->periode_id }}" 
@@ -147,7 +147,7 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             <button type="submit" class="btn btn-primary">Kirim</button>
           </div>
-        </form>        
+        </form>
       </div>
     </div>
   </div>
@@ -246,7 +246,6 @@
     </div>
   </div>
 </main>
-
 @endsection
 
 @section('scripts')
