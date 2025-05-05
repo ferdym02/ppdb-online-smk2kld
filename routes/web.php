@@ -28,7 +28,6 @@ use App\Http\Controllers\PeriodeJurusanController;
 */
 
 Route::get('/', [HomeController::class, 'index']);
-
 Route::get('/login', [AuthController::class, 'userLoginForm'])->name('user.login');
 Route::post('/login', [AuthController::class, 'userLogin']);
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
@@ -40,6 +39,10 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 Route::get('/admin/login', [AuthController::class, 'adminLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/dokumen/{filename}', [PendaftaranController::class, 'lihatDokumen'])->name('dokumen.lihat')->middleware('auth');
+Route::get('/lihat-foto/{filename}', [PendaftaranController::class, 'lihatFoto'])->name('foto.lihat')->middleware('auth');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->group(function () {
@@ -54,7 +57,6 @@ Route::middleware(['auth'])->group(function () {
         });
         Route::get('/users-data', [DataTableController::class, 'getUsersData'])->name('users.data');
         Route::resource('/admin/jurusan', JurusanController::class);
-        Route::get('/jurusan-data', [DataTableController::class, 'getJurusanData'])->name('jurusan.data');
         Route::get('/admin/pendaftar', [PendaftaranController::class, 'index'])->name('admin.pendaftar.index');
         Route::get('/admin/pendaftar/status/{status}/data', [DataTableController::class, 'getPendaftarByStatus'])->name('pendaftar.status.data');
         Route::get('/admin/pendaftar/status/{status}', [PendaftaranController::class, 'indexByStatus'])->name('pendaftar.status');
@@ -69,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('/admin/jadwals', JadwalController::class);
         Route::get('/periodes-data', [PeriodeController::class, 'getPeriodeData'])->name('periodes.data');
         Route::resource('/admin/aptitudes', AptitudeTestController::class);
-        Route::get('/aptitude-data', [AptitudeTestController::class, 'getAptitudeTestsData'])->name('aptitude_tests.data');
+        Route::get('/admin/aptitudes/{aptitude}/pendaftar', [AptitudeTestController::class, 'getPendaftarData'])->name('aptitudes.pendaftar');
         Route::post('/admin/pendaftar/{id}/update-nilai-tes', [PendaftaranController::class, 'updateNilaiTes'])->name('pendaftar.updateNilaiTes');
         Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/admin/laporan/getData', [LaporanController::class, 'getData'])->name('laporan.getData');
