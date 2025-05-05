@@ -62,7 +62,6 @@ class PendaftaranController extends Controller
                                     ->where('periode_id', $selectedPeriodId)
                                     ->count();
         }
-
         
         return view('admin.pendaftar.index', compact(
             'totalPending', 'totalVerified', 'totalRejected', 'totalDiterima', 'totalGugur', 'totalCadangan', 'title', 'name', 'periodes', 'selectedPeriodId'
@@ -74,20 +73,14 @@ class PendaftaranController extends Controller
         session(['index_by_status_url' => $request->fullUrl()]);
         $title = 'Data Pendaftar';
         $name = Auth::user()->name;
-        $pendaftar = Pendaftar::where('status_pendaftaran', $status)->get();
         $periodeId = $request->input('periode_id');
         
         $jurusans = Jurusan::all()->keyBy('id');
 
-        // Membuat mapping ID jurusan ke nama jurusan
-        $jurusanMap = $jurusans->mapWithKeys(function ($item) {
-            return [$item->id => $item->nama];
-        });
         // Ambil data tahun pelajaran dari model Periode
         $periode = $periodeId ? Periode::find($periodeId) : null;
-        $tahunPelajaran = $periode?->tahun_pelajaran;
 
-        return view('admin.pendaftar.index_by_status', compact('pendaftar', 'jurusanMap', 'title', 'name', 'status', 'tahunPelajaran', 'periode'));
+        return view('admin.pendaftar.index_by_status', compact( 'title', 'name', 'status', 'periode'));
     }
 
     public function show($id, Request $request)
@@ -202,6 +195,7 @@ class PendaftaranController extends Controller
             'nilai_rapor.*.bahasa_inggris' => 'required|numeric|min:0|max:100',
         ], [
             'nisn.unique' => 'NISN ini sudah terdaftar, silakan periksa kembali.',
+            '*.required' => 'Wajib diisi.',
         ]);
 
         // Mendapatkan tanggal saat ini
@@ -221,19 +215,11 @@ class PendaftaranController extends Controller
         DB::beginTransaction();
 
         try {
-            // Simpan semua file
-            $fileFields = ['kartu_keluarga', 'ktp_orang_tua', 'akte_kelahiran', 'ijazah', 'foto_calon_siswa', 'raport', 'piagam', 'surat_keterangan'];
-            $files = collect($fileFields)->mapWithKeys(fn($field) =>
-                [$field => $request->hasFile($field)
-                    ? $request->file($field)->storeAs('file_pendaftaran', "{$request->nisn}_{$field}_" . time() . '.' . $request->file($field)->getClientOriginalExtension(), 'public')
-                    : null]
-            )->toArray();
-    
-            // Siapkan data pendaftar
+            // Simpan data awal TANPA file
             $pendaftarData = $request->only([
                 'nama_lengkap', 'tempat_lahir', 'tanggal_lahir', 'alamat', 'asal_sekolah', 'nisn', 'jenis_kelamin',
                 'nama_ayah', 'nama_ibu', 'nomor_wa', 'prestasi_akademik', 'prestasi_non_akademik'
-            ]) + $files + [
+            ]) + [
                 'user_id' => $userId,
                 'status_pendaftaran' => 'pending',
                 'daftar_ulang' => null,
@@ -251,17 +237,32 @@ class PendaftaranController extends Controller
             // Simpan data pendaftar
             $pendaftar = Pendaftar::create($pendaftarData);
     
-            // Simpan pilihan jurusan
+            // Generate nomor pendaftaran
+            $jurusan1 = Jurusan::find($request->pilihan_jurusan_1);
+            $nomorPendaftaran = Pendaftar::generateNomorPendaftaran($jurusan1->kode, $pendaftar->id);
+            $pendaftar->update(['nomor_pendaftaran' => $nomorPendaftaran]);
+
+            // Upload file setelah nomor_pendaftaran tersedia
+            $fileFields = ['kartu_keluarga', 'ktp_orang_tua', 'akte_kelahiran', 'ijazah', 'foto_calon_siswa', 'raport', 'piagam', 'surat_keterangan'];
+            $fileUpdates = [];
+
+            foreach ($fileFields as $field) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $filename = "{$nomorPendaftaran}_{$field}_" . time() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('file_pendaftaran', $filename);
+                    $fileUpdates[$field] = $path;
+                }
+            }
+
+            // Update kolom file di tabel pendaftar
+            $pendaftar->update($fileUpdates);
+
+            // Simpan jurusan
             $pendaftar->jurusans()->attach([
                 $request->pilihan_jurusan_1 => ['urutan_pilihan' => 1],
                 $request->pilihan_jurusan_2 => ['urutan_pilihan' => 2],
                 $request->pilihan_jurusan_3 => ['urutan_pilihan' => 3],
-            ]);
-    
-            // Update nomor pendaftaran
-            $jurusan1 = Jurusan::find($request->pilihan_jurusan_1);
-            $pendaftar->update([
-                'nomor_pendaftaran' => Pendaftar::generateNomorPendaftaran($jurusan1->kode, $pendaftar->id),
             ]);
     
             DB::commit();
@@ -326,16 +327,16 @@ class PendaftaranController extends Controller
             if ($request->hasFile($fileField)) {
                 // Hapus file lama jika ada
                 $oldFilePath = $pendaftar->$fileField;
-                if ($oldFilePath && Storage::disk('public')->exists($oldFilePath)) {
-                    Storage::disk('public')->delete($oldFilePath);
-                }
+                if ($oldFilePath && Storage::exists($oldFilePath)) {
+                    Storage::delete($oldFilePath);
+                }                
 
                 // Buat nama file baru dengan format khusus
                 $fileExtension = $request->file($fileField)->getClientOriginalExtension();
-                $fileName = $request->nisn . '_' . $fileField . '_' . time() . '.' . $fileExtension;
+                $fileName = $pendaftar->nomor_pendaftaran . '_' . $fileField . '_' . time() . '.' . $fileExtension;
 
                 // Simpan file baru dengan nama khusus
-                $validatedData[$fileField] = $request->file($fileField)->storeAs('file_pendaftaran', $fileName, 'public');
+                $validatedData[$fileField] = $request->file($fileField)->storeAs('file_pendaftaran', $fileName);
             } else {
                 // Jika tidak ada file baru, gunakan file lama
                 $validatedData[$fileField] = $pendaftar->$fileField;
@@ -429,16 +430,16 @@ class PendaftaranController extends Controller
             if ($request->hasFile($fileField)) {
                 // Hapus file lama jika ada
                 $oldFilePath = $pendaftar->$fileField;
-                if ($oldFilePath && Storage::disk('public')->exists($oldFilePath)) {
-                    Storage::disk('public')->delete($oldFilePath);
-                }
+                if ($oldFilePath && Storage::exists($oldFilePath)) {
+                    Storage::delete($oldFilePath);
+                }                
 
                 // Buat nama file baru dengan format khusus
                 $fileExtension = $request->file($fileField)->getClientOriginalExtension();
-                $fileName = $request->nisn . '_' . $fileField . '_' . time() . '.' . $fileExtension;
+                $fileName = $pendaftar->nomor_pendaftaran . '_' . $fileField . '_' . time() . '.' . $fileExtension;
 
                 // Simpan file baru dengan nama khusus
-                $validatedData[$fileField] = $request->file($fileField)->storeAs('file_pendaftaran', $fileName, 'public');
+                $validatedData[$fileField] = $request->file($fileField)->storeAs('file_pendaftaran', $fileName);
             } else {
                 // Jika tidak ada file baru, gunakan file lama
                 $validatedData[$fileField] = $pendaftar->$fileField;
@@ -493,8 +494,8 @@ class PendaftaranController extends Controller
 
             // Hapus setiap file jika ada
             foreach ($fileAttributes as $attribute) {
-                if ($pendaftar->$attribute) {
-                    Storage::disk('public')->delete('file_pendaftaran/' . basename($pendaftar->$attribute));
+                if ($pendaftar->$attribute && Storage::exists($pendaftar->$attribute)) {
+                    Storage::delete($pendaftar->$attribute);
                 }
             }
 
@@ -519,9 +520,15 @@ class PendaftaranController extends Controller
             $pendaftar->status_pendaftaran = 'verified';
             $pendaftar->catatan_penolakan = null;
 
-            // Ambil tes aktif yang belum selesai
+            $periodeAktif = Periode::where('status', true)->first();
+
+            if (!$periodeAktif) {
+                return redirect()->back()->with('error', 'Tidak ada periode aktif saat ini.');
+            }
+
             $tesAktif = AptitudeTest::where('status', true)
                 ->where('tanggal_tutup_tes', '>=', now()->toDateString())
+                ->where('periode_id', $periodeAktif->id)
                 ->orderBy('tanggal_buka_tes')
                 ->first();
 
@@ -538,6 +545,17 @@ class PendaftaranController extends Controller
                             ? Carbon::parse($tesAktif->tanggal_buka_tes)
                             : now()->addDay();
                 $endDate = Carbon::parse($tesAktif->tanggal_tutup_tes);
+
+                // Cek endDate maksimal 1 hari setelah periode pendaftaran tutup
+                $maxEndDate = Carbon::parse($periodeAktif->tanggal_tutup)->addDay();
+
+                if (
+                    $startDate->lt(Carbon::parse($periodeAktif->tanggal_buka)) || 
+                    $endDate->gt($maxEndDate)
+                ) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', 'Tanggal tes minat bakat di luar rentang periode pendaftaran.');
+                }
 
                 while ($startDate <= $endDate) {
                     // Periksa apakah tanggal saat ini adalah hari Minggu
@@ -577,6 +595,9 @@ class PendaftaranController extends Controller
                 return redirect()->back()->with('error', 'Terjadi kesalahan saat menentukan tanggal tes.');
             }
         } elseif ($request->status == 'tolak') {
+            if (empty($request->catatan_penolakan)) {
+                return redirect()->back()->with('error', 'Catatan perbaikan wajib diisi.');
+            }
             $pendaftar->status_pendaftaran = 'rejected';
             $pendaftar->catatan_penolakan = $request->catatan_penolakan;
             $pendaftar->save();
@@ -672,6 +693,7 @@ class PendaftaranController extends Controller
 
     public function cetakBukti($id)
     {
+        \Carbon\Carbon::setLocale('id');
         $pendaftar = Pendaftar::with('jurusans')->findOrFail($id);
 
         // Periksa otorisasi
@@ -691,7 +713,7 @@ class PendaftaranController extends Controller
             $periode = Periode::where('status', true)->first();  // Ambil periode yang aktif
 
             // Ambil foto calon siswa dan konversi ke base64
-            $pathFotoCalonSiswa = storage_path('app/public/' . $pendaftar->foto_calon_siswa);
+            $pathFotoCalonSiswa = storage_path('app/' . $pendaftar->foto_calon_siswa);
             $pathFotoCalonSiswa = str_replace('\\', '/', $pathFotoCalonSiswa);
 
             if (file_exists($pathFotoCalonSiswa)) {
@@ -727,7 +749,7 @@ class PendaftaranController extends Controller
             ];
 
             $pdf = PDF::loadView('pdf.bukti_pendaftaran', $data, compact('base64Left', 'base64Right', 'periode'));
-            return $pdf->download('Bukti_Pendaftaran.pdf');
+            return $pdf->download($pendaftar->nomor_pendaftaran . '_Bukti_Pendaftaran.pdf');
         }
 
         // Jika tidak berhak, tampilkan error
@@ -807,5 +829,32 @@ class PendaftaranController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    public function lihatDokumen($filename)
+    {
+        // Cek apakah user sudah login
+        if (!Auth::check()) {
+            abort(403, 'Anda harus login untuk mengakses file.');
+        }
+
+        $path = 'file_pendaftaran/' . $filename;
+
+        if (!Storage::exists($path)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        return response()->file(storage_path('app/' . $path));
+    }
+
+    public function lihatFoto($filename)
+    {
+        $path = 'file_pendaftaran/' . $filename;
+
+        if (!Storage::exists($path)) {
+            abort(404, 'Foto tidak ditemukan.');
+        }
+
+        return response()->file(storage_path('app/' . $path));
+}
 
 }
