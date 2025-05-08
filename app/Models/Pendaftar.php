@@ -70,9 +70,10 @@ class Pendaftar extends Model
         // });
     }
 
-    public static function generateNomorPendaftaran($kodeJurusan, $excludeId = null)
+    public static function generateNomorPendaftaran($kodeJurusan, $periodeId, $excludeId = null)
     {
         $lastPendaftar = Pendaftar::where('id', '!=', $excludeId)
+            ->where('periode_id', $periodeId)
             ->whereHas('jurusans', function ($query) use ($kodeJurusan) {
                 $query->where('jurusans.kode', $kodeJurusan)
                     ->where('pendaftar_jurusan.urutan_pilihan', 1);
@@ -82,9 +83,10 @@ class Pendaftar extends Model
 
         $lastNumber = $lastPendaftar ? (int) substr($lastPendaftar->nomor_pendaftaran, -3) : 0;
         $nextNumber = $lastNumber + 1;
-        // dd($kodeJurusan . str_pad($nextNumber, 3, '0', STR_PAD_LEFT));
+
         return $kodeJurusan . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     }
+
 
     /**
      * The jurusan that belong to the pendaftar.
