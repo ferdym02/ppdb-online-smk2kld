@@ -5,9 +5,11 @@ namespace App\Exports;
 use App\Models\Pendaftar;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Illuminate\Support\Collection;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class PendaftarExport implements FromCollection, WithHeadings
+class PendaftarExport implements FromCollection, WithHeadings, WithColumnFormatting
 {
     protected $filters;
 
@@ -40,10 +42,10 @@ class PendaftarExport implements FromCollection, WithHeadings
             $query->whereDate('created_at', '>=', $this->filters['start_date']);
         } elseif (!empty($this->filters['end_date'])) {
             $query->whereDate('created_at', '<=', $this->filters['end_date']);
-        }
+        }       
 
-        // Ambil data dan urutkan berdasarkan periode dan nama lengkap
-        $data = $query->orderBy('periode_id')->orderBy('nama_lengkap')->get();
+        // Ambil data dan urutkan berdasarkan periode dan id
+        $data = $query->orderBy('periode_id')->orderBy('id', 'asc')->get();
 
         // Mapping status pendaftaran
         $statusMapping = [
@@ -81,7 +83,7 @@ class PendaftarExport implements FromCollection, WithHeadings
                     $item->nama_lengkap,
                     $item->jenis_kelamin,
                     $item->asal_sekolah,
-                    $status, // Status sudah dikonversi sesuai mapping
+                    $status,
                 ]);
             }
         }
@@ -92,5 +94,12 @@ class PendaftarExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return []; // Header sudah ditangani dalam collection()
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'C' => NumberFormat::FORMAT_TEXT, // Kolom C = NISN
+        ];
     }
 }

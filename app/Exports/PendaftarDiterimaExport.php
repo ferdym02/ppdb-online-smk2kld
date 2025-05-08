@@ -5,8 +5,10 @@ namespace App\Exports;
 use App\Models\Pendaftar;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class PendaftarDiterimaExport implements FromCollection, WithHeadings
+class PendaftarDiterimaExport implements FromCollection, WithHeadings, WithColumnFormatting
 {
     protected $periodeId;
 
@@ -37,7 +39,7 @@ class PendaftarDiterimaExport implements FromCollection, WithHeadings
             return [
                 'No' => $index + 1,
                 'Nomor Pendaftaran' => $item->nomor_pendaftaran,
-                'NISN' => $item->nisn,
+                'NISN' => (string) $item->nisn,
                 'Nama Lengkap' => $item->nama_lengkap,
                 'Jenis Kelamin' => $item->jenis_kelamin,
                 'Asal Sekolah' => $item->asal_sekolah,
@@ -60,6 +62,13 @@ class PendaftarDiterimaExport implements FromCollection, WithHeadings
             'Jurusan Diterima',
             'Nilai Akhir',
             'Status Pendaftaran',
+        ];
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'C' => NumberFormat::FORMAT_TEXT, // Kolom ke-3: NISN
         ];
     }
 }
