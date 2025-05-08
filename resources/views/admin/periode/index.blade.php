@@ -31,41 +31,43 @@
           <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Tambah Data</button>
           <div class="card">
             <div class="card-body">
-              <table id="periode-table" class="table table-bordered table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th class="text-center">No.</th>
-                    <th class="text-center">Tahun Ajaran</th>
-                    <th class="text-center">Tanggal Buka</th>
-                    <th class="text-center">Tanggal Tutup</th>
-                    <th class="text-center">Kuota Penerimaan</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($periodes as $index => $periode)
-                  <tr>
-                    <td class="text-center align-middle">{{ $index + 1 }}</td>
-                    <td class="text-center align-middle">{{ $periode->tahun_pelajaran }}</td>
-                    <td class="text-center align-middle">{{ \Carbon\Carbon::parse($periode->tanggal_buka)->format('d-m-Y') }}</td>
-                    <td class="text-center align-middle">{{ \Carbon\Carbon::parse($periode->tanggal_tutup)->format('d-m-Y') }}</td>
-                    <td class="text-center align-middle">{{ $periode->kuota_penerimaan }}</td>
-                    <td class="text-center align-middle">{{ $periode->status ? 'Aktif' : 'Tidak Aktif' }}</td>
-                    <td class="text-center align-middle">
-                      <a href="{{ route('periodes.show', $periode->id) }}" class="btn btn-info btn-sm">Detail</a>
-                      <!-- Tambahkan tombol aksi (edit/delete) sesuai kebutuhan -->
-                      <button class="btn btn-warning btn-sm edit-btn" data-periode="{{ $periode }}">Edit</button>
-                      <form method="POST" action="{{ route('periodes.destroy', $periode->id) }}" style="display: inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger btn-sm">Hapus</button>
-                      </form>
-                    </td>
-                  </tr>
-                  @endforeach
-                </tbody>
-              </table>
+              <div class="table-responsive">
+                <table id="periode-table" class="table table-bordered table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-center">No.</th>
+                      <th class="text-center">Tahun Ajaran</th>
+                      <th class="text-center">Tanggal Buka</th>
+                      <th class="text-center">Tanggal Tutup</th>
+                      <th class="text-center">Kuota Penerimaan</th>
+                      <th class="text-center">Status</th>
+                      <th class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($periodes as $index => $periode)
+                    <tr>
+                      <td class="text-center align-middle">{{ $index + 1 }}</td>
+                      <td class="text-center align-middle">{{ $periode->tahun_pelajaran }}</td>
+                      <td class="text-center align-middle">{{ \Carbon\Carbon::parse($periode->tanggal_buka)->format('d-m-Y') }}</td>
+                      <td class="text-center align-middle">{{ \Carbon\Carbon::parse($periode->tanggal_tutup)->format('d-m-Y') }}</td>
+                      <td class="text-center align-middle">{{ $periode->kuota_penerimaan }}</td>
+                      <td class="text-center align-middle">{{ $periode->status ? 'Aktif' : 'Tidak Aktif' }}</td>
+                      <td class="text-center align-middle">
+                        <a href="{{ route('periodes.show', $periode->id) }}" class="btn btn-info btn-sm">Detail</a>
+                        <!-- Tambahkan tombol aksi (edit/delete) sesuai kebutuhan -->
+                        <button class="btn btn-warning btn-sm edit-btn" data-periode="{{ $periode }}">Edit</button>
+                        <form method="POST" action="{{ route('periodes.destroy', $periode->id) }}" style="display: inline-block;">
+                          @csrf
+                          @method('DELETE')
+                          <button class="btn btn-danger btn-sm">Hapus</button>
+                        </form>
+                      </td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

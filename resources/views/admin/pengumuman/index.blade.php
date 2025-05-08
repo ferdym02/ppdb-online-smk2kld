@@ -32,52 +32,54 @@
           </button>
           <div class="card">
             <div class="card-body">
-              <table id="pengumumanTable" class="table table-bordered table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th class="text-center">No.</th>
-                    <th>Judul</th>
-                    <th>Ringkasan Isi</th> <!-- Tambahkan kolom Ringkasan -->
-                    <th class="text-center">File Lampiran</th>
-                    <th class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($pengumumans as $index => $pengumuman)
-                  <tr>
-                    <td class="text-center align-middle">{{ $index + 1 }}</td>
-                    <td class="align-middle">{{ \Illuminate\Support\Str::limit(strip_tags($pengumuman->judul), 25, '...') }}</td>
-                    <td class="align-middle">{{ \Illuminate\Support\Str::limit(strip_tags($pengumuman->isi), 50, '...') }}</td> <!-- Tambahkan ini -->
-                    <td class="text-center align-middle">
-                      @if($pengumuman->file_lampiran)
-                      <a href="{{ asset('storage/' . $pengumuman->file_lampiran) }}" target="_blank">Download</a>
-                      @else
-                      Tidak Ada File
-                      @endif
-                    </td>
-                    <td class="text-center align-middle">
-                      <a href="{{ route('pengumuman.show', $pengumuman->id) }}" class="btn btn-sm btn-info">
-                        Detail
-                      </a>
-                      <button class="btn btn-sm btn-warning btn-edit"
-                        data-id="{{ $pengumuman->id }}"
-                        data-judul="{{ $pengumuman->judul }}"
-                        data-file="{{ $pengumuman->file_lampiran }}"
-                        data-isi="{{ $pengumuman->isi }}"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editModal">
-                        Edit
-                      </button>
-                      <form action="{{ route('pengumuman.destroy', $pengumuman->id) }}" method="POST" style="display:inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-delete btn-sm btn-danger">Hapus</button>
-                      </form>
-                    </td>
-                  </tr>
-                  @endforeach
-                </tbody>
-              </table>
+              <div class="table-responsive">
+                <table id="pengumumanTable" class="table table-bordered table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-center">No.</th>
+                      <th>Judul</th>
+                      <th>Ringkasan Isi</th> <!-- Tambahkan kolom Ringkasan -->
+                      <th class="text-center">File Lampiran</th>
+                      <th class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($pengumumans as $index => $pengumuman)
+                    <tr>
+                      <td class="text-center align-middle">{{ $index + 1 }}</td>
+                      <td class="align-middle">{{ \Illuminate\Support\Str::limit(strip_tags($pengumuman->judul), 25, '...') }}</td>
+                      <td class="align-middle">{{ \Illuminate\Support\Str::limit(strip_tags($pengumuman->isi), 50, '...') }}</td> <!-- Tambahkan ini -->
+                      <td class="text-center align-middle">
+                        @if($pengumuman->file_lampiran)
+                        <a href="{{ asset('storage/' . $pengumuman->file_lampiran) }}" target="_blank">Download</a>
+                        @else
+                        Tidak Ada File
+                        @endif
+                      </td>
+                      <td class="text-center align-middle">
+                        <a href="{{ route('pengumuman.show', $pengumuman->id) }}" class="btn btn-sm btn-info">
+                          Detail
+                        </a>
+                        <button class="btn btn-sm btn-warning btn-edit"
+                          data-id="{{ $pengumuman->id }}"
+                          data-judul="{{ $pengumuman->judul }}"
+                          data-file="{{ $pengumuman->file_lampiran }}"
+                          data-isi="{{ $pengumuman->isi }}"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editModal">
+                          Edit
+                        </button>
+                        <form action="{{ route('pengumuman.destroy', $pengumuman->id) }}" method="POST" style="display:inline-block;">
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit" class="btn btn-delete btn-sm btn-danger">Hapus</button>
+                        </form>
+                      </td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

@@ -25,48 +25,50 @@
           <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createJadwalModal">Tambah Data</button>
           <div class="card">
             <div class="card-body">
-              <table id="jadwalTable" class="table table-bordered table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>Kegiatan</th>
-                    <th>Lokasi</th>
-                    <th>Tanggal Mulai</th>
-                    <th>Tanggal Selesai</th>
-                    <th>Waktu</th>
-                    <th class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($jadwals as $jadwal)
-                  <tr>
-                    <td class="align-middle">{{ $jadwal->kegiatan }}</td>
-                    <td class="align-middle">{{ $jadwal->lokasi }}</td>
-                    <td class="align-middle">{{ $jadwal->tanggal_mulai->format('d M Y') }}</td>
-                    <td class="align-middle">{{ $jadwal->tanggal_selesai ? $jadwal->tanggal_selesai->format('d M Y') : '-' }}</td>
-                    <td class="align-middle">{{ $jadwal->waktu }}</td>
-                    <td class="text-center align-middle">
-                      <button class="btn btn-warning btn-edit btn-sm" 
-                              data-id="{{ $jadwal->id }}" 
-                              data-kegiatan="{{ $jadwal->kegiatan }}" 
-                              data-lokasi="{{ $jadwal->lokasi }}" 
-                              data-tanggal-mulai="{{ $jadwal->tanggal_mulai->toDateString() }}" 
-                              data-tanggal-selesai="{{ $jadwal->tanggal_selesai ? $jadwal->tanggal_selesai->toDateString() : '' }}" 
-                              data-waktu="{{ $jadwal->waktu }}" 
-                              data-bs-toggle="modal" 
-                              data-bs-target="#editJadwalModal">
-                          Edit
-                      </button>
-                        
-                        <form action="{{ route('jadwals.destroy', $jadwal->id) }}" method="POST" style="display:inline-block;">
-                          @csrf
-                          @method('DELETE')
-                          <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                        </form>
-                    </td>
-                  </tr>
-                  @endforeach
-                </tbody>
-              </table>
+              <div class="table-responsive">
+                <table id="jadwalTable" class="table table-bordered table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>Kegiatan</th>
+                      <th>Lokasi</th>
+                      <th>Tanggal Mulai</th>
+                      <th>Tanggal Selesai</th>
+                      <th>Waktu</th>
+                      <th class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($jadwals as $jadwal)
+                    <tr>
+                      <td class="align-middle">{{ $jadwal->kegiatan }}</td>
+                      <td class="align-middle">{{ $jadwal->lokasi }}</td>
+                      <td class="align-middle">{{ $jadwal->tanggal_mulai->format('d M Y') }}</td>
+                      <td class="align-middle">{{ $jadwal->tanggal_selesai ? $jadwal->tanggal_selesai->format('d M Y') : '-' }}</td>
+                      <td class="align-middle">{{ $jadwal->waktu }}</td>
+                      <td class="text-center align-middle">
+                        <button class="btn btn-warning btn-edit btn-sm" 
+                                data-id="{{ $jadwal->id }}" 
+                                data-kegiatan="{{ $jadwal->kegiatan }}" 
+                                data-lokasi="{{ $jadwal->lokasi }}" 
+                                data-tanggal-mulai="{{ $jadwal->tanggal_mulai->toDateString() }}" 
+                                data-tanggal-selesai="{{ $jadwal->tanggal_selesai ? $jadwal->tanggal_selesai->toDateString() : '' }}" 
+                                data-waktu="{{ $jadwal->waktu }}" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editJadwalModal">
+                            Edit
+                        </button>
+                          
+                          <form action="{{ route('jadwals.destroy', $jadwal->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                          </form>
+                      </td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

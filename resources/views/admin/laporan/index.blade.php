@@ -112,23 +112,25 @@
               </a>
               <a href="#" id="cetak-excel" class="btn btn-success ms-1">
                 <i class="bi bi-file-earmark-excel"></i> Laporan Excel
-              </a>            
+              </a>
             </div>
             <div class="card-body">
-              <table id="pendaftar-table" class="table table-bordered table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th class="text-center">No.</th>
-                    <th class="text-center">No. Pendaftaran</th>
-                    <th class="text-center">NISN</th>
-                    <th>Nama Lengkap</th>
-                    <th class="text-center">L/P</th>
-                    <th>Asal Sekolah</th>
-                    <th>Status Pendaftaran</th>
-                    <th class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-              </table>
+              <div class="table-responsive">
+                <table id="pendaftar-table" class="table table-bordered table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-center">No.</th>
+                      <th class="text-center">No. Pendaftaran</th>
+                      <th class="text-center">NISN</th>
+                      <th>Nama Lengkap</th>
+                      <th class="text-center">L/P</th>
+                      <th>Asal Sekolah</th>
+                      <th>Status Pendaftaran</th>
+                      <th class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
             </div>
           </div>
         </div>

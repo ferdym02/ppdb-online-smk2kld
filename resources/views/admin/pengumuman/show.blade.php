@@ -2,10 +2,17 @@
 @section('css')
 <style>
   .pengumuman-content img {
-      max-width: 500px;
+      max-width: 100%;
       height: auto;
       display: block;
       margin: 10px auto;
+  }
+
+  /* Batasi lebar gambar hanya pada layar besar */
+  @media (min-width: 768px) {
+      .pengumuman-content img {
+          max-width: 500px;
+      }
   }
 </style>
 @endsection
@@ -17,7 +24,7 @@
             <div class="row">
                 <div class="col-sm-6 d-flex align-items-center">
                   <!-- Tombol ikon kembali -->
-                    <a href="{{ session('periodes_url') }}" class="me-3">
+                    <a href="{{ route('pengumuman.index') }}" class="me-3">
                       <i class="fas fa-arrow-left"></i>
                     </a>
                     <h3 class="mb-0">{{ $title }}</h3>

@@ -102,34 +102,36 @@
                             @if($periodes->aptitudeTests->isEmpty())
                                 <p class="text-center">Tidak ada data tes minat bakat untuk periode ini.</p>
                             @else
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center">No.</th>
-                                            <th class="text-center">Periode Pendaftaran</th>
-                                            <th class="text-center">Tanggal Tes Dibuka</th>
-                                            <th class="text-center">Tanggal Tes Ditutup</th>
-                                            <th class="text-center">Kuota Per Hari</th>
-                                            <th class="text-center">Status</th>
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($periodes->aptitudeTests as $index => $test)
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
                                             <tr>
-                                                <td class="text-center">{{ $index + 1 }}</td>
-                                                <td class="text-center">{{ $periodes->tahun_pelajaran }}</td>
-                                                <td class="text-center">{{ \Carbon\Carbon::parse($test->tanggal_buka_tes)->format('d-m-Y') }}</td>
-                                                <td class="text-center">{{ \Carbon\Carbon::parse($test->tanggal_tutup_tes)->format('d-m-Y') }}</td>
-                                                <td class="text-center">{{ $test->kuota_per_hari }}</td>
-                                                <td class="text-center">{{ $test->status ? 'Aktif' : 'Tidak Aktif' }}</td>
-                                                <td class="text-center">
-                                                    <a href="{{ route('aptitudes.show', $test->id) }}" class="btn btn-info btn-sm">Detail</a>
-                                                </td>
+                                                <th class="text-center">No.</th>
+                                                <th class="text-center">Periode Pendaftaran</th>
+                                                <th class="text-center">Tanggal Tes Dibuka</th>
+                                                <th class="text-center">Tanggal Tes Ditutup</th>
+                                                <th class="text-center">Kuota Per Hari</th>
+                                                <th class="text-center">Status</th>
+                                                <th class="text-center">Aksi</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($periodes->aptitudeTests as $index => $test)
+                                                <tr>
+                                                    <td class="text-center">{{ $index + 1 }}</td>
+                                                    <td class="text-center">{{ $periodes->tahun_pelajaran }}</td>
+                                                    <td class="text-center">{{ \Carbon\Carbon::parse($test->tanggal_buka_tes)->format('d-m-Y') }}</td>
+                                                    <td class="text-center">{{ \Carbon\Carbon::parse($test->tanggal_tutup_tes)->format('d-m-Y') }}</td>
+                                                    <td class="text-center">{{ $test->kuota_per_hari }}</td>
+                                                    <td class="text-center">{{ $test->status ? 'Aktif' : 'Tidak Aktif' }}</td>
+                                                    <td class="text-center">
+                                                        <a href="{{ route('aptitudes.show', $test->id) }}" class="btn btn-info btn-sm">Detail</a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -146,6 +148,7 @@
                             @if($periodes->periodeJurusans->isEmpty())
                                 <p class="text-center">Tidak ada data jurusan untuk periode ini.</p>
                             @else
+                            <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -175,6 +178,7 @@
                                         </tr>
                                     </tfoot>
                                 </table>
+                            </div>
                             @endif
                         </div>
                     </div>

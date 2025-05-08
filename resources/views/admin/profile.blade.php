@@ -35,6 +35,11 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="email" name="email" value="{{ $admin->email }}" readonly>
+                        </div>                        
+
+                        <div class="mb-3">
                             <label for="password" class="form-label">Password (Kosongkan jika tidak ingin mengubah)</label>
                             <input type="password" class="form-control" id="password" name="password" min="8">
                             @error('password')

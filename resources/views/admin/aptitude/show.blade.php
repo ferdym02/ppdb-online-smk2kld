@@ -112,21 +112,23 @@
                         </div>
                       </div>
                     </form>
-                    <table id="pendaftarTable" class="table table-bordered table-striped">
-                      <thead>
-                        <tr>
-                          <th class="text-center">No</th>
-                          <th class="text-center">Nomor Pendaftaran</th>
-                          <th>Nama Lengkap</th>
-                          <th class="text-center">L/P</th>
-                          <th class="text-center">Tanggal Tes</th>
-                          <th class="text-center">Status Tes</th>
-                          <th class="text-center">Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      </tbody>
-                    </table>
+                    <div class="table-responsive">          
+                      <table id="pendaftarTable" class="table table-bordered table-striped">
+                        <thead>
+                          <tr>
+                            <th class="text-center">No</th>
+                            <th class="text-center">Nomor Pendaftaran</th>
+                            <th>Nama Lengkap</th>
+                            <th class="text-center">L/P</th>
+                            <th class="text-center">Tanggal Tes</th>
+                            <th class="text-center">Status Tes</th>
+                            <th class="text-center">Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>

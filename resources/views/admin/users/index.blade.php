@@ -30,16 +30,18 @@
           <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Data</button>
           <div class="card">
             <div class="card-body">
-              <table id="users-table" class="table table-bordered table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th class="text-center">No.</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-              </table>
+              <div class="table-responsive">
+                <table id="users-table" class="table table-bordered table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-center">No.</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
             </div>
           </div>
         </div>

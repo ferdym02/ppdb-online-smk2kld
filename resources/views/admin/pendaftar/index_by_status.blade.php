@@ -61,20 +61,22 @@
             <div class="col-12">
                 <div class="card">
                   <div class="card-body">
-                    <table id="pendaftar-status-table" class="table table-bordered table-striped table-hover">
-                      <thead>
-                          <tr>
-                              <th class="text-center">No.</th>
-                              <th class="text-center">No. Pendaftaran</th>
-                              <th class="text-center">NISN</th>
-                              <th>Nama Lengkap</th>
-                              <th class="text-center">L/P</th>
-                              <th>Asal Sekolah</th>
-                              <th class="text-center">Tgl Pendaftaran</th>
-                              <th class="text-center">Aksi</th>
-                          </tr>
-                      </thead>
-                  </table>
+                    <div class="table-responsive">          
+                      <table id="pendaftar-status-table" class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">No.</th>
+                                <th class="text-center">No. Pendaftaran</th>
+                                <th class="text-center">NISN</th>
+                                <th>Nama Lengkap</th>
+                                <th class="text-center">L/P</th>
+                                <th>Asal Sekolah</th>
+                                <th class="text-center">Tgl Pendaftaran</th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                      </table>
+                    </div>
                   </div>
                 </div>
             </div>
@@ -114,6 +116,7 @@
               url: "{{ route('pendaftar.status.data', $status) }}",
               data: function (d) {
                   d.daftar_ulang = $('#filterDaftarUlang').val(); // Kirim nilai filter daftar_ulang
+                  d.periode_id = "{{ request()->input('periode_id') }}";
               }
           },
           columns: [

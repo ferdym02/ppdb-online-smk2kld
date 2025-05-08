@@ -95,12 +95,19 @@
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
-
         @auth
-            <a class="btn-getstarted" href="{{ route('user.dashboard') }}">{{ Auth::user()->name }}</a>
-        @else
-            <a class="btn-getstarted" href="/login">Login</a>
-        @endauth
+          @php
+              $role = Auth::user()->role;
+          @endphp
+
+          @if ($role === 'admin' || $role === 'superadmin')
+              <a class="btn-getstarted" href="{{ route('admin.dashboard') }}">{{ Auth::user()->name }}</a>
+          @else
+              <a class="btn-getstarted" href="{{ route('user.dashboard') }}">{{ Auth::user()->name }}</a>
+          @endif
+      @else
+          <a class="btn-getstarted" href="/login">Login</a>
+      @endauth
       </div>
     </header>
 
@@ -562,7 +569,7 @@
       </div>
 
       <div class="container copyright text-center mt-4">
-        <p>© <span>Hak Cipta</span> <strong class="px-1 sitename">PPDB SMK Negeri 2 Kalianada</strong> <span>Semua hak dilindungi</span></p>
+        <p>© <span>Hak Cipta</span> <strong class="px-1 sitename">PPDB SMK Negeri 2 Kalianda</strong> <span>Semua hak dilindungi</span></p>
       </div>
     </footer>
 

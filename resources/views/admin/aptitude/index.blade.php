@@ -31,46 +31,48 @@
           <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Tambah Data</button>
           <div class="card">
             <div class="card-body">
-              <table id="aptitude-tests-table" class="table table-bordered table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th class="text-center">No.</th>
-                    <th class="text-center">Periode Pendaftaran</th>
-                    <th class="text-center">Tanggal Buka Tes</th>
-                    <th class="text-center">Tanggal Tutup Tes</th>
-                    <th class="text-center">Kuota Per Hari</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($aptitudes as $index => $aptitude)
+              <div class="table-responsive">                
+                <table id="aptitude-tests-table" class="table table-bordered table-striped table-hover">
+                  <thead>
                     <tr>
-                      <td class="text-center align-middle">{{ $index + 1 }}</td>
-                      <td class="text-center align-middle">{{ $aptitude->periode->tahun_pelajaran }}</td>
-                      <td class="text-center align-middle">{{ \Carbon\Carbon::parse($aptitude->tanggal_buka_tes)->format('d-m-Y') }}</td>
-                      <td class="text-center align-middle">{{ \Carbon\Carbon::parse($aptitude->tanggal_tutup_tes)->format('d-m-Y') }}</td>                      
-                      <td class="text-center align-middle">{{ $aptitude->kuota_per_hari }}</td>
-                      <td class="text-center align-middle">{{ $aptitude->status ? 'Aktif' : 'Tidak Aktif' }}</td>
-                      <td class="text-center align-middle">
-                        <a href="{{ route('aptitudes.show', $aptitude->id) }}" class="btn btn-info btn-sm">Detail</a>
-                        <button class="btn btn-warning btn-edit btn-sm" data-id="{{ $aptitude->id }}" 
-                          data-periode="{{ $aptitude->periode_id }}" 
-                          data-tanggal-buka="{{ $aptitude->tanggal_buka_tes }}" 
-                          data-tanggal-tutup="{{ $aptitude->tanggal_tutup_tes }}" 
-                          data-kuota="{{ $aptitude->kuota_per_hari }}" 
-                          data-status="{{ $aptitude->status }}" 
-                          data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
-                        <form action="{{ route('aptitudes.destroy', $aptitude->id) }}" method="POST" style="display:inline-block;">
-                          @csrf
-                          @method('DELETE')
-                          <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                        </form>
-                      </td>
+                      <th class="text-center">No.</th>
+                      <th class="text-center">Periode Pendaftaran</th>
+                      <th class="text-center">Tanggal Buka Tes</th>
+                      <th class="text-center">Tanggal Tutup Tes</th>
+                      <th class="text-center">Kuota Per Hari</th>
+                      <th class="text-center">Status</th>
+                      <th class="text-center">Aksi</th>
                     </tr>
-                  @endforeach
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    @foreach($aptitudes as $index => $aptitude)
+                      <tr>
+                        <td class="text-center align-middle">{{ $index + 1 }}</td>
+                        <td class="text-center align-middle">{{ $aptitude->periode->tahun_pelajaran }}</td>
+                        <td class="text-center align-middle">{{ \Carbon\Carbon::parse($aptitude->tanggal_buka_tes)->format('d-m-Y') }}</td>
+                        <td class="text-center align-middle">{{ \Carbon\Carbon::parse($aptitude->tanggal_tutup_tes)->format('d-m-Y') }}</td>                      
+                        <td class="text-center align-middle">{{ $aptitude->kuota_per_hari }}</td>
+                        <td class="text-center align-middle">{{ $aptitude->status ? 'Aktif' : 'Tidak Aktif' }}</td>
+                        <td class="text-center align-middle">
+                          <a href="{{ route('aptitudes.show', $aptitude->id) }}" class="btn btn-info btn-sm">Detail</a>
+                          <button class="btn btn-warning btn-edit btn-sm" data-id="{{ $aptitude->id }}" 
+                            data-periode="{{ $aptitude->periode_id }}" 
+                            data-tanggal-buka="{{ $aptitude->tanggal_buka_tes }}" 
+                            data-tanggal-tutup="{{ $aptitude->tanggal_tutup_tes }}" 
+                            data-kuota="{{ $aptitude->kuota_per_hari }}" 
+                            data-status="{{ $aptitude->status }}" 
+                            data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+                          <form action="{{ route('aptitudes.destroy', $aptitude->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                          </form>
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
