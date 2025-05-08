@@ -86,6 +86,11 @@ class DataTableController extends Controller
         // Filter hanya untuk status 'diterima'
         $pendaftars = Pendaftar::where('status_pendaftaran', $status);
 
+        // Filter berdasarkan periode_id
+        if ($request->has('periode_id') && $request->periode_id != '') {
+            $pendaftars->where('periode_id', $request->periode_id);
+        }
+        
         // Tambahkan filter daftar ulang
         if ($request->has('daftar_ulang') && $request->daftar_ulang !== '') {
             if ($request->daftar_ulang === 'null') {

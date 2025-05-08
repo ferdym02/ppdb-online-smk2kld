@@ -239,7 +239,9 @@ class PendaftaranController extends Controller
     
             // Generate nomor pendaftaran
             $jurusan1 = Jurusan::find($request->pilihan_jurusan_1);
-            $nomorPendaftaran = Pendaftar::generateNomorPendaftaran($jurusan1->kode, $pendaftar->id);
+            // Ambil periode dari data pendaftar
+            $periodeId = $pendaftar->periode_id;
+            $nomorPendaftaran = Pendaftar::generateNomorPendaftaran($jurusan1->kode, $periodeId, $pendaftar->id);
             $pendaftar->update(['nomor_pendaftaran' => $nomorPendaftaran]);
 
             // Upload file setelah nomor_pendaftaran tersedia
@@ -514,20 +516,25 @@ class PendaftaranController extends Controller
 
     public function verifikasi(Request $request, $id)
     {
+        // Ambil data pendaftar berdasarkan ID, akan gagal jika tidak ditemukan
         $pendaftar = Pendaftar::findOrFail($id);
 
         if ($request->status == 'verifikasi') {
+            // Set status pendaftaran menjadi "verified" dan kosongkan catatan penolakan jika sebelumnya pernah ditolak
             $pendaftar->status_pendaftaran = 'verified';
             $pendaftar->catatan_penolakan = null;
 
+            // Ambil periode aktif (status = true)
             $periodeAktif = Periode::where('status', true)->first();
 
             if (!$periodeAktif) {
+                // Jika tidak ada periode aktif, kembalikan pesan error
                 return redirect()->back()->with('error', 'Tidak ada periode aktif saat ini.');
             }
 
+            // Ambil tes minat bakat aktif yang masih dibuka dan sesuai dengan periode aktif
             $tesAktif = AptitudeTest::where('status', true)
-                ->where('tanggal_tutup_tes', '>=', now()->toDateString())
+                ->where('tanggal_tutup_tes', '>=', now()->toDateString()) // Belum melewati tanggal tutup
                 ->where('periode_id', $periodeAktif->id)
                 ->orderBy('tanggal_buka_tes')
                 ->first();
@@ -535,18 +542,20 @@ class PendaftaranController extends Controller
             if (!$tesAktif) {
                 return redirect()->back()->with('error', 'Tidak ada tes minat bakat tersedia saat ini.');
             }
-            // Tambahkan aptitude_tests_id ke pendaftar
+
+            // Hubungkan pendaftar dengan tes minat bakat
             $pendaftar->aptitude_tests_id = $tesAktif->id;
 
             try {
-                DB::beginTransaction(); // Mulai transaksi hanya untuk penjadwalan tanggal tes
-                
+                DB::beginTransaction(); // Mulai transaksi untuk penjadwalan tes
+
+                // Tentukan tanggal mulai penjadwalan tes: hari ini + 1 jika tes sudah dimulai, atau pakai tanggal mulai tes
                 $startDate = Carbon::parse($tesAktif->tanggal_buka_tes)->greaterThan(now())
                             ? Carbon::parse($tesAktif->tanggal_buka_tes)
                             : now()->addDay();
                 $endDate = Carbon::parse($tesAktif->tanggal_tutup_tes);
 
-                // Cek endDate maksimal 1 hari setelah periode pendaftaran tutup
+                // Batasi tanggal akhir tes maksimal 1 hari setelah periode pendaftaran tutup
                 $maxEndDate = Carbon::parse($periodeAktif->tanggal_tutup)->addDay();
 
                 if (
@@ -557,44 +566,41 @@ class PendaftaranController extends Controller
                     return redirect()->back()->with('error', 'Tanggal tes minat bakat di luar rentang periode pendaftaran.');
                 }
 
+                // Loop dari tanggal mulai sampai akhir untuk mencari tanggal yang masih tersedia kuota
                 while ($startDate <= $endDate) {
-                    // Periksa apakah tanggal saat ini adalah hari Minggu
                     if ($startDate->isSunday()) {
                         $startDate->addDay(); // Lewati hari Minggu
                         continue;
                     }
 
-                    // Cek kuota pada tanggal ini dengan locking untuk menghindari race condition
+                    // Cek jumlah pendaftar di tanggal tersebut menggunakan lock untuk mencegah race condition
                     $count = Pendaftar::where('tanggal_tes', $startDate->toDateString())
-                        ->lockForUpdate() // Lock hanya saat memeriksa kuota
+                        ->lockForUpdate()
                         ->count();
 
                     if ($count < $tesAktif->kuota_per_hari) {
+                        // Jika kuota masih tersedia, tetapkan tanggal tes ke pendaftar
                         $pendaftar->tanggal_tes = $startDate->toDateString();
                         break;
                     }
 
-                    $startDate->addDay(); // Lanjut ke hari berikutnya
+                    $startDate->addDay(); // Lanjut ke tanggal berikutnya
                 }
 
                 if (!$pendaftar->tanggal_tes) {
-                    // Jika tidak ada tanggal tes yang tersedia
-                    if ($startDate > $endDate) {
-                        DB::rollBack(); // Batalkan transaksi jika tidak ada kuota dan tanggal sudah lewat
-                        return redirect()->back()->with('error', 'Tanggal tes sudah lewat atau semua kuota sudah penuh.');
-                    }
-    
-                    DB::rollBack(); // Batalkan transaksi jika tidak menemukan kuota
-                    return redirect()->back()->with('error', 'Semua kuota tes minat bakat pada periode ini sudah penuh.');
+                    // Jika tidak mendapatkan tanggal tes, rollback dan beri pesan error
+                    DB::rollBack();
+                    return redirect()->back()->with('error', 'Tanggal tes sudah lewat atau semua kuota sudah penuh.');
                 }
 
-                $pendaftar->save(); // Simpan perubahan pendaftar
-                DB::commit(); // Selesaikan transaksi
+                $pendaftar->save(); // Simpan data pendaftar yang sudah diperbarui
+                DB::commit(); // Selesaikan transaksi jika semua proses berhasil
             } catch (\Exception $e) {
-                DB::rollBack(); // Batalkan transaksi jika terjadi error
+                DB::rollBack(); // Rollback jika terjadi error saat proses
                 return redirect()->back()->with('error', 'Terjadi kesalahan saat menentukan tanggal tes.');
             }
         } elseif ($request->status == 'tolak') {
+            // Proses penolakan pendaftaran
             if (empty($request->catatan_penolakan)) {
                 return redirect()->back()->with('error', 'Catatan perbaikan wajib diisi.');
             }
@@ -609,18 +615,26 @@ class PendaftaranController extends Controller
     public function updateNilaiTes(Request $request, $id)
     {
         try {
+            // Validasi input: nilai tes wajib salah satu dari A, B, C, atau K
+            // jurusan_diterima boleh kosong tapi jika diisi harus ada di tabel periode_jurusan
             $request->validate([
                 'nilai_tes_minat_bakat' => 'required|in:A,B,C,K',
                 'jurusan_diterima' => 'nullable|exists:periode_jurusan,id',
             ]);
             
+            // Ambil data pendaftar berdasarkan ID
             $pendaftar = Pendaftar::findOrFail($id);
+
+            // Simpan nilai tes minat bakat
             $pendaftar->nilai_tes_minat_bakat = $request->nilai_tes_minat_bakat;
             
+            // Jika nilai tes adalah 'K' (tidak cocok), status langsung gugur
             if ($request->nilai_tes_minat_bakat === 'K') {
                 $pendaftar->status_pendaftaran = 'gugur';
             } else {
-               // Hitung nilai akhir
+                // Jika lulus tes, lanjutkan perhitungan nilai akhir
+
+                // Hitung total nilai Matematika (5 semester dikali bobot 2)
                 $nilaiMtkTotal = (
                     $pendaftar->nilai_mtk_semester_1 +
                     $pendaftar->nilai_mtk_semester_2 +
@@ -629,6 +643,7 @@ class PendaftaranController extends Controller
                     $pendaftar->nilai_mtk_semester_5
                 ) * 2;
 
+                // Hitung total nilai Bahasa Inggris (5 semester dikali bobot 2)
                 $nilaiBahasaInggrisTotal = (
                     $pendaftar->nilai_bahasa_inggris_semester_1 +
                     $pendaftar->nilai_bahasa_inggris_semester_2 +
@@ -637,6 +652,7 @@ class PendaftaranController extends Controller
                     $pendaftar->nilai_bahasa_inggris_semester_5
                 ) * 2;
 
+                // Hitung rata-rata nilai rapor
                 $nilaiRapor = (
                     $nilaiMtkTotal +
                     $nilaiBahasaInggrisTotal +
@@ -651,7 +667,9 @@ class PendaftaranController extends Controller
                     $pendaftar->nilai_ipa_semester_5 +
                     $pendaftar->nilai_bahasa_indonesia_semester_5
                 ) / 30;
-    
+
+                // Hitung nilai prestasi
+                // Jika punya prestasi akademik atau non-akademik, masing-masing bernilai 50
                 $nilaiPrestasi = 0;
                 if ($pendaftar->prestasi_akademik) {
                     $nilaiPrestasi += 50;
@@ -659,35 +677,41 @@ class PendaftaranController extends Controller
                 if ($pendaftar->prestasi_non_akademik) {
                     $nilaiPrestasi += 50;
                 }
-                $nilaiPrestasi = $nilaiPrestasi / 2;
-    
+                $nilaiPrestasi = $nilaiPrestasi / 2; // Rata-rata prestasi
+
+                // Hitung nilai akhir dengan bobot 80% nilai rapor dan 20% prestasi
                 $pendaftar->nilai_akhir = ($nilaiRapor * 0.8) + ($nilaiPrestasi * 0.2);
-    
-                // Cek kuota melalui tabel periode_jurusan
+
+                // Ambil data kuota jurusan dari tabel pivot periode_jurusan
                 $periodeJurusan = PeriodeJurusan::find($request->jurusan_diterima);
                 
                 if ($periodeJurusan) {
-                    $pendaftar->jurusan_diterima = $periodeJurusan->jurusan->id; 
+                    // Simpan jurusan yang diterima (relasi ke tabel jurusan)
+                    $pendaftar->jurusan_diterima = $periodeJurusan->jurusan->id;
+
                     if ($periodeJurusan->kuota > 0) {
+                        // Jika kuota masih ada, status diterima dan kurangi kuota
                         $pendaftar->status_pendaftaran = 'diterima';
-    
-                        // Kurangi kuota jurusan
                         $periodeJurusan->kuota -= 1;
                         $periodeJurusan->save();
                     } else {
+                        // Jika kuota penuh, status jadi cadangan
                         $pendaftar->status_pendaftaran = 'cadangan';
                     }
                 } else {
+                    // Jika jurusan tidak valid
                     return redirect()->back()->with('error', 'Jurusan tidak valid untuk periode ini.');
                 }
             }
-    
+
+            // Tandai bahwa peserta telah mengikuti tes
             $pendaftar->status_tes = 'sudah';
             $pendaftar->save();
-    
+
+            // Beri notifikasi sukses ke pengguna
             return redirect()->back()->with('success', 'Nilai tes minat bakat dan status pendaftaran berhasil diperbarui.');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            dd($e->errors()); // Debug pesan error validasi
+            return redirect()->back()->withErrors($e->errors())->withInput();
         }
     }
 
@@ -759,39 +783,49 @@ class PendaftaranController extends Controller
     public function updateDaftarUlang(Request $request, $id)
     {
         try {
+            // Memulai transaksi database agar proses di dalamnya berjalan atomik (semuanya berhasil atau semuanya gagal)
             DB::transaction(function () use ($request, $id) {
+                // Cari data pendaftar berdasarkan ID
                 $pendaftar = Pendaftar::findOrFail($id);
 
+                // Validasi input daftar ulang (hanya boleh 'ya' atau 'tidak')
                 $request->validate([
                     'daftar_ulang' => 'required|in:ya,tidak',
                 ]);
 
+                // Simpan status daftar ulang ke dalam model
                 $pendaftar->daftar_ulang = $request->daftar_ulang;
 
                 if ($request->daftar_ulang === 'tidak') {
+                    // Jika pendaftar tidak melakukan daftar ulang, statusnya menjadi 'gugur'
                     $pendaftar->status_pendaftaran = 'gugur';
 
                     if ($pendaftar->jurusan_diterima) {
+                        // Ambil data kuota jurusan yang sebelumnya diterima oleh pendaftar
                         $periodeJurusan = PeriodeJurusan::where('jurusan_id', $pendaftar->jurusan_diterima)
                             ->where('periode_id', $pendaftar->periode_id)
-                            ->lockForUpdate() // Lock untuk mencegah race condition
+                            ->lockForUpdate() // Mengunci baris ini agar tidak diubah oleh proses lain (hindari race condition)
                             ->first();
 
                         if ($periodeJurusan) {
+                            // Tambah kuota kembali karena pendaftar membatalkan diri
                             $periodeJurusan->kuota += 1;
                             $periodeJurusan->save();
                         }
                     }
 
+                    // Kosongkan jurusan diterima karena statusnya gugur
                     $pendaftar->jurusan_diterima = null;
                 }
 
+                // Simpan perubahan ke dalam database
                 $pendaftar->save();
             });
 
             return redirect()->back()->with('success', 'Status daftar ulang berhasil diperbarui.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            // Tangani error jika terjadi, tanpa membocorkan detail teknis ke pengguna
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui status daftar ulang.');
         }
     }
 
@@ -801,12 +835,14 @@ class PendaftaranController extends Controller
             DB::transaction(function () use ($request, $id) {
                 $pendaftar = Pendaftar::findOrFail($id);
 
+                // Hanya pendaftar dengan status 'cadangan' yang boleh diperbarui ke 'diterima'
                 if ($pendaftar->status_pendaftaran !== 'cadangan') {
                     throw new \Exception('Hanya pendaftar dengan status "cadangan" yang dapat diubah.');
                 }
 
+                // Ambil data kuota jurusan yang dipilih
                 $periodeJurusan = PeriodeJurusan::where('jurusan_id', $pendaftar->jurusan_diterima)
-                    ->lockForUpdate()
+                    ->lockForUpdate() // Hindari race condition saat mengubah kuota
                     ->first();
 
                 if (!$periodeJurusan) {
@@ -817,16 +853,18 @@ class PendaftaranController extends Controller
                     throw new \Exception('Kuota untuk jurusan yang dipilih sudah penuh.');
                 }
 
+                // Kurangi kuota karena pendaftar diterima
                 $periodeJurusan->kuota -= 1;
                 $periodeJurusan->save();
 
+                // Ubah status pendaftar menjadi 'diterima'
                 $pendaftar->status_pendaftaran = 'diterima';
                 $pendaftar->save();
             });
 
             return redirect()->back()->with('success', 'Status pendaftaran berhasil diubah menjadi lulus.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui status pendaftaran.');
         }
     }
 
@@ -855,6 +893,6 @@ class PendaftaranController extends Controller
         }
 
         return response()->file(storage_path('app/' . $path));
-}
+    }
 
 }
