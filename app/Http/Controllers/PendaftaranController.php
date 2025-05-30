@@ -74,8 +74,6 @@ class PendaftaranController extends Controller
         $title = 'Data Pendaftar';
         $name = Auth::user()->name;
         $periodeId = $request->input('periode_id');
-        
-        $jurusans = Jurusan::all()->keyBy('id');
 
         // Ambil data tahun pelajaran dari model Periode
         $periode = $periodeId ? Periode::find($periodeId) : null;
@@ -773,7 +771,7 @@ class PendaftaranController extends Controller
             ];
 
             $pdf = PDF::loadView('pdf.bukti_pendaftaran', $data, compact('base64Left', 'base64Right', 'periode'));
-            return $pdf->download($pendaftar->nomor_pendaftaran . '_Bukti_Pendaftaran.pdf');
+            return $pdf->stream($pendaftar->nomor_pendaftaran . '_Bukti_Pendaftaran.pdf');
         }
 
         // Jika tidak berhak, tampilkan error
