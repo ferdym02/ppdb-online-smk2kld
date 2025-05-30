@@ -10,7 +10,7 @@ use App\Models\User;
 use App\Models\PasswordResetToken;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPasswordMail;
-
+use Illuminate\Auth\Events\Registered; // Tambahkan ini di atas
 
 class AuthController extends Controller
 {
@@ -31,15 +31,20 @@ class AuthController extends Controller
         try {
             // Enkripsi password
             $validatedData['password'] = Hash::make($validatedData['password']);
-            
-            // Buat pengguna baru
-            User::create($validatedData);
-    
-            // Redirect dengan pesan sukses
-            return redirect()->back()->with('success', 'Berhasil daftar akun, silakan login.');
-    
+
+            // Buat user baru
+            $user = User::create($validatedData);
+
+            // Kirim email verifikasi
+            event(new Registered($user));
+
+            // Login user agar bisa diarahkan ke email/verify
+            auth()->login($user);
+
+            // Redirect ke halaman verifikasi email
+            return redirect()->route('verification.notice');
+
         } catch (\Exception $e) {
-            // Jika terjadi kesalahan, kembalikan dengan pesan error
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mendaftar akun. Silakan coba lagi.')->withInput();
         }
     }
