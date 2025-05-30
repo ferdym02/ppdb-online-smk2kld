@@ -54,7 +54,7 @@
             <div class="alert alert-info">
                 Silakan menunggu hasil tes pada halaman ini setelah Anda melakukan Tes Minat Bakat.
             </div>
-            <a href="{{ route('pendaftar.cetakBukti', $pendaftar->id) }}" class="btn btn-success">
+            <a href="{{ route('pendaftar.cetakBukti', $pendaftar->id) }}" class="btn btn-success" target="_blank">
                 <i class="fas fa-print"></i> Cetak Bukti Pendaftaran
             </a>
         @elseif ($pendaftar->status_pendaftaran == 'rejected')
@@ -906,8 +906,8 @@
             document.getElementById('formTahap2').classList.remove('d-none');
         }
 
-        // document.getElementById('formTahap1').classList.add('d-none');
-        // document.getElementById('formTahap2').classList.remove('d-none');
+        document.getElementById('formTahap1').classList.add('d-none');
+        document.getElementById('formTahap2').classList.remove('d-none');
     });
 
     // Event listener untuk tombol "Lanjut ke Tahap 3"
@@ -939,8 +939,8 @@
             document.getElementById('formTahap3').classList.remove('d-none');
         }
 
-        // document.getElementById('formTahap2').classList.add('d-none');
-        // document.getElementById('formTahap3').classList.remove('d-none');
+        document.getElementById('formTahap2').classList.add('d-none');
+        document.getElementById('formTahap3').classList.remove('d-none');
     });
 
     document.getElementById('pendaftaranForm').addEventListener('submit', function(event) {
