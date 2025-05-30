@@ -339,7 +339,24 @@
                                     <table class="table">
                                         <tr>
                                             <th>Nilai Tes Minat Bakat</th>
-                                            <td>: {{ $pendaftar->nilai_tes_minat_bakat ?? 'Belum ditentukan' }}</td>
+                                            <td>:
+                                                @php
+                                                    $nilai = $pendaftar->nilai_tes_minat_bakat;
+                                                    $keterangan = match ($nilai) {
+                                                        'A' => 'Sangat Baik',
+                                                        'B' => 'Baik',
+                                                        'C' => 'Cukup',
+                                                        'K' => 'Kurang',
+                                                        default => null,
+                                                    };
+                                                @endphp
+
+                                                @if ($nilai && $keterangan)
+                                                    {{ $nilai }} ({{ $keterangan }})
+                                                @else
+                                                    Belum ditentukan
+                                                @endif
+                                            </td>
                                         </tr>
                                         @if ($pendaftar->jurusan_diterima)
                                         <tr>
@@ -508,9 +525,10 @@
                         <div class="card-footer">
                             <div class="d-flex justify-content-end">
                                 @if (!in_array($pendaftar->status_pendaftaran, ['pending', 'rejected']))
-                                    <a href="{{ route('admin.cetakBukti', $pendaftar->id) }}" class="btn btn-success me-1">
+                                    <a href="{{ route('admin.cetakBukti', $pendaftar->id) }}" class="btn btn-success me-1" target="_blank">
                                         <i class="fas fa-print"></i> | Cetak Bukti Pendaftaran
                                     </a>
+                                    
                                 @endif
                                 <a href="/admin/pendaftar/{{ $pendaftar->id }}/edit" class="btn btn-warning">Edit</a>
                                 <form action="{{ route('pendaftar.destroy', $pendaftar->id) }}" method="POST" style="display:inline;" class="form-delete">
