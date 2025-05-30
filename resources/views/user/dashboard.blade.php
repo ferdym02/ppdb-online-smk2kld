@@ -204,7 +204,24 @@
                         @if($pendaftar && $pendaftar->status_tes == "sudah")
                             <tr>
                                 <th scope="row">Nilai Tes Minat Bakat</th>
-                                <td>{{ $pendaftar->nilai_tes_minat_bakat }}</td>
+                                <td>:
+                                    @php
+                                        $nilai = $pendaftar->nilai_tes_minat_bakat;
+                                        $keterangan = match ($nilai) {
+                                            'A' => 'Sangat Baik',
+                                            'B' => 'Baik',
+                                            'C' => 'Cukup',
+                                            'K' => 'Kurang',
+                                            default => null,
+                                        };
+                                    @endphp
+
+                                    @if ($nilai && $keterangan)
+                                        {{ $nilai }} ({{ $keterangan }})
+                                    @else
+                                        Belum ditentukan
+                                    @endif
+                                </td>
                             </tr>
                         @endif
                     </tbody>
