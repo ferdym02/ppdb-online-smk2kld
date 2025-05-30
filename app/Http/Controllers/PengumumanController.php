@@ -15,7 +15,7 @@ class PengumumanController extends Controller
     public function index()
     {
         $title = 'Pengumuman';
-        $pengumumans = Pengumuman::orderBy('created_at', 'desc')->get();
+        $pengumumans = Pengumuman::orderBy('created_at', 'asc')->get();
         $name = Auth::user()->name;
         return view('admin.pengumuman.index', compact('title', 'name', 'pengumumans'));
     }
@@ -205,7 +205,7 @@ class PengumumanController extends Controller
             ->first();
 
         $isRegistrationOpen = $activePeriod ? true : false;
-        $pengumumans = Pengumuman::orderBy('created_at', 'desc')->get();
+        $pengumumans = Pengumuman::orderBy('created_at', 'asc')->get();
         return view('user.pengumuman', compact('pengumumans', 'isRegistrationOpen', 'title'));
     }
 
