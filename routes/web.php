@@ -15,6 +15,8 @@ use App\Http\Controllers\AptitudeTestController;
 use App\Http\Controllers\SchoolProfileController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\PeriodeJurusanController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +45,23 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dokumen/{filename}', [PendaftaranController::class, 'lihatDokumen'])->name('dokumen.lihat')->middleware('auth');
 Route::get('/lihat-foto/{filename}', [PendaftaranController::class, 'lihatFoto'])->name('foto.lihat')->middleware('auth');
 
+// Route untuk halaman verifikasi email
+Route::get('/email/verify', function () {
+    $title = "Verifikasi Email";
+    return view('auth.verify-email', compact('title'));
+})->middleware('auth')->name('verification.notice');
+
+// Route untuk memproses link verifikasi email
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill(); // menandai email sebagai telah diverifikasi
+    return redirect('/user/dashboard');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// Route untuk mengirim ulang email verifikasi
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Link verifikasi telah dikirim ulang ke email Anda.');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->group(function () {
@@ -87,7 +106,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('/admin/periode-jurusan', PeriodeJurusanController::class);
     });
 
-    Route::middleware(['role:user'])->group(function () {
+    Route::middleware(['role:user', 'verified'])->group(function () {
         Route::get('/user/dashboard', [UserController::class, 'userDashboard'])->name('user.dashboard');
         Route::get('/user/profile', [UserController::class, 'showProfile'])->name('user.profile');
         Route::put('/user/update-password',[UserController::class, 'updatePassword'])->name('user.update.password');
